@@ -16,20 +16,26 @@
         <script src="" async defer></script>
         <h1>Login</h1>
         <!-- Welcome to div city -->
-        <div class="grid-container" id="login-panel">
-            <div class="grid-item text" id="username-text-div">
-                Username
+        <div class="flex-container" id="login-panel">
+            <div class="flex-item" id="username-div">
+                <div class="flex-item text" id="username-text-div">
+                    Username
+                </div>
+                <div class="flex-item textbox" id="username-textbox-div">
+                    <input id="username-textbox" class="textbox">
+                </div>
             </div>
-            <div class="grid-item textbox" id="username-textbox-div">
-                <input id="username-textbox">
+            <div class="flex-item" id="password-div">
+                <div class="flex-item text" id="password-text-div">
+                    Password
+                </div>
+                <div class="flex-item textbox" id="password-textbox-div">
+                    <input id="password-textbox" class="textbox" type="password">
+                </div>
             </div>
-            <div class="grid-item text" id="password-text-div">
-                Password
+            <div class="flex-item" id="button-div">
+                <button>Login</button>
             </div>
-            <div class="grid-item textbox" id="password-textbox-div">
-                <input id="password-textbox">
-            </div>
-            <button>Login</button>
         </div>
     </body>
 </html>
