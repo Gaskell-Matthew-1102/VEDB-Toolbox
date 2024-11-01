@@ -12,7 +12,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_email: str)
-    return user.User.get(user_email)
+    return user.get(user_email)
 
 #Rename to application name
 @app.route('/login', methods=['GET', 'POST'])
