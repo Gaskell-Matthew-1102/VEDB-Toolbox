@@ -1,0 +1,35 @@
+#login_panel {
+    display: grid;
+    column-gap: 10px;
+    row-gap: 10px;
+
+    grid-template-columns: auto auto auto auto;
+}
+.text {
+    margin: 10px 5px;
+    padding: 5px;
+    grid-column: 1 / 2;
+    text-align: left;
+}
+.textbox {
+    grid-column: 2 / 4;
+    text-align: left;
+}
+.grid-container {
+    display: grid;
+    column-gap: 5px;
+    row-gap: 2px;
+    margin: auto;
+
+    float: left;
+    width: 100%;
+    height: 12vh;
+}
+.grid-item {
+    border-style: solid;
+    margin: 2px 1px;
+    padding: 5px;
+    /* text-align: right; */
+
+    background-color: white;
+}
