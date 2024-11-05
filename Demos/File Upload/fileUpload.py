@@ -1,6 +1,21 @@
 import os
 from tkinter.filedialog import askdirectory
+
+import threading
+
+from flask import Flask, render_template, request
+from wtforms import Form, StringField, SubmitField
 from os import walk
+
+app = Flask(__name__)
+
+class VideoForm(Form):
+    vpath = StringField('Video Folder')
+    submitV = SubmitField('Upload')
+
+class DataForm(Form):
+    dpath = StringField('Data Folder')
+    submitD = SubmitField('Upload')
 
 #Opens file explorer, allowing user to select the folder containing their video files
 def get_video_path():
@@ -8,12 +23,12 @@ def get_video_path():
     return video_path
 
 #Opens file explorer, allowing user to select the folder containing their data files
-def get_data_path():
+def get_data_path() -> str:
     data_path = '{}'.format(askdirectory(title='Choose a directory', initialdir=r'C:\ '))
     return data_path
 
 #Function to count the number of files in a folder
-def count_files(directory_path):
+def count_files(directory_path) -> int:
     count = 0
     for filename in os.listdir(directory_path):
         filepath = os.path.join(directory_path, filename)
@@ -22,7 +37,7 @@ def count_files(directory_path):
     return count
 
 #Function to count the number of folders within a folder
-def count_folders(directory_path):
+def count_folders(directory_path) -> int:
     count = 0
     for filename in os.listdir(directory_path):
         filepath = os.path.join(directory_path, filename)
@@ -40,13 +55,13 @@ def list_files(directory_path):
     return file_list
 
 #Function that returns the type of file
-def get_file_type(directory_path):
+def get_file_type(directory_path) -> str:
     #change file_name to an _ if unused (made variable just incase)
     file_name, file_type = os.path.splitext(directory_path)
     return file_type
 
 #Function to validate that the user's selected video folder is correct and valid
-def validate_video_path(vpath):
+def validate_video_path(vpath) -> bool:
     file_count = count_files(vpath)
     # print("Number of files: ", file_count)
     if file_count != 4:
@@ -66,7 +81,7 @@ def validate_video_path(vpath):
         return False
 
 #Function to validate that the user's selected data folder is correct and valid
-def validate_data_path(dpath):
+def validate_data_path(dpath) -> bool:
     file_count = count_files(dpath)
     folder_count = count_folders(dpath)
     if folder_count > 1 and 20 >= file_count <= 10:
@@ -78,3 +93,45 @@ def validate_data_path(dpath):
         if filename not in required_files:
             return False
     return True
+
+@app.route('/FileUpload')
+def initialize_page():
+    return(render_template("main.html"))
+
+@app.route('/FileUpload', methods=['GET', 'POST'])
+def upload_video_folder():
+    video_form = VideoForm()
+    data_form = DataForm()
+
+    videoflag = False
+    dataflag = False
+
+    if video_form.submitV.data and video_form.validate():
+        videoflag = validate_video_path(video_form.submitV.data)
+
+
+    if request.method == 'POST':
+
+        vpath = request.form['video_directory']
+        dpath = request.form['data_directory']
+
+        videoflag = False
+        dataflag = False
+
+        if videoflag == False:
+            videoflag = validate_video_path(vpath)
+        elif dataflag == False:
+            dataflag = validate_data_path(dpath)
+
+        print(videoflag)
+        print(dataflag)
+
+    if videoflag == True and dataflag == False:
+        return(render_template("main.html"))
+    elif videoflag == False:
+        return (render_template("main.html"))
+    else:
+        return (render_template("main.html"))
+
+if __name__=='__main__':
+    app.run()
