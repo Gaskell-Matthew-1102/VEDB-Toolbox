@@ -14,6 +14,7 @@ app.config['SERVER_NAME'] = 'localhost:5000'
 #Rename to actual application name
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def load_user(user_email: str):
     return user.User.get(user_email)
@@ -32,9 +33,12 @@ def validate_login(username: str, password: str) -> bool:
 def login():
     error = None
     if request.method == 'POST':
+        print(f"Username: {request.form['username']} | Password: {request.form['password']}")
         if validate_login(request.form['username'], request.form['password']):
+            print("Login validated")
             return log_the_user_in(request.form['username'])
         else:
+            print("Login failed to validate")
             error = 'Invalid username/password'
     return render_template('login.html', error=error)
 
@@ -48,3 +52,6 @@ def logout():
 def guh():
     return "<p>hi<p>"
 
+if __name__ == "__main__":
+    app.run()
+print("how did we get here")
