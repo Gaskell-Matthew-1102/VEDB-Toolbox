@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from wtforms import Form, StringField, SubmitField
 from os import walk
 
-UPLOAD_FOLDER = '/File Upload'
+UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'csv', 'pldata', 'npy', 'yaml', 'intrinsics', 'extrinsics'}
 
 app = Flask(__name__)
@@ -107,65 +107,61 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/FileUpload')
-def initialize_page():
+def main():
     return(render_template("test.html"))
 
-@app.route('/FileUpload', methods=['GET', 'POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    filename_list = []
     print("here")
     if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part')
+        if 'files[]' not in request.files:
             print("here2")
-            return redirect(request.url)
-        file = request.files['file']
+            return 'No file part'
+
+        files = request.files.getlist('file')
 
         print("here2")
-        if file:
-            print("cant be here")
-            filename = secure_filename(file.filename)
-            filename_list.append(filename)
-            print(filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-    return(render_template("main.html"))
+        for file in files:
+            file.save(file.filename)
+        print("not here")
+        return "<h1>Files Uploaded Successfully.!</h1>"
 
 
-# @app.route('/FileUpload', methods=['GET', 'POST'])
-# def upload_video_folder():
-#     video_form = VideoForm()
-#     data_form = DataForm()
-#
-#     videoflag = False
-#     dataflag = False
-#
-#     if video_form.submitV.data and video_form.validate():
-#         videoflag = validate_video_path(video_form.submitV.data)
-#
-#
-#     if request.method == 'POST':
-#
-#         vpath = request.form['video_directory']
-#         dpath = request.form['data_directory']
-#
-#         videoflag = False
-#         dataflag = False
-#
-#         if videoflag == False:
-#             videoflag = validate_video_path(vpath)
-#         elif dataflag == False:
-#             dataflag = validate_data_path(dpath)
-#
-#         print(videoflag)
-#         print(dataflag)
-#
-#     if videoflag == True and dataflag == False:
-#         return(render_template("main.html"))
-#     elif videoflag == False:
-#         return (render_template("main.html"))
-#     else:
-#         return (render_template("main.html"))
+
+@app.route('/FileUpload', methods=['GET', 'POST'])
+def upload_video_folder():
+    video_form = VideoForm()
+    data_form = DataForm()
+
+    videoflag = False
+    dataflag = False
+
+    if video_form.submitV.data and video_form.validate():
+        videoflag = validate_video_path(video_form.submitV.data)
+
+
+    if request.method == 'POST':
+
+        vpath = request.form['video_directory']
+        dpath = request.form['data_directory']
+
+        videoflag = False
+        dataflag = False
+
+        if videoflag == False:
+            videoflag = validate_video_path(vpath)
+        elif dataflag == False:
+            dataflag = validate_data_path(dpath)
+
+        print(videoflag)
+        print(dataflag)
+
+    if videoflag == True and dataflag == False:
+        return(render_template("main.html"))
+    elif videoflag == False:
+        return (render_template("main.html"))
+    else:
+        return (render_template("main.html"))
 
 if __name__=='__main__':
     app.debug = True
