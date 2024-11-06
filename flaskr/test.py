@@ -12,18 +12,19 @@ import pandas as pd
 
 app = Flask(__name__)
 
-file_list = []
+video_file_list = []
+data_file_list = []
 
 show_form1 = True
 show_form2 = True
 
-def get_showform(form_num) -> int:
+def get_showform(form_num: int) -> int:
     if form_num == 1:
         return show_form1
     elif form_num == 2:
         return show_form2
 
-def set_showform(form_num, flag):
+def set_showform(form_num: int, flag: bool) -> None:
     if form_num == 1:
         global show_form1
         show_form1 = flag
@@ -31,12 +32,20 @@ def set_showform(form_num, flag):
         global show_form2
         show_form2 = flag
 
-def delete_files_on_exit():
-    for file in file_list:
+def delete_files_in_list(listed_files) -> None:
+    for file in listed_files:
         if os.path.isfile(file):
             os.remove(file)
 
-def validate_link(link, flag) -> bool:
+def delete_files_on_exit():
+    for file in video_file_list:
+        if os.path.isfile(file):
+            os.remove(file)
+    for file in data_file_list:
+        if os.path.isfile(file):
+            os.remove(file)
+
+def validate_link(link: str, flag: int) -> bool:
     if "." not in link:
         return False
     if "osf.io" not in link and flag == 1:
@@ -46,7 +55,7 @@ def validate_link(link, flag) -> bool:
     #Passes first check, still forced to hit others (exception)
     return True
 
-def extract_unzip(file):
+def extract_unzip(file: str) -> None:
     test_link = validate_link
     if test_link is False:
         raise Exception("Invalid link")
@@ -59,6 +68,41 @@ def extract_unzip(file):
     zip_file = zipfile.ZipFile(BytesIO(response.content))
     extracted_folder = getcwd()
     zip_file.extractall(extracted_folder)
+
+def validate_video_files(file_list) -> bool:
+    file_count = len(file_list)
+
+    if file_count != 4:
+        return False
+
+    mp4_count = 0
+    csv_count = 0
+
+    for filename in file_list:
+        file_type = filename.split(".", 1)[1]
+        if file_type == 'mp4':
+            mp4_count = mp4_count + 1
+        elif file_type == 'csv':
+            csv_count = csv_count + 1
+
+    if mp4_count == 3 and csv_count == 1:
+        return True
+    else:
+        return False
+
+def validate_data_files(file_list) -> bool:
+    file_count = len(file_list)
+    if file_count != 10:
+        return False
+
+    required_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
+                      "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
+                      "odometry_timestamps.npy", "odometry.pldata"]
+
+    for filename in file_list:
+        if filename not in required_files:
+            return False
+    return True
 
 atexit.register(delete_files_on_exit)
 
@@ -76,8 +120,16 @@ def upload_video():
         # Iterate for each file in the files List, and Save them
         for file in files:
             file.save(file.filename)
-            global file_list
-            file_list.append(file.filename)
+            global video_file_list
+            video_file_list.append(file.filename)
+
+        #File Validation
+        if validate_video_files(video_file_list) is False:
+            delete_files_in_list(video_file_list)
+            video_file_list.clear()
+            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+
+        #Runs if files are correctly uploaded and validated
         set_showform(1, False)
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
@@ -94,8 +146,16 @@ def upload_data():
         # Iterate for each file in the files List, and Save them
         for file in files:
             file.save(file.filename)
-            global file_list
-            file_list.append(file.filename)
+            global data_file_list
+            data_file_list.append(file.filename)
+
+        # File Validation
+        if validate_data_files(data_file_list) is False:
+            delete_files_in_list(data_file_list)
+            data_file_list.clear()
+            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+
+        # Runs if files are correctly uploaded and validated
         set_showform(2, False)
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
