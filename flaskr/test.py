@@ -1,3 +1,5 @@
+from operator import truediv
+
 from flask import *
 import atexit
 import os
@@ -11,6 +13,23 @@ import pandas as pd
 app = Flask(__name__)
 
 file_list = []
+
+show_form1 = True
+show_form2 = True
+
+def get_showform(form_num) -> int:
+    if form_num == 1:
+        return show_form1
+    elif form_num == 2:
+        return show_form2
+
+def set_showform(form_num, flag):
+    if form_num == 1:
+        global show_form1
+        show_form1 = flag
+    elif form_num == 2:
+        global show_form2
+        show_form2 = flag
 
 def delete_files_on_exit():
     for file in file_list:
@@ -45,10 +64,10 @@ atexit.register(delete_files_on_exit)
 
 @app.route('/')
 def main():
-    return render_template("test.html")
+    return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload', methods=['POST'])
-def upload():
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
     if request.method == 'POST':
 
         # Get the list of files from webpage
@@ -59,7 +78,29 @@ def upload():
             file.save(file.filename)
             global file_list
             file_list.append(file.filename)
-        return "<h1>Files Uploaded Successfully.!</h1>"
+        set_showform(1, False)
+        if get_showform(1) == False and get_showform(2) == False:
+            return "<h1>Files Uploaded Successfully.!</h1>"
+        else:
+            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+
+@app.route('/upload_data', methods=['POST'])
+def upload_data():
+    if request.method == 'POST':
+
+        # Get the list of files from webpage
+        files = request.files.getlist("file")
+
+        # Iterate for each file in the files List, and Save them
+        for file in files:
+            file.save(file.filename)
+            global file_list
+            file_list.append(file.filename)
+        set_showform(2, False)
+        if get_showform(1) == False and get_showform(2) == False:
+            return "<h1>Files Uploaded Successfully.!</h1>"
+        else:
+            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
 
 if __name__ == '__main__':
     app.run(debug=True)
