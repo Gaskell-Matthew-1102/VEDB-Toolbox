@@ -1,4 +1,5 @@
 from flask import Flask
+import os
 
 # This code was sourced from https://flask.palletsprojects.com/en/stable/tutorial/factory/#id1
 def create_app(test_config=None):
@@ -25,5 +26,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+
+    from . import login
+    login.init_app(app)
 
     return app
