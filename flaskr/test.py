@@ -55,19 +55,25 @@ def validate_link(link: str, flag: int) -> bool:
     #Passes first check, still forced to hit others (exception)
     return True
 
-def extract_unzip(file: str) -> None:
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of
+# Dr. MacNeilage's Self-Motion Lab. It has been slightly altered to fit our code.
+def extract_unzip(file: str) -> int:
     test_link = validate_link
     if test_link is False:
-        raise Exception("Invalid link")
+        #raise Exception("Invalid link")
+        return 2
     zip_url = file
     response = requests.get(zip_url)
     if response.status_code == 200:
         print("Download successful")
     else:
-        raise Exception(f"Failed to download file: {response.status_code}")
+        #raise Exception(f"Failed to download file: {response.status_code}")
+        #raise Exception("Download failed")
+        return 3
     zip_file = zipfile.ZipFile(BytesIO(response.content))
     extracted_folder = getcwd()
     zip_file.extractall(extracted_folder)
+    return 1
 
 def validate_video_files(file_list) -> bool:
     file_count = len(file_list)
@@ -161,6 +167,72 @@ def upload_data():
             return "<h1>Files Uploaded Successfully.!</h1>"
         else:
             return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+
+@app.route('/upload_video_link', methods=['POST'])
+def upload_video_link():
+    if request.method == 'POST':
+        vid_link = request.form['video_link']
+
+        initial_files_list = os.listdir('.')
+
+        if validate_link(vid_link, 0) is False:
+            return "<h1>The provided link is invalid.</h1>"
+
+        flag = extract_unzip(vid_link)
+        if flag == 3:
+            return "<h1>The download has failed.</h1>"
+
+        global video_file_list
+        video_file_list = os.listdir('.')
+
+        for file in video_file_list:
+            if file in initial_files_list:
+                video_file_list.remove(file)
+
+        if validate_data_files(video_file_list) is False:
+            delete_files_in_list(video_file_list)
+            #return something to report that link downloaded wrong files
+
+        # Runs if files are correctly uploaded and validated
+        set_showform(2, False)
+        if get_showform(1) == False and get_showform(2) == False:
+            return "<h1>Files Uploaded Successfully.!</h1>"
+        else:
+            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+
+
+@app.route('/upload_data_link', methods=['POST'])
+def upload_data_link():
+    if request.method == 'POST':
+        data_link = request.form['data_link']
+
+        initial_files_list = os.listdir('.')
+        if validate_link(data_link, 1) is False:
+            return "<h1>The provided link is invalid.</h1>"
+
+        flag = extract_unzip(data_link)
+
+        if flag == 3:
+            return "<h1>The download has failed.</h1>"
+
+        global data_file_list
+        data_file_list = os.listdir('.')
+
+        for file in data_file_list:
+            if file in initial_files_list:
+                data_file_list.remove(file)
+
+        if validate_data_files(data_file_list) is False:
+            delete_files_in_list(data_file_list)
+            #return something to report that link downloaded wrong files
+
+        # Runs if files are correctly uploaded and validated
+        set_showform(2, False)
+        if get_showform(1) == False and get_showform(2) == False:
+            return "<h1>Files Uploaded Successfully.!</h1>"
+        else:
+            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

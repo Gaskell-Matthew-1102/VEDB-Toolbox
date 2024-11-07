@@ -15,5 +15,21 @@
         <input type = "submit" value="Upload">
     </form>
 {% endif %}
+{% if show_form1 %}
+    <form action = "/upload_video_link" method="POST" enctype="multipart/form-data">
+        <input type="text" name="video_link"
+               placeholder="Link to Video Download"
+               value ="{{request.form['video_link'] }}"/>
+        <input type = "submit" value="Download">
+    </form>
+{% endif %}
+{% if show_form2 %}
+    <form action = "/upload_data_link" method="POST" enctype="multipart/form-data">
+        <input type="text" name="data_link"
+               placeholder="Link to Data Download"
+               value ="{{request.form['data_link'] }}"/>
+        <input type = "submit" value="Download">
+    </form>
+{% endif %}
 </body>
 </html>
