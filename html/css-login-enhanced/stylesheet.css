@@ -18,14 +18,19 @@
 .header {
     background-color: #ffffff;
 }
-.imgbutton {
-    background-color: #ffffff;
-}
 .body {
     background-color: #8ca8cc79;
+    background-image: url('./images/journey_into_dataviz_feature.jpg');
+    background-repeat: repeat-x;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 50%;
 }
 .nav {
     background-color: #222287;
+    margin-left: -10px;
+    margin-right: 250px;
+    border-radius: 0px 50px 50px 0px; 
     /* padding: 1em; */
     /* margin: 0 -1em; */
     /* border-bottom: 1px solid#222287; */
@@ -41,4 +46,47 @@
     display: flex;
     align-items: center;
     justify-content: left;
+}
+.flex-container {
+    background-color: #33367b;
+    display: flex;
+    flex-direction: column;
+    column-gap: 5px;
+    row-gap: 2px;
+    margin: auto;
+
+    padding: 10px 5px 20px;
+
+    /* float: center; */
+    width: 15%;
+    height: 100%;
+    border: 5px solid #001c2e;
+    border-radius: 25px;
+}
+.flex-item {
+    /* border-style: solid; */
+    align-items: center;
+    margin: 2px;
+    color: white;
+    /* text-align: right; */
+}
+.flex-button{
+    float: right;
+}
+.textbox {
+    grid-column: 2 / 4;
+    text-align: left;
+    width: 90%;
+}
+.text {
+    margin: 10px 5px;
+    padding: 5px;
+    text-align: left;
+}
+.navbar {
+    background-color: #aa9999;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
