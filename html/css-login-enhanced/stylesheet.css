@@ -1,0 +1,14 @@
+.img {
+    border: 5px solid #000000;
+    background-color: #ffffff;
+    border-radius: 25px;
+}
+.header {
+    background-color: #ffffff;
+}
+.imgbutton {
+    background-color: #ffffff;
+}
+.body {
+    background-color: #558cd4;
+}
