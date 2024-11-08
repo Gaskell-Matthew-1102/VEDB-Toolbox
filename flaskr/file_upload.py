@@ -9,7 +9,6 @@ import msgpack
 import collections
 import pandas as pd
 
-
 app = Flask(__name__)
 
 video_file_list = []
@@ -32,12 +31,21 @@ def set_showform(form_num: int, flag: bool) -> None:
         global show_form2
         show_form2 = flag
 
+#Two get functions for lists be utilized by the viewer application
+def get_video_list() -> list:
+    return video_file_list
+
+def get_data_file_list() -> list:
+    return data_file_list
+
 def delete_files_in_list(listed_files) -> None:
     for file in listed_files:
         if os.path.isfile(file):
             os.remove(file)
 
-def delete_files_on_exit():
+#Automatically deletes populated files on exit of python program
+#could add a feature where users choose to keep these files(??)
+def delete_files_on_exit() -> None:
     for file in video_file_list:
         if os.path.isfile(file):
             os.remove(file)
@@ -87,8 +95,10 @@ def validate_video_files(file_list) -> bool:
     for filename in file_list:
         file_type = filename.split(".", 1)[1]
         if file_type == 'mp4':
-            mp4_count = mp4_count + 1
+            if "eye0" in filename or "eye1" in filename or "worldPrivate" in filename:
+                mp4_count = mp4_count + 1
         elif file_type == 'csv':
+            #naming convention is just the date/timestamp, hard to name validate
             csv_count = csv_count + 1
 
     if mp4_count == 3 and csv_count == 1:

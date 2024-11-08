@@ -32,6 +32,7 @@ def test_validate_link():
     assert validate_link('https://osf.io/6m2ak/download', 1)
 
 def test_validate_video_files():
+    #just checks for 3 mp4 videos and 1 csv file
     video_list = ["video1.mp4", "video2.mp4"]
     assert not validate_video_files(video_list)
     video_list.append("video3.mp4")
