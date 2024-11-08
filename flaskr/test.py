@@ -101,12 +101,13 @@ def validate_data_files(file_list) -> bool:
     if file_count != 10:
         return False
 
-    required_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
+    acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
                       "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
-                      "odometry_timestamps.npy", "odometry.pldata"]
+                      "odometry_timestamps.npy", "odometry.pldata", "world.intrincics", "world.extrincics",
+                        "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
 
     for filename in file_list:
-        if filename not in required_files:
+        if filename not in acceptable_files:
             return False
     return True
 
@@ -233,6 +234,14 @@ def upload_data_link():
         else:
             return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
 
+@app.route('/upload_help')
+def upload_help():
+    return render_template("file-upload/file_upload_help.html")
+
+@app.route('/go_back', methods=['POST'])
+def back_to_file_upload():
+    if request.method == 'POST':
+        return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,8 @@
+.heading_bar {
+    position:fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    backgroud-color: #000ae3;
+    padding: 10px;
+}
