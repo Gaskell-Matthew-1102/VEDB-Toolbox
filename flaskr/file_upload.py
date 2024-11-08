@@ -115,7 +115,7 @@ atexit.register(delete_files_on_exit)
 
 @app.route('/')
 def main():
-    return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+    return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
@@ -134,14 +134,14 @@ def upload_video():
         if validate_video_files(video_file_list) is False:
             delete_files_in_list(video_file_list)
             video_file_list.clear()
-            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
         #Runs if files are correctly uploaded and validated
         set_showform(1, False)
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
         else:
-            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_data', methods=['POST'])
 def upload_data():
@@ -160,14 +160,14 @@ def upload_data():
         if validate_data_files(data_file_list) is False:
             delete_files_in_list(data_file_list)
             data_file_list.clear()
-            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
         else:
-            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_video_link', methods=['POST'])
 def upload_video_link():
@@ -199,7 +199,7 @@ def upload_video_link():
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
         else:
-            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 
 @app.route('/upload_data_link', methods=['POST'])
@@ -232,7 +232,7 @@ def upload_data_link():
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
         else:
-            return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_help')
 def upload_help():
@@ -241,7 +241,7 @@ def upload_help():
 @app.route('/go_back', methods=['POST'])
 def back_to_file_upload():
     if request.method == 'POST':
-        return render_template("file-upload/test.html", show_form1=show_form1, show_form2=show_form2)
+        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 if __name__ == '__main__':
     app.run(debug=True)

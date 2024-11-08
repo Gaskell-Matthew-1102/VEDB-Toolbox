@@ -108,7 +108,7 @@ def allowed_file(filename):
 
 @app.route('/FileUpload')
 def main():
-    return(render_template("test.html"))
+    return(render_template("file_upload.html"))
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
