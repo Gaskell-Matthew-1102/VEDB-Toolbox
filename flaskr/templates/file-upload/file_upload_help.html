@@ -1,3 +1,39 @@
-<h1>HELP</h1>
-<form action = '/go_back' method="POST">
+<!--<h1>HELP</h1>-->
+<!--<form action = '/go_back' method="POST">-->
+<!--        <button type="submit">Go Back</button>-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VEDB Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/file-upload/stylesheet.css') }}">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1 class="logo">VEDB ToolBox</h1>
+        <strong><nav>
+          <ul class="menu">
+<!--            add some account information here i would say-->
+          </ul>
+        </nav></strong>
+      </div>
+    </header>
+    <div class="container">
+        <h2>How To Upload Files</h2>
+    </div>
+    <section class="container">
+    <div class="one">
+        <h3>Video Files</h3>
+            <p>How 2 upload video files</p>
+    </div>
+    <div class="two">
+        <h3>Data Files</h3>
+            <p>How 2 upload data files</p>
+    </div>
+    </section>
+        <form action = '/go_back' method="POST">
         <button type="submit">Go Back</button>
+        </form>
+  </body>
+</html>
