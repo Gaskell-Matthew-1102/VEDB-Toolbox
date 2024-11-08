@@ -86,10 +86,8 @@ def main():
     df = pd.DataFrame(odometry_data)
     parsed_data = parse_pldata(df[1].iloc[0])
     list_all = []
-    # for i in range(len(df)):
-    #     # list_all.append(parse_pldata(df[1].iloc[i]))
-    #     print(parse_pldata(df[1].iloc[i+1])['timestamp'] - parse_pldata(df[1].iloc[i])['timestamp'])
-    # print(list_all)
+    for i in range(len(df)):
+        list_all.append(parse_pldata(df[1].iloc[i]))
     print(parsed_data)
     print('\n\n')
     print(parsed_data['linear_acceleration_0'] - parse_pldata(pd.DataFrame(read_pldata(f'{data_path}/{'odometry.pldata'}'))[1].iloc[0])['linear_acceleration_0'])
