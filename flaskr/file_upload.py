@@ -98,7 +98,7 @@ def validate_video_files(file_list) -> bool:
 
 def validate_data_files(file_list) -> bool:
     file_count = len(file_list)
-    if file_count != 10:
+    if file_count != 15:
         return False
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
