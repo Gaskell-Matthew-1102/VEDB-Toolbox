@@ -6,6 +6,9 @@ from pathlib import Path
 import msgpack
 import collections
 import pandas as pd
+from io import BytesIO
+import zipfile
+import requests
 
 app = Flask(__name__)
 
@@ -63,23 +66,17 @@ def validate_link(link: str, flag: int) -> bool:
 
 # The original code for this function was given to us by Brian Szekely, a PhD student and former student of
 # Dr. MacNeilage's Self-Motion Lab. It has been slightly altered to fit our code.
-def extract_unzip(file: str) -> int:
-    test_link = validate_link
-    if test_link is False:
-        #raise Exception("Invalid link")
-        return 2
-    zip_url = file
+def extract_unzip(link: str) -> bool:
+    zip_url = link
     response = requests.get(zip_url)
-    if response.status_code == 200:
-        print("Download successful")
-    else:
-        #raise Exception(f"Failed to download file: {response.status_code}")
-        #raise Exception("Download failed")
-        return 3
-    zip_file = zipfile.ZipFile(BytesIO(response.content))
-    extracted_folder = getcwd()
-    zip_file.extractall(extracted_folder)
-    return 1
+
+    if response.status_code != 200:
+        raise Exception(f"Failed to download file: {response.status_code}")
+
+    zip_file = zipfile.ZipFile(BytesIO(response.content)) # get the zip file
+    filepath = os.path.abspath(os.path.dirname( __file__ ))
+    zip_file.extractall(filepath)
+    return True
 
 def validate_video_files(file_list) -> bool:
     file_count = len(file_list)
@@ -187,21 +184,40 @@ def upload_video_link():
     if request.method == 'POST':
         vid_link = request.form['video_link']
 
-        initial_files_list = os.listdir('.')
+        # initial_files_list = os.listdir('.')
 
         if validate_link(vid_link, 0) is False:
             return "<h1>The provided link is invalid.</h1>"
 
-        flag = extract_unzip(vid_link)
-        if flag == 3:
-            return "<h1>The download has failed.</h1>"
+        # try:
+        #     extract_unzip(vid_link)
+        # except:
+        #     # Change this to form show/hide
+        #     return "<h1>The download has failed.</h1>"
 
-        global video_file_list
-        video_file_list = os.listdir('.')
+        # global video_file_list
+        # video_file_list = os.listdir('.')
 
-        for file in video_file_list:
-            if file in initial_files_list:
-                video_file_list.remove(file)
+        # for file in video_file_list:
+        #     if file in initial_files_list:
+        #         video_file_list.remove(file)
+
+        folders_list = []
+        video_folder_name = ""
+        current_working_dir = os.getcwd()
+        for folder in os.scandir(os.path.abspath(os.path.dirname(__file__))):
+            if folder.is_dir():
+                folders_list.append(folder)
+
+        for folder in folders_list:
+            if "-" in folder:
+                video_folder_name = folder
+                break
+
+        video_dir = current_working_dir + video_folder_name
+        global data_file_list
+        for file in video_dir:
+            video_file_list.append(file)
 
         if validate_data_files(video_file_list) is False:
             delete_files_in_list(video_file_list)
@@ -221,12 +237,13 @@ def upload_data_link():
         data_link = request.form['data_link']
 
         initial_files_list = os.listdir('.')
-        if validate_link(data_link, 1) is False:
+        if validate_link(data_link, 0) is False:
             return "<h1>The provided link is invalid.</h1>"
 
-        flag = extract_unzip(data_link)
-
-        if flag == 3:
+        try:
+            extract_unzip(data_link)
+        except:
+            #Change this to form show/hide
             return "<h1>The download has failed.</h1>"
 
         global data_file_list
@@ -236,9 +253,29 @@ def upload_data_link():
             if file in initial_files_list:
                 data_file_list.remove(file)
 
+        folders_list = []
+        data_folder_name = ""
+        current_working_dir = os.getcwd()
+        for folder in os.scandir(os.path.abspath(os.path.dirname( __file__ ))):
+            if folder.is_dir():
+                folders_list.append(folder)
+
+        for folder in folders_list:
+            if "-" not in folder and "MAC" not in folder:
+                data_folder_name = folder
+                break
+
+        data_dir = current_working_dir + data_folder_name
+        global data_file_list
+        for file in data_dir:
+            data_file_list.append(file)
+
+        print(data_file_list)
+
         if validate_data_files(data_file_list) is False:
             delete_files_in_list(data_file_list)
-            #return something to report that link downloaded wrong files
+            #change this to return something to report that link downloaded wrong files
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)

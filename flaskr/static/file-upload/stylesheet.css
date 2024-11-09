@@ -1,26 +1,5 @@
-/*.header {*/
-/*    color: #00008b;*/
-/*    position:fixed;*/
-/*    top:0;*/
-/*    left:0;*/
-/*    width: 100%;*/
-/*    padding: 10px;*/
-/*}*/
-
-/*header h1.logo {*/
-/*  margin: 0;*/
-/*  font-size: 1.7em;*/
-/*  color: #fff;*/
-/*  text-transform: uppercase;*/
-/*  float: left;*/
-/*}*/
-
-/*.container {*/
-/*  width: 1200px;*/
-/*  margin: 0 auto;*/
-/*}*/
-
-/*https://pythonhow.com/python-tutorial/flask/Adding-CSS-styling-to-your-website/*/
+/*I used a decent amount of Leon's code that he wrote for the login page for this
+stylesheet, modifying it to conform for the file upload pages*/
 
 body {
   margin: 0;
@@ -28,141 +7,95 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #444;
 }
-/*
- * Formatting the header area
- */
-header {
-  background-color: #000a3e;
-  height: 50px;
-  width: 100%;
-  opacity: .9;
-  margin-bottom: 10px;
-  margin-top: 0;
-}
-header h1.logo {
-  margin: 0;
-  font-size: 1.7em;
-  color: #c0c0c0;
-  text-transform: uppercase;
-  float: left;
-}
-header h1.logo:hover {
-  color: #fff;
-  text-decoration: none;
-}
-/*
- * Centering the body content
- */
-.container {
-  width: 1200px;
-  margin: 0 auto;
+
+.h1 {
+    color: white;
+    font-weight: lighter;
+    font-size: 70px;
+    text-indent: 10px;
+    margin-top: 15px;
+    font-family: "Courier New", Courier, monospace;
 }
 
-.one {
-  margin-right: 10%;
-  width: 15%;
-  height: 200px;
-  background: #c0c0c0;
-  float: left;
+.h2 {
+    color: white;
+    font-weight: bold;
+    text-indent: 10px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
 }
 
-.two {
-  margin-left: 15%;
-  height: 200px;
-    width: 15%;
-  background: #c0c0c0;
+.h3 {
+    color: #222287;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
 }
 
-.grid-container {
-  display: grid;
-  column-gap: 30px;
+.body {
+    background-color: #8ca8cc79;
+    /*background-image: url('./images/journey_into_dataviz_feature.jpg');*/
+    background-repeat: repeat-x;
+    /* background-attachment: fixed; */
+    background-position: center;
+    background-position-y: 150px;
+    background-size: 50%;
 }
 
-/*.grid-container > div {*/
-/*  text-align: center;*/
-/*  background: #c0c0c0;*/
-/*  padding: 20px 0;*/
-/*}*/
+.nav {
+    background-color: #222287;
+    margin-left: -10px;
+    margin-right: 250px;
+    border: 5px solid #07062b;
+    border-radius: 0px 50px 50px 0px;
+    /* padding: 1em; */
+    /* margin: 0 -1em; */
+    /* border-bottom: 1px solid#222287; */
+}
 
-.item-1 {
-  grid-column-start: 2;
-  grid-column-end: 3;
+.subtitle {
+    color: rgb(122, 196, 223);
+    font-size: 20px;
+    margin-top: -50px;
+    text-indent: 150px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.h1_title {
+    color: #222287;
+    font-weight: bold;
+    font-size: 50px;
+    /*text-indent: 10px;*/
+    text-align: center;
+    margin-top: 15px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.paragraph {
   text-align: center;
-  background: #d7d7d8;
-  padding: 40px 0;
-  border-left: #000a3e;
-  border-right: #000a3e;
-  border-top: #000a3e;
-  border-bottom: #000a3e;
-  border-left-width: 10px;
-  border-right-width: 10px;
-  border-top-width: 10px;
-  border-bottom-width: 10px;
+  color: white;
+  text-indent: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-.item-2 {
-  grid-column-start: 3;
-  grid-column-end: 4;
-  text-align: center;
-  background: #d7d7d8;
-  padding: 40px 0;
-  border-left-color: #000a3e;
-  border-right-color: #000a3e;
-  border-top-color: #000a3e;
-  border-bottom-color: #000a3e;
-  border-left-width: 10px;
-  border-right-width: 10px;
-  border-top-width: 10px;
-  border-bottom-width: 10px;
-}
+.infoblock1 {
+    background-color: #222287;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border: 5px solid #07062b;
+    border-radius: 50px 50px 50px 50px;
+ }
 
-.item-3{
-  grid-column-start: 4;
-  grid-column-end: 5;
-  background: #ffffff;
-  text-align: center;
-  padding: 20px 0;
-}
-
-div.home {
-  padding: 10px 0 30px 0;
-  background-color: #E6E6FA;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
-}
-div.about {
-  padding: 10px 0 30px 0;
-  background-color: #E6E6FA;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
-}
-h2 {
-  font-size: 3em;
-  margin-top: 40px;
-  text-align: center;
-  letter-spacing: -2px;
-}
-h3 {
-  font-size: 1.7em;
-  font-weight: 100;
-  margin-top: 30px;
-  text-align: center;
-  letter-spacing: -1px;
-  color: #000000;
-}
-.menu {
-  float: right;
-  margin-top: 8px;
-}
-.menu li {
-  display: inline;
-}
-.menu li + li {
-  margin-left: 35px;
-}
-.menu li a {
-  color: #444;
-  text-decoration: none;
-}
+ .infoblock2 {
+    background-color: #222287;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border: 5px solid #07062b;
+    border-radius: 50px 50px 50px 50px;
+ }
