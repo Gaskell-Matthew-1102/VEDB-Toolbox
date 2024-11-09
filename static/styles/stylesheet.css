@@ -30,7 +30,7 @@
 }
 .body {
     background-color: #8ca8cc79;
-    background-image: url('./images/journey_into_dataviz_feature.jpg');
+    background-image: url('../images/journey_into_dataviz_feature.png');
     background-repeat: repeat-x;
     /* background-attachment: fixed; */
     background-position: center;
