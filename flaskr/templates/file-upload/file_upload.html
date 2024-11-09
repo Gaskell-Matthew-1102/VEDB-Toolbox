@@ -65,33 +65,48 @@
     <div class="container">
         <h2>Upload Files</h2>
         {% if show_form1 %}
-        <form action = "/upload_video" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" value="Choose Video Files" multiple />
-            <input type = "submit" value="Upload Video Files">
-        </form>
-    {% endif %}
-    {% if show_form2 %}
-        <form action = "/upload_data" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" value="Choose Data Files" multiple />
-            <input type = "submit" value="Upload Data Files">
-        </form>
-    {% endif %}
-    {% if show_form1 %}
-        <form action = "/upload_video_link" method="POST" enctype="multipart/form-data">
-            <input type="text" name="video_link"
-                   placeholder="Link to Video Download"
-                   value ="{{request.form['video_link'] }}"/>
-            <input type = "submit" value="Download Video Files">
-        </form>
-    {% endif %}
-    {% if show_form2 %}
-        <form action = "/upload_data_link" method="POST" enctype="multipart/form-data">
-            <input type="text" name="data_link"
-                   placeholder="Link to Data Download"
-                   value ="{{request.form['data_link'] }}"/>
-            <input type = "submit" value="Download Data Files">
-        </form>
-    {% endif %}
+            <form action = "/upload_video" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" value="Choose Video Files" multiple />
+                <input type = "submit" value="Upload Video Files">
+            </form>
+        {% endif %}
+        {% if show_form2 %}
+            <form action = "/upload_data" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" value="Choose Data Files" multiple />
+                <input type = "submit" value="Upload Data Files">
+            </form>
+        {% endif %}
+        {% if show_form1 %}
+            <form action = "/upload_video_link" method="POST" enctype="multipart/form-data">
+                <input type="text" name="video_link"
+                       placeholder="Link to Video Download"
+                       value ="{{request.form['video_link'] }}"/>
+                <input type = "submit" value="Download Video Files">
+            </form>
+        {% endif %}
+        {% if show_form2 %}
+            <form action = "/upload_data_link" method="POST" enctype="multipart/form-data">
+                <input type="text" name="data_link"
+                       placeholder="Link to Data Download"
+                       value ="{{request.form['data_link'] }}"/>
+                <input type = "submit" value="Download Data Files">
+            </form>
+        {% endif %}
+        {% if not show_form1 %}
+            <form action = "/upload_different_video" method="POST">
+                <button type="submit">Upload Different Video Files</button>
+            </form>
+        {% endif %}
+        {% if not show_form2 %}
+            <form action = "/upload_different_data" method="POST">
+                <button type="submit">Upload Different Data Files</button>
+            </form>
+        {% endif %}
+        {% if not show_form1 and not show_form2 %}
+            <form action = '/go_back' method="POST">
+                <button type="submit">Enter Visualizer</button>
+            </form>
+        {% endif %}
     <h3>Help</h3>
         <p style="text-align: center">Not sure what files to upload or links to enter? Please click <a href="/upload_help">here for help.</a></p>
     </div>

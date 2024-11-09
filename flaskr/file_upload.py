@@ -106,7 +106,7 @@ def validate_video_files(file_list) -> bool:
 
 def validate_data_files(file_list) -> bool:
     file_count = len(file_list)
-    if file_count != 15:
+    if file_count > 15:
         return False
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
@@ -247,6 +247,27 @@ def upload_data_link():
         else:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
+#The following two functions provide functionality for uploading different files after previous file upload, for both video and data
+@app.route('/upload_different_video', methods=['POST'])
+def upload_different_video():
+    if request.method == 'POST':
+        global video_file_list
+        delete_files_in_list(video_file_list)
+
+        global show_form1
+        show_form1 = True
+        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+
+@app.route('/upload_different_data', methods=['POST'])
+def upload_different_data():
+    if request.method == 'POST':
+        global data_file_list
+        delete_files_in_list(data_file_list)
+
+        global show_form2
+        show_form2 = True
+        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+
 @app.route('/upload_help')
 def upload_help():
     return render_template("file-upload/file_upload_help.html")
@@ -255,6 +276,14 @@ def upload_help():
 def back_to_file_upload():
     if request.method == 'POST':
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+
+@app.route('/visualizer', methods=['POST'])
+def load_visualizer():
+    if request.method == 'POST':
+        if not show_form1 and not show_form2:
+            return render_template("visualizer/main.html")
+        else:
+            raise Exception(f"Invalid Action")
 
 if __name__ == '__main__':
     app.run(debug=True)

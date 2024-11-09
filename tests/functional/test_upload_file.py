@@ -2,7 +2,11 @@ import pytest
 import os
 from flaskr import create_app
 import flaskr.file_upload
-from flaskr.file_upload import app, validate_link, validate_video_files, validate_data_files
+from flaskr.file_upload import app, validate_link, validate_video_files, validate_data_files, get_showform
+
+
+# from flaskr.visualizer import data_list
+
 
 def test_file_upload_initial_route():
     #This will probably be used when we link together all the files
@@ -29,3 +33,19 @@ def test_file_help_route():
     assert b"item-1" in response.data
     #Item 2 is the help section for data files
     assert b"item-2" in response.data
+
+def test_upload_different_video():
+    response = app.test_client().get('/upload_different_video')
+    assert response.status_code == 405
+    response = app.test_client().post('/upload_different_video')
+    assert response.status_code == 200
+    assert get_showform(1) is True
+    assert b'<form action = "/upload_video" method="POST" enctype="multipart/form-data">' in response.data
+
+def test_upload_different_data():
+    response = app.test_client().get('/upload_different_data')
+    assert response.status_code == 405
+    response = app.test_client().post('/upload_different_data')
+    assert response.status_code == 200
+    assert get_showform(2) is True
+    assert b'<form action = "/upload_data" method="POST" enctype="multipart/form-data">' in response.data

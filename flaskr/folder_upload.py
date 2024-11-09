@@ -14,12 +14,12 @@ app = Flask(__name__)
 app.secret_key = 'paint THE sky'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-#Opens file explorer, allowing user to select the folder containing their video files
+#Opens file explorer, allowing user to select the folder containing their video files, RECONFIGURE
 def get_video_path():
     video_path = '{}'.format(askdirectory(title='Choose a directory', initialdir=r'C:\ '))
     return video_path
 
-#Opens file explorer, allowing user to select the folder containing their data files
+#Opens file explorer, allowing user to select the folder containing their data files, RECONFIGURE
 def get_data_path() -> str:
     data_path = '{}'.format(askdirectory(title='Choose a directory', initialdir=r'C:\ '))
     return data_path
