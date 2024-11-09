@@ -3,7 +3,7 @@
 <head><!--Header, what needs to be loaded before page is made-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="stylesheet.css">
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles/stylesheet.css') }}">
     <title>Document</title>
     <style>
         p {
@@ -16,7 +16,7 @@
     <!-- THIS ISNT THE NAV BAR SORRY -->
     <nav class="nav">
         <div class="container">
-            <img class="img" src="./images/vedblogo.png" alt="VEDB Logo" style="width:100px;height:100px;">
+            <img class="img" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:100px;height:100px;">
             <h1 class="h1">VEDB Toolbox</h1>
         </div>
         <h1 class="subtitle">
@@ -24,42 +24,69 @@
         </h1>
     </nav> 
     <br>
-    <!-- This is where login shit starts -->
-    <div class="flex-container" id="login-panel">
-        <!-- Username textbox -->
-        <div class="flex-item" id="username-div">
-            <!-- text -->
-            <div class="text" id="username-text-div">
-                Username
+    <!-- This is where register shit starts -->
+    <form action="/register" method="POST" id="login-form">
+        <div class="flex-container" id="login-panel">
+            <!-- Username textbox -->
+            <div class="flex-item" id="username-div">
+                <!-- text -->
+                <div class="text" id="username-text-div">
+                    Username
+                </div>
+                <!-- input box -->
+                <div class="textbox" id="username-textbox-div">
+                    <input id="username-textbox" name="username" class="textbox">
+                </div>
             </div>
-            <!-- input box -->
-            <div class="textbox" id="username-textbox-div">
-                <input id="username-textbox" class="textbox">
+            <!-- Email textbox -->
+            <div class="flex-item" id="email-div">
+                <!-- text -->
+                <div class="text" id="email-text-div">
+                    Email
+                </div>
+                <!-- input box -->
+                <div class="textbox" id="email-textbox-div">
+                    <input id="email-textbox" name="email" class="textbox">
+                </div>
             </div>
-        </div>
-        <!-- Passwrod Textbox -->
-        <div class="flex-item" id="password-div">
-            <!-- text -->
-            <div class="text" id="password-text-div">
-                Password
+            <!-- Password Textbox -->
+            <div class="flex-item" id="password-div">
+                <!-- text -->
+                <div class="text" id="password-text-div">
+                    Password
+                </div>
+                <!-- input box -->
+                <div class="textbox" id="password-textbox-div">
+                    <input id="password-textbox" name="password" class="textbox" type="password">
+                </div>
             </div>
-            <!-- input box -->
-            <div class="textbox" id="password-textbox-div">
-                <input id="password-textbox" class="textbox" type="password">
+            <!-- Repeat Password Textbox -->
+            <div class="flex-item" id="repeat-password-div">
+                <!-- text -->
+                <div class="text" id="repeat-password-text-div">
+                    Repeat Password
+                </div>
+                <!-- input box -->
+                <div class="textbox" id="repeat-password-textbox-div">
+                    <input id="repeat-password-textbox" name="repeat-password" class="textbox" type="password">
+                </div>
             </div>
-        </div>
-        <!-- Login button -->
-        <div class="flex-button" id="button-div">
-            <button>Login</button>
-        </div>
+            
+            <!-- Register button -->
+            <div class="flex-button" id="button-div">
+                <button type="submit">Register</button>
+            </div>
+    </form>
         <br>
-        <!-- Sign up -->
+        <!-- Log in if user has an account -->
         <div class="container">
             <!-- text -->
             <div class="text" id="password-text-div">
-                Don't have an account?
+                Already have an account?
             </div>
-            <button  id="button-div">Register</button>
+            <a href="{{ url_for('login') }}">
+                <button type="button" id="button-div">Login</button>
+            </a>
         </div>
     </div>
     <!-- info thing 1-->
@@ -80,12 +107,12 @@
                 Lacinia placerat neque magna penatibus arcu. Semper dui aliquam consectetur fusce ex cras nunc est. Tempus vestibulum bibendum interdum luctus leo sollicitudin litora ante. Ornare cras luctus sagittis blandit natoque. Sem rhoncus dis aliquet duis, elit suspendisse lacinia quis. Porttitor sollicitudin integer at dolor amet purus arcu scelerisque. Primis porttitor gravida nascetur potenti potenti sodales. Blandit at ac dis; sapien egestas efficitur eu ridiculus?
             </p>
         </div>
-        <img class="imgbig" src="./images/placeholder.png" alt="VEDB Logo" style="width:300px;height:300px;">
+        <img class="imgbig" src="../static/images/placeholder.png" alt="VEDB Logo" style="width:300px;height:300px;">
     </div>
     <!-- info thing 2-->
     <div class="container">
         <!-- info thing -->
-        <img class="imgbig2" src="./images/journey_into_dataviz_feature.jpg" alt="VEDB Logo" style="width:400px;height:300px;">
+        <img class="imgbig2" src="../static/images/journey_into_dataviz_feature.png" alt="VEDB Logo" style="width:400px;height:300px;">
         <div class="infoblock2">
             <h1 class="h2">
                 What kind of data can you see?
@@ -115,9 +142,9 @@
     <!-- top corner -->
     <div class="topbar">
         <div class="container">
-            <img class="imgsmall" src="./images/vedblogo.png" alt="VEDB Logo" style="width:30px;height:30px;">
-            <img class="imgsmall" src="./images/databrary.png" alt="VEDB Logo" style="width:30px;height:30px;">
-            <img class="imgsmall" src="./images/vedblogo.png" alt="VEDB Logo" style="width:30px;height:30px;">
+            <img class="imgsmall" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:30px;height:30px;">
+            <img class="imgsmall" src="../static/images/databrary.png" alt="VEDB Logo" style="width:30px;height:30px;">
+            <img class="imgsmall" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:30px;height:30px;">
         </div>
     </div>
 </body>

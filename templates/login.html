@@ -35,7 +35,7 @@
                 </div>
                 <!-- input box -->
                 <div class="textbox" id="username-textbox-div">
-                    <input id="username-textbox" name="username" class="textbox" required>
+                    <input id="username-textbox" name="username" class="textbox">
                 </div>
             </div>
             <!-- Passwrod Textbox -->
@@ -46,7 +46,7 @@
                 </div>
                 <!-- input box -->
                 <div class="textbox" id="password-textbox-div">
-                    <input id="password-textbox" name="password" class="textbox" type="password" required>
+                    <input id="password-textbox" name="password" class="textbox" type="password">
                 </div>
             </div>
             
@@ -62,8 +62,8 @@
             <div class="text" id="password-text-div">
                 Don't have an account?
             </div>
-            <a href="/register">
-                <button id="button-div">Register</button>
+            <a href="{{ url_for('register') }}">
+                <button type="button" id="button-div">Register</button>
             </a>
         </div>
     </div>

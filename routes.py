@@ -1,7 +1,7 @@
 # routes.py
 
 from flask import render_template, request, redirect, flash, url_for
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Users
 
@@ -12,6 +12,10 @@ def register():
             flash("Username already in use!", "danger")
             return redirect(url_for("register"))
 
+        if request.form.get("password") != request.form.get("repeat-password"):
+            flash("Passwords do not match!", "danger")
+            return redirect(url_for("register"))            
+
         password_hash = generate_password_hash(request.form.get("password"))
         user = Users(username=request.form.get("username"), email=request.form.get("email"), password=password_hash)
 
@@ -21,7 +25,7 @@ def register():
         login_user(user)
         return redirect(url_for("home"))
 
-    return render_template("sign_up.html")
+    return render_template("register.html")
 
 # Login route
 def login():
@@ -43,4 +47,7 @@ def logout():
 
 # Home route
 def home():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))  # Redirect to the login page if the user is not logged in
+
     return render_template("home.html")
