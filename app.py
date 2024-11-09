@@ -55,8 +55,9 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        # once account is created, redirect user
-        return redirect(url_for("login"))
+        # once account is created, log in as user and redirect to home
+        login_user(user)
+        return redirect(url_for("home"))
 
     # else (if GET), render sign_up template
     return render_template("sign_up.html")
