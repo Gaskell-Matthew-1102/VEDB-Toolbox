@@ -178,7 +178,7 @@ def upload_data():
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
         if get_showform(1) == False and get_showform(2) == False:
-            return "<h1>Files Uploaded Successfully.!</h1>"
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
         else:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
@@ -210,7 +210,7 @@ def upload_video_link():
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
         if get_showform(1) == False and get_showform(2) == False:
-            return "<h1>Files Uploaded Successfully.!</h1>"
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
         else:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
