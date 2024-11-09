@@ -1,5 +1,3 @@
-from operator import truediv
-
 from flask import *
 import atexit
 import os
@@ -113,7 +111,7 @@ def validate_data_files(file_list) -> bool:
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
                       "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
-                      "odometry_timestamps.npy", "odometry.pldata", "world.intrincics", "world.extrincics",
+                      "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
                         "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
 
     for filename in file_list:
@@ -125,6 +123,11 @@ atexit.register(delete_files_on_exit)
 
 @app.route('/')
 def main():
+    global show_form1
+    show_form1 = True
+    global show_form2
+    show_form2 = True
+
     return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_video', methods=['POST'])
