@@ -25,50 +25,43 @@
     </nav> 
     <br>
     <!-- This is where register shit starts -->
-    <form action="/register" method="POST" id="login-form">
+    <form action="{{ url_for('register') }}" method="POST" id="login-form" class="form-container">
+        {{ form.hidden_tag() }}
         <div class="flex-container" id="login-panel">
             <!-- Username textbox -->
             <div class="flex-item" id="username-div">
                 <!-- text -->
-                <div class="text" id="username-text-div">
-                    Username
-                </div>
-                <!-- input box -->
+                <label class="text" id="username-text-div">Username</label>
+                <!-- WTForm input box -->
                 <div class="textbox" id="username-textbox-div">
-                    <input id="username-textbox" name="username" class="textbox">
+                    {{ form.username(class="textbox", id="username-textbox") }}
                 </div>
             </div>
             <!-- Email textbox -->
             <div class="flex-item" id="email-div">
                 <!-- text -->
-                <div class="text" id="email-text-div">
-                    Email
-                </div>
-                <!-- input box -->
+                <label class="text" id="email-text-div">Email</label>
+                <!-- WTForm input box -->
                 <div class="textbox" id="email-textbox-div">
-                    <input id="email-textbox" name="email" class="textbox">
+                    {{ form.email(class="textbox", id="email-textbox") }}
                 </div>
             </div>
-            <!-- Password Textbox -->
+            <!-- Passwrod Textbox -->
             <div class="flex-item" id="password-div">
                 <!-- text -->
-                <div class="text" id="password-text-div">
-                    Password
-                </div>
-                <!-- input box -->
+                <label class="text" id="password-text-div">Password</label>
+                <!-- WTForm input box -->
                 <div class="textbox" id="password-textbox-div">
-                    <input id="password-textbox" name="password" class="textbox" type="password">
+                    {{ form.password(class="textbox", id="password-textbox") }}
                 </div>
             </div>
             <!-- Repeat Password Textbox -->
             <div class="flex-item" id="repeat-password-div">
                 <!-- text -->
-                <div class="text" id="repeat-password-text-div">
-                    Repeat Password
-                </div>
+                <label class="text" id="repeat-password-text-div">Repeat Password</label>
                 <!-- input box -->
                 <div class="textbox" id="repeat-password-textbox-div">
-                    <input id="repeat-password-textbox" name="repeat-password" class="textbox" type="password">
+                    {{ form.repeat_password(class="textbox", id="repeat_password-textbox") }}
                 </div>
             </div>
             
