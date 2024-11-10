@@ -1,1 +1,2 @@
-instance/user_db.sqlite
+instance
+__pycache__
