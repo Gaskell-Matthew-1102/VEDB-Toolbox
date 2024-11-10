@@ -18,6 +18,13 @@ data_file_list = []
 show_form1 = True
 show_form2 = True
 
+are_videos_in_folder = False
+is_data_in_folder = False
+
+video_folder_name = ""
+data_folder_name = ""
+
+#FOR THE FOLLOWING GETTERS AND SETTERS: form_num is 1 for videos, 2 for data
 def get_showform(form_num: int) -> int:
     if form_num == 1:
         return show_form1
@@ -32,12 +39,32 @@ def set_showform(form_num: int, flag: bool) -> None:
         global show_form2
         show_form2 = flag
 
+def set_is_folder(form_num: int, flag: bool) -> None:
+    if form_num == 1:
+        global are_videos_in_folder
+        are_videos_in_folder = flag
+    elif form_num == 2:
+        global is_data_in_folder
+        is_data_in_folder = flag
+
+def get_is_folder(form_num: int) -> bool:
+    if form_num == 1:
+        return are_videos_in_folder
+    elif form_num == 2:
+        return is_data_in_folder
+
 #Two get functions for lists be utilized by the viewer application
 def get_video_list() -> list:
     return video_file_list
 
 def get_data_file_list() -> list:
     return data_file_list
+
+def get_folder_name(form_num: int) -> str:
+    if form_num == 1:
+        return video_folder_name
+    elif form_num == 2:
+        return data_folder_name
 
 def delete_files_in_list(listed_files) -> None:
     for file in listed_files:
@@ -184,32 +211,24 @@ def upload_video_link():
     if request.method == 'POST':
         vid_link = request.form['video_link']
 
-        # initial_files_list = os.listdir('.')
-
         if validate_link(vid_link, 0) is False:
             return "<h1>The provided link is invalid.</h1>"
 
-        # try:
-        #     extract_unzip(vid_link)
-        # except:
-        #     # Change this to form show/hide
-        #     return "<h1>The download has failed.</h1>"
-
-        # global video_file_list
-        # video_file_list = os.listdir('.')
-
-        # for file in video_file_list:
-        #     if file in initial_files_list:
-        #         video_file_list.remove(file)
+        try:
+            extract_unzip(vid_link)
+        except:
+            # Change this to form show/hide
+            return "<h1>The download has failed.</h1>"
 
         folders_list = []
-        video_folder_name = ""
         current_working_dir = os.getcwd()
         for folder in os.scandir(os.path.abspath(os.path.dirname(__file__))):
             if folder.is_dir():
                 folders_list.append(folder)
 
+        global video_folder_name
         for folder in folders_list:
+            #Should pick out unzipped folder containing videos
             if "-" in folder:
                 video_folder_name = folder
                 break
@@ -225,11 +244,17 @@ def upload_video_link():
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
+        set_is_folder(2, True)
+
+        for file in video_file_list:
+            complete_file_path = video_folder_name + "/" + file
+            video_file_list.append(complete_file_path)
+            video_file_list.remove(file)
+
         if get_showform(1) == False and get_showform(2) == False:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
         else:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
-
 
 @app.route('/upload_data_link', methods=['POST'])
 def upload_data_link():
@@ -246,20 +271,13 @@ def upload_data_link():
             #Change this to form show/hide
             return "<h1>The download has failed.</h1>"
 
-        global data_file_list
-        data_file_list = os.listdir('.')
-
-        for file in data_file_list:
-            if file in initial_files_list:
-                data_file_list.remove(file)
-
         folders_list = []
-        data_folder_name = ""
         current_working_dir = os.getcwd()
         for folder in os.scandir(os.path.abspath(os.path.dirname( __file__ ))):
             if folder.is_dir():
                 folders_list.append(folder)
 
+        global data_folder_name
         for folder in folders_list:
             if "-" not in folder and "MAC" not in folder:
                 data_folder_name = folder
@@ -279,6 +297,13 @@ def upload_data_link():
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
+        set_is_folder(2, True)
+
+        for file in data_file_list:
+            complete_file_path = data_folder_name + "/" + file
+            data_file_list.append(complete_file_path)
+            data_file_list.remove(file)
+
         if get_showform(1) == False and get_showform(2) == False:
             return "<h1>Files Uploaded Successfully.!</h1>"
         else:
@@ -320,7 +345,7 @@ def load_visualizer():
         if not show_form1 and not show_form2:
             return render_template("visualizer/main.html")
         else:
-            raise Exception(f"Invalid Action")
+            raise Exception(f"Invalid Action") #how did it get here
 
 if __name__ == '__main__':
     app.run(debug=True)

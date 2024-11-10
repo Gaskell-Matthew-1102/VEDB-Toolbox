@@ -1,14 +1,20 @@
+import shutil
+
 from flask import *
 import os
 
 import file_upload
-from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list
+from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list, get_is_folder, get_folder_name
 
 app = Flask(__name__)
 
 #Global variables for the list of video files and data files
 video_list = []
 data_list = []
+
+#If data was passed in through the upload link feature
+video_folder = ""
+data_folder = ""
 
 #Global variables for video file names (not named by convention)
 eye0_filename = ""
@@ -22,6 +28,11 @@ def setup() -> bool:
     video_list = get_video_list()
     global data_list
     data_list = get_data_file_list()
+
+    global video_folder
+    video_folder = get_folder_name(1)
+    global data_folder
+    data_folder = get_folder_name(2)
 
     global eye0_filename
     global eye1_filename
@@ -52,6 +63,22 @@ def upload_new_files() -> None:
         delete_files_in_list(video_list)
         delete_files_in_list(data_list)
         file_upload.main()
+
+@app.route("/visualizer_logout", methods=["POST"])
+def logout() -> None:
+    if request.method == "POST":
+        #once again code likely here to end/clsoe video playback, other file uses
+
+        delete_files_in_list(video_list)
+        delete_files_in_list(data_list)
+        if get_is_folder(1):
+            name_folder = get_folder_name(1)
+            shutil.rmtree(name_folder)
+        if get_is_folder(2):
+            name_folder = get_folder_name(2)
+            shutil.rmtree(name_folder)
+            shutil.rmtree("__MACOSX")
+        #some code here to run logout functionality
 
 @app.route("/visualizer")
 def main():
