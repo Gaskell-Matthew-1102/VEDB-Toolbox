@@ -61,6 +61,8 @@ def logout():
 
 # Home route
 def home():
+
+# placeholder for administration dashboard
     if not current_user.is_authenticated:
         return redirect(url_for('login'))  # Redirect to the login page if the user is not logged in
 
