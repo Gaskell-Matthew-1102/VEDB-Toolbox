@@ -99,3 +99,25 @@ body {
     border: 5px solid #07062b;
     border-radius: 50px 50px 50px 50px;
  }
+
+ .back_button {
+     background-color: #222287;
+     color: #ffffff;
+     border: 5px solid #07062b;
+     border-radius: 10px;
+     position: absolute;
+     left: 46%;
+     font-family: "Courier New", Courier, monospace;
+     font-weight: bold;
+     font-size: 30px;
+     min-height: 40px;
+     min-width: 80px;
+ }
+
+.back_button:hover{
+    color: rgb(122, 196, 223);
+}
+
+.back_button:active{
+     background-color: #8ca8cc79;
+ }
