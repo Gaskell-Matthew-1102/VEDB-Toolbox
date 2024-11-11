@@ -125,11 +125,11 @@ def upload_video_folder():
         print(dataflag)
 
     if videoflag == True and dataflag == False:
-        return(render_template("main.html"))
+        return(render_template("visualizer.html"))
     elif videoflag == False:
-        return (render_template("main.html"))
+        return (render_template("visualizer.html"))
     else:
-        return (render_template("main.html"))
+        return (render_template("visualizer.html"))
 
 if __name__=='__main__':
     app.debug = True

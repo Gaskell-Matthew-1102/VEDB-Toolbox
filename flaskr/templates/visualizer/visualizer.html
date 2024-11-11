@@ -29,6 +29,18 @@
         
         <script src="" async defer></script>
 
-        <h1></h1>
+        <h1>Viewer</h1>
+        <video width="512" height="384" controls>
+            <source src="{{ url_for('static', filename='../static/worldvideo.mp4') }}" type="video/mp4">
+            Browser support failed.
+        </video>
+        <video width="200" height="200" controls>
+            <source src="{{ url_for('static', filename='../static/eye0.mp4') }}" type="video/mp4">
+            Browser support failed.
+        </video>
+        <video width="200" height="200" controls>
+            <source src="{{ url_for('static', filename='../static/eye1.mp4') }}" type="video/mp4">
+            Browser support failed.
+        </video>
     </body>
 </html>

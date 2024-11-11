@@ -343,7 +343,7 @@ def back_to_file_upload():
 def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
-            return render_template("visualizer/main.html")
+            return render_template("visualizer/visualizer.html")
         else:
             raise Exception(f"Invalid Action") #how did it get here
 

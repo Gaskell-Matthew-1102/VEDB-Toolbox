@@ -2,8 +2,8 @@ import shutil
 
 from flask import *
 import os
+# import cv2
 
-import file_upload
 from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list, get_is_folder, get_folder_name
 
 app = Flask(__name__)
@@ -54,6 +54,33 @@ def setup() -> bool:
 
     return True
 
+def get_video_height(vid_file):
+    video = cv2.VideoCapture(vid_file)
+    height = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    return height
+
+def get_video_width(vid_file):
+    video = cv2.VideoCapture(vid_file)
+    width = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    return width
+
+def rename_video_files():
+    global worldvideo_filename
+    worldvideo_filename = "static/" + "testingworldvid.mp4"
+    print("here")
+    os.rename(worldvideo_filename, "worldvideo.mp4")
+    print("hello")
+    worldvideo_filename = "static/worldvideo.mp4"
+
+def move_to_static(file):
+    print("premove")
+    shutil.move(file, "static/")
+    moved_file = "static/" + file
+    while not os.path.exists(moved_file):
+        1+1
+    print("should've moved")
+    rename_video_files()
+
 #This function will run when user presses an Upload New Files button, removes current files, returns to file upload screen
 @app.route("/new_files", methods=["POST"])
 def upload_new_files() -> None:
@@ -83,8 +110,17 @@ def logout() -> None:
 @app.route("/visualizer")
 def main():
     # if setup():
-    #     render_template("templates/visualizer/main.html")
-    return render_template("visualizer/main.html")
+    #     render_template("templates/visualizer/visualizer.html")
+    # video_height = get_video_height(worldvideo_filename)
+    # video_width = get_video_width(worldvideo_filename)
+
+    video_height = 1536
+    video_height = video_height / 4
+    video_width = 2048
+    video_width = video_width / 4
+
+    return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
+                           worldvideo_filename=worldvideo_filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
