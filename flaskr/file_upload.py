@@ -18,6 +18,11 @@ data_file_list = []
 show_form1 = True
 show_form2 = True
 
+failed_video_upload = False
+failed_data_upload = False
+failed_video_link = False
+failed_data_link = False
+
 are_videos_in_folder = False
 is_data_in_folder = False
 
@@ -52,6 +57,32 @@ def get_is_folder(form_num: int) -> bool:
         return are_videos_in_folder
     elif form_num == 2:
         return is_data_in_folder
+
+def set_failed_link(form_num: int, failed: bool) -> None:
+    if form_num == 1:
+        global failed_video_link
+        failed_video_link = failed
+    if form_num == 2:
+        global failed_data_link
+        failed_data_link = failed
+
+def set_failed_upload(form_num: int, failed: bool) -> None:
+    if form_num == 1:
+        global failed_video_upload
+        failed_video_upload = failed
+    if form_num == 2:
+        global failed_data_upload
+        failed_data_upload = failed
+
+def reset_failures():
+    global failed_video_upload
+    failed_video_upload = False
+    global failed_data_upload
+    failed_data_upload = False
+    global failed_video_link
+    failed_video_link = False
+    global failed_data_link
+    failed_data_link = False
 
 #Two get functions for lists be utilized by the viewer application
 def get_video_list() -> list:
@@ -151,15 +182,22 @@ def main():
     show_form1 = True
     global show_form2
     show_form2 = True
+    reset_failures()
 
     return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
     if request.method == 'POST':
+        reset_failures()
 
         # Get the list of files from webpage
         files = request.files.getlist("file")
+        # This checks for the case where no files are uploaded, and the upload files button is just clicked
+        if len(files) == 1:
+            set_failed_upload(1, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_video_upload=failed_video_upload, failed_data_upload=failed_data_upload)
 
         # Iterate for each file in the files List, and Save them
         for file in files:
@@ -171,7 +209,9 @@ def upload_video():
         if validate_video_files(video_file_list) is False:
             delete_files_in_list(video_file_list)
             video_file_list.clear()
-            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+            set_failed_upload(1, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_video_upload=failed_video_upload, failed_data_upload=failed_data_upload)
 
         #Runs if files are correctly uploaded and validated
         set_showform(1, False)
@@ -183,9 +223,15 @@ def upload_video():
 @app.route('/upload_data', methods=['POST'])
 def upload_data():
     if request.method == 'POST':
+        reset_failures()
 
         # Get the list of files from webpage
         files = request.files.getlist("file")
+        #This checks for the case where no files are uploaded, and the upload files button is just clicked
+        if len(files) == 1:
+            set_failed_upload(2, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_video_upload=failed_video_upload, failed_data_upload=failed_data_upload)
 
         # Iterate for each file in the files List, and Save them
         for file in files:
@@ -197,7 +243,9 @@ def upload_data():
         if validate_data_files(data_file_list) is False:
             delete_files_in_list(data_file_list)
             data_file_list.clear()
-            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+            set_failed_upload(2, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_video_upload=failed_video_upload, failed_data_upload=failed_data_upload)
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
@@ -209,15 +257,19 @@ def upload_data():
 @app.route('/upload_video_link', methods=['POST'])
 def upload_video_link():
     if request.method == 'POST':
+        reset_failures()
         vid_link = request.form['video_link']
 
         if validate_link(vid_link, 0) is False:
-            return "<h1>The provided link is invalid.</h1>"
+            set_failed_link(1, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         try:
             extract_unzip(vid_link)
         except:
             # Change this to form show/hide
+            set_failed_link(1, True)
             return "<h1>The download has failed.</h1>"
 
         folders_list = []
@@ -259,11 +311,14 @@ def upload_video_link():
 @app.route('/upload_data_link', methods=['POST'])
 def upload_data_link():
     if request.method == 'POST':
+        reset_failures()
         data_link = request.form['data_link']
 
         initial_files_list = os.listdir('.')
-        if validate_link(data_link, 0) is False:
-            return "<h1>The provided link is invalid.</h1>"
+        if validate_link(data_link, 1) is False:
+            set_failed_link(2, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         try:
             extract_unzip(data_link)
@@ -313,6 +368,7 @@ def upload_data_link():
 @app.route('/upload_different_video', methods=['POST'])
 def upload_different_video():
     if request.method == 'POST':
+        reset_failures()
         global video_file_list
         delete_files_in_list(video_file_list)
 
@@ -323,6 +379,7 @@ def upload_different_video():
 @app.route('/upload_different_data', methods=['POST'])
 def upload_different_data():
     if request.method == 'POST':
+        reset_failures()
         global data_file_list
         delete_files_in_list(data_file_list)
 
@@ -332,6 +389,7 @@ def upload_different_data():
 
 @app.route('/upload_help')
 def upload_help():
+    reset_failures()
     return render_template("file-upload/file_upload_help.html")
 
 @app.route('/go_back', methods=['POST'])
