@@ -19,23 +19,7 @@ from pathlib import Path
 # HEAD TRACKING MODULE (RealSense T265): 30fps
 # EYE TRACKING (Pupil Labs Pupil-Core): 120fps
 
-def quat_to_euler(quaternions):
-    """
-    Convert quaternions to Euler angles.
-    
-    Roll (φ) = atan2(2(w x + y z), 1 - 2(x^2 + y^2))
-    Pitch (θ) = asin(2(w y - z x))
-    Yaw (ψ) = atan2(2(w z + x y), 1 - 2(y^2 + z^2))
-    """
-    q_w, q_x, q_y, q_z = quaternions[:, 0], quaternions[:, 1], quaternions[:, 2], quaternions[:, 3]
-    #Roll
-    roll = np.degrees(np.arctan2(2 * (q_w * q_x + q_y * q_z), 1 - 2 * (q_x**2 + q_y**2)))
-    #Pitch
-    pitch = np.degrees(np.arcsin(2 * (q_w * q_y - q_z * q_x)))
-    #Yaw
-    yaw = np.degrees(np.arctan2(2 * (q_w * q_z + q_x * q_y), 1 - 2 * (q_y**2 + q_z**2)))
 
-    return np.column_stack((roll, pitch, yaw))
 
 def read_pldata(file_path):
     with open(file_path, 'rb') as file:
