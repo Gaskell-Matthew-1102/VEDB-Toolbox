@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+{% from 'bootstrap5/form.html' import render_form %}
+
 <html lang="en">
 <head><!--Header, what needs to be loaded before page is made-->
     <meta charset="UTF-8">
@@ -25,44 +28,19 @@
     </nav> 
     <br>
     <!-- This is where login shit starts -->
-    <form action="{{ url_for('login') }}" method="POST" id="login-form" class="form-container">
-        {{ form.hidden_tag() }}
-        <div class="flex-container" id="login-panel">
-            <!-- Username textbox -->
-            <div class="flex-item" id="username-div">
-                <!-- text -->
-                <label class="text" id="username-text-div">Username</label>
-                <!-- WTForm input box -->
-                <div class="textbox" id="username-textbox-div">
-                    {{ form.username(class="textbox", id="username-textbox") }}
-                </div>
-            </div>
-            <!-- Passwrod Textbox -->
-            <div class="flex-item" id="password-div">
-                <!-- text -->
-                <label class="text" id="password-text-div">Password</label>
-                <!-- WTForm input box -->
-                <div class="textbox" id="password-textbox-div">
-                    {{ form.password(class="textbox", id="password-textbox") }}
-                </div>
-            </div>
-            
-            <!-- Login button -->
-            <div class="flex-button" id="button-div">
-                <button type="submit" class="button">Login</button>
-            </div>
-    </form>
-        <br>
+    <div class="flex-container" id="login-panel">
+        {{ render_form(form) }}
+
         <!-- Sign up -->
         <div class="container">
             <!-- text -->
-            <div class="text" id="password-text-div">
+            <div class="text" id="account-text-div">
                 Don't have an account?
             </div>
             <a href="{{ url_for('register') }}">
                 <button type="button" id="button-div">Register</button>
             </a>
-        </div>
+        </div>        
     </div>
     <!-- info thing 1-->
     <div class="container">

@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask_login import LoginManager
+from flask_bootstrap import Bootstrap5
 from config import Config
 from models import db, Users
 import routes
@@ -11,6 +12,9 @@ app.config.from_object(Config)
 
 # Initialize database
 db.init_app(app)
+
+# Import Bootstrap CSS/JS library
+bootstrap = Bootstrap5(app)
 
 # Setup LoginManager
 login_manager = LoginManager()

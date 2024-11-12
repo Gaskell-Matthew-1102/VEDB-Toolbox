@@ -1,6 +1,6 @@
 # routes.py
 
-from flask import render_template, request, redirect, flash, url_for
+from flask import render_template, redirect, flash, url_for
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Users
@@ -61,9 +61,8 @@ def logout():
 
 # Home route
 def home():
-
-# placeholder for administration dashboard
     if not current_user.is_authenticated:
         return redirect(url_for('login'))  # Redirect to the login page if the user is not logged in
-
     return render_template("home.html")
+
+# placeholder for administration dashboard
