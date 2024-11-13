@@ -10,6 +10,7 @@ from io import BytesIO
 import zipfile
 import requests
 
+
 app = Flask(__name__)
 
 video_file_list = []
@@ -293,7 +294,7 @@ def upload_video_link():
         global video_folder_name
         for folder in folders_list:
             #Should pick out unzipped folder containing videos
-            if "-" in folder:
+            if "-" in folder and "pycache" not in folder:
                 video_folder_name = folder
                 break
 
@@ -309,6 +310,22 @@ def upload_video_link():
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
         set_is_folder(2, True)
+
+        for filename in video_file_list:
+            if "worldPrivate" in filename:
+                os.rename(filename, "static/worldvideo.mp4")
+            elif "eye0" in filename:
+                os.rename(filename, "static/eye0.mp4")
+            elif "eye1" in filename:
+                os.rename(filename, "static/eye1.mp4")
+            elif "csv" in filename:
+                os.rename(filename, "static/datatable.csv")
+
+        video_file_list.clear()
+        video_file_list.append("static/worldvideo.mp4")
+        video_file_list.append("static/eye0.mp4")
+        video_file_list.append("static/eye1.mp4")
+        video_file_list.append("static/datatable.csv")
 
         for file in video_file_list:
             complete_file_path = video_folder_name + "/" + file
@@ -365,10 +382,12 @@ def upload_data_link():
         set_showform(2, False)
         set_is_folder(2, True)
 
+        new_data_file_list = []
         for file in data_file_list:
             complete_file_path = data_folder_name + "/" + file
-            data_file_list.append(complete_file_path)
+            new_data_file_list.append(complete_file_path)
             data_file_list.remove(file)
+        data_file_list = new_data_file_list
 
         if get_showform(1) == False and get_showform(2) == False:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
