@@ -161,7 +161,7 @@ def validate_video_files(file_list) -> bool:
 
 def validate_data_files(file_list) -> bool:
     file_count = len(file_list)
-    if file_count > 15:
+    if file_count > 15 or file_count < 10:
         return False
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
@@ -213,12 +213,27 @@ def upload_video():
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
                                    failed_video_upload=failed_video_upload, failed_data_upload=failed_data_upload)
 
-        #Runs if files are correctly uploaded and validated
+        #Runs if files are correctly uploaded and validated, naming convention for viewer (needs to be in static folder)
+        for filename in video_file_list:
+            if "worldPrivate" in filename:
+                os.rename(filename, "static/worldvideo.mp4")
+            elif "eye0" in filename:
+                os.rename(filename, "static/eye0.mp4")
+            elif "eye1" in filename:
+                os.rename(filename, "static/eye1.mp4")
+            elif "csv" in filename:
+                os.rename(filename, "static/datatable.csv")
+
+        video_file_list.clear()
+        video_file_list.append("static/worldvideo.mp4")
+        video_file_list.append("static/eye0.mp4")
+        video_file_list.append("static/eye1.mp4")
+        video_file_list.append("static/datatable.csv")
+
+        print(video_file_list)
+
         set_showform(1, False)
-        if get_showform(1) == False and get_showform(2) == False:
-            return "<h1>Files Uploaded Successfully.!</h1>"
-        else:
-            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_data', methods=['POST'])
 def upload_data():
@@ -249,10 +264,7 @@ def upload_data():
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
-        if get_showform(1) == False and get_showform(2) == False:
-            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
-        else:
-            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 @app.route('/upload_video_link', methods=['POST'])
 def upload_video_link():
@@ -314,7 +326,6 @@ def upload_data_link():
         reset_failures()
         data_link = request.form['data_link']
 
-        initial_files_list = os.listdir('.')
         if validate_link(data_link, 1) is False:
             set_failed_link(2, True)
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
@@ -347,8 +358,8 @@ def upload_data_link():
 
         if validate_data_files(data_file_list) is False:
             delete_files_in_list(data_file_list)
-            #change this to return something to report that link downloaded wrong files
-            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
@@ -360,7 +371,7 @@ def upload_data_link():
             data_file_list.remove(file)
 
         if get_showform(1) == False and get_showform(2) == False:
-            return "<h1>Files Uploaded Successfully.!</h1>"
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
         else:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 

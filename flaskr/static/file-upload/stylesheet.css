@@ -159,6 +159,16 @@ body {
     padding-right: 10px;
 }
 
+.success-text {
+    text-align: center;
+    color: greenyellow;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: "Courier New", Courier, monospace;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .vedb_img {
     border: 5px solid #ffffff;
     background-color: #ffffff;

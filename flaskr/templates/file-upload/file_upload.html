@@ -40,6 +40,12 @@
                 <input type = "submit" value="Download Video Files">
             </form>
         {% endif %}
+            {% if not show_form1 %}
+            <p class="success-text">Sucess!</p>
+            <form action = "/upload_different_video" method="POST">
+                <button type="submit">Upload Different Video Files</button>
+            </form>
+        {% endif %}
             </div>
         <div class="upload-container">
             <h1 class="upload-container-text">Upload Data Files</h1>
@@ -57,17 +63,13 @@
                 <input type = "submit" value="Download Data Files">
             </form>
         {% endif %}
-            </div>
-        {% if not show_form1 %}
-            <form action = "/upload_different_video" method="POST">
-                <button type="submit">Upload Different Video Files</button>
-            </form>
-        {% endif %}
-        {% if not show_form2 %}
+            {% if not show_form2 %}
+            <p class="success-text">Sucess!</p>
             <form action = "/upload_different_data" method="POST">
                 <button type="submit">Upload Different Data Files</button>
             </form>
         {% endif %}
+            </div>
         {% if not show_form1 and not show_form2 %}
             <form action = '/visualizer' method="POST">
                 <button type="submit" class="back_button">Enter Visualizer</button>

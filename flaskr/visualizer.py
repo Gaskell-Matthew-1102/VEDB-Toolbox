@@ -2,9 +2,13 @@ import shutil
 
 from flask import *
 import os
-# import cv2
 
-from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list, get_is_folder, get_folder_name
+from flaskr import file_upload
+from moviepy.editor import *
+
+import cv2
+
+# from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list, get_is_folder, get_folder_name
 
 app = Flask(__name__)
 
@@ -25,14 +29,14 @@ csvfilename = ""
 #Initializing variables function, takes in information from file_upload
 def setup() -> bool:
     global video_list
-    video_list = get_video_list()
+    video_list = file_upload.get_video_list()
     global data_list
-    data_list = get_data_file_list()
+    data_list = file_upload.get_data_file_list()
 
     global video_folder
-    video_folder = get_folder_name(1)
+    video_folder = file_upload.get_folder_name(1)
     global data_folder
-    data_folder = get_folder_name(2)
+    data_folder = file_upload.get_folder_name(2)
 
     global eye0_filename
     global eye1_filename
@@ -54,32 +58,26 @@ def setup() -> bool:
 
     return True
 
+#Sourced dimension code from here https://stackoverflow.com/questions/7348505/get-dimensions-of-a-video-file
 def get_video_height(vid_file):
-    video = cv2.VideoCapture(vid_file)
-    height = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    video_file = cv2.VideoCapture(vid_file)
+    height = video_file.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    video_file.release()
     return height
 
 def get_video_width(vid_file):
-    video = cv2.VideoCapture(vid_file)
-    width = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    video_file = cv2.VideoCapture(vid_file)
+    width = video_file.get(cv2.CAP_PROP_FRAME_WIDTH)
+    video_file.release()
     return width
 
-def rename_video_files():
-    global worldvideo_filename
-    worldvideo_filename = "static/" + "testingworldvid.mp4"
-    print("here")
-    os.rename(worldvideo_filename, "worldvideo.mp4")
-    print("hello")
-    worldvideo_filename = "static/worldvideo.mp4"
-
-def move_to_static(file):
-    print("premove")
-    shutil.move(file, "static/")
-    moved_file = "static/" + file
-    while not os.path.exists(moved_file):
-        1+1
-    print("should've moved")
-    rename_video_files()
+def get_video_duration(vid_file):
+    video_file = cv2.VideoCapture(vid_file)
+    frame_rate = video_file.get(cv2.CAP_PROP_FPS)
+    frames = video_file.get(cv2.CAP_PROP_FRAME_COUNT)
+    video_file.release()
+    length = frames/frame_rate
+    return length
 
 #This function will run when user presses an Upload New Files button, removes current files, returns to file upload screen
 @app.route("/new_files", methods=["POST"])
@@ -87,42 +85,31 @@ def upload_new_files() -> None:
     if request.method == "POST":
         #code here likely to end/close video playback, anything that is using a file
 
-        delete_files_in_list(video_list)
-        delete_files_in_list(data_list)
+        file_upload.delete_files_in_list(video_list)
+        file_upload.delete_files_in_list(data_list)
         file_upload.main()
 
+# This function will run when a user chooses to log out, NEEDS CODE TO RETURN TO LOGIN SCREEN
 @app.route("/visualizer_logout", methods=["POST"])
 def logout() -> None:
     if request.method == "POST":
         #once again code likely here to end/clsoe video playback, other file uses
 
-        delete_files_in_list(video_list)
-        delete_files_in_list(data_list)
-        if get_is_folder(1):
-            name_folder = get_folder_name(1)
+        file_upload.delete_files_in_list(video_list)
+        file_upload.delete_files_in_list(data_list)
+        if file_upload.get_is_folder(1):
+            name_folder = file_upload.get_folder_name(1)
             shutil.rmtree(name_folder)
-        if get_is_folder(2):
-            name_folder = get_folder_name(2)
+        if file_upload.get_is_folder(2):
+            name_folder = file_upload.get_folder_name(2)
             shutil.rmtree(name_folder)
             shutil.rmtree("__MACOSX")
         #some code here to run logout functionality
 
 @app.route("/visualizer")
 def main():
-    # if setup():
-    #     render_template("templates/visualizer/visualizer.html")
-    # video_height = get_video_height(worldvideo_filename)
-    # video_width = get_video_width(worldvideo_filename)
-
-    video_height = 1536
-    video_height = video_height / 4
-    video_width = 2048
-    video_width = video_width / 4
-
     return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
                            worldvideo_filename=worldvideo_filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# os.remove("static/test.py")

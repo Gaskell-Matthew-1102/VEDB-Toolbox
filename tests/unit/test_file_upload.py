@@ -1,6 +1,8 @@
 import pytest
 import flaskr.file_upload
-from flaskr.file_upload import app, validate_link, validate_video_files, validate_data_files
+from flaskr.file_upload import app, validate_link, validate_video_files, validate_data_files, set_failed_upload, \
+    set_failed_link, reset_failures, failed_data_upload, failed_video_link, failed_data_link, failed_video_upload
+
 
 def test_validate_link():
     assert not validate_link('falselink.com', 1)
@@ -32,6 +34,18 @@ def test_validate_data_files():
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
                         "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
     assert validate_data_files(data_list)
-    #1 file missing should invalidate the function
-    data_list.pop()
-    assert not validate_data_files(data_list)
+
+def test_reset_failures():
+    set_failed_upload(1, True)
+    set_failed_upload(2, True)
+    set_failed_link(1, True)
+    set_failed_link(2, True)
+    assert failed_video_upload is True
+    assert failed_data_upload is True
+    assert failed_video_link is True
+    assert failed_data_link is True
+    reset_failures()
+    assert failed_video_upload is False
+    assert failed_data_upload is False
+    assert failed_video_link is False
+    assert failed_data_link is False

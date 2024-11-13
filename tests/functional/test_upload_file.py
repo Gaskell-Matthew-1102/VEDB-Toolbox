@@ -14,7 +14,7 @@ def test_file_upload_initial_route():
     #app = create_app('testing')
     response = app.test_client().get('/')
     assert response.status_code == 200
-    assert b"File Upload" in response.data
+    assert b"Upload Files" in response.data
     #Form to upload video files
     assert b'<form action = "/upload_video" method="POST" enctype="multipart/form-data">' in response.data
     #Form to upload data files
@@ -29,10 +29,19 @@ def test_file_help_route():
     assert response.status_code == 200
     #Title
     assert b"How To Upload Files" in response.data
-    #Item 1 is the help section for video files
-    assert b"item-1" in response.data
-    #Item 2 is the help section for data files
-    assert b"item-2" in response.data
+    #Infoblock 1 is the help section for video files
+    assert b"infoblock1" in response.data
+    #Infoblock 2 is the help section for data files
+    assert b"infoblock2" in response.data
+
+def test_back_to_upload():
+    response = app.test_client().post('/go_back')
+    assert response.status_code == 200
+    assert b"Upload Files" in response.data
+    assert b'<form action = "/upload_video" method="POST" enctype="multipart/form-data">' in response.data
+    assert b'<form action = "/upload_data" method="POST" enctype="multipart/form-data">' in response.data
+    assert b'<form action = "/upload_video_link" method="POST" enctype="multipart/form-data">' in response.data
+    assert b'<form action = "/upload_data_link" method="POST" enctype="multipart/form-data">' in response.data
 
 def test_upload_different_video():
     response = app.test_client().get('/upload_different_video')
