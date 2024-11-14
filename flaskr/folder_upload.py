@@ -1,35 +1,25 @@
 import os
-from dataclasses import field
 from tkinter.filedialog import askdirectory
 
-import threading
-
 from flask import Flask, render_template, request, flash, redirect, url_for
-from werkzeug.utils import secure_filename
 from wtforms import Form, StringField, SubmitField
-from os import walk
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'csv', 'pldata', 'npy', 'yaml', 'intrinsics', 'extrinsics'}
 
+
+#This code was not used for our current method of handling files, but may be used next semester
+#for a simpler way of utilizing locally downloaded files from a user's machine
 app = Flask(__name__)
 app.secret_key = 'paint THE sky'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-class VideoForm(Form):
-    vpath = StringField('Video Folder')
-    submitV = SubmitField('Upload')
-
-class DataForm(Form):
-    dpath = StringField('Data Folder')
-    submitD = SubmitField('Upload')
-
-#Opens file explorer, allowing user to select the folder containing their video files
+#Opens file explorer, allowing user to select the folder containing their video files, RECONFIGURE
 def get_video_path():
     video_path = '{}'.format(askdirectory(title='Choose a directory', initialdir=r'C:\ '))
     return video_path
 
-#Opens file explorer, allowing user to select the folder containing their data files
+#Opens file explorer, allowing user to select the folder containing their data files, RECONFIGURE
 def get_data_path() -> str:
     data_path = '{}'.format(askdirectory(title='Choose a directory', initialdir=r'C:\ '))
     return data_path
@@ -106,28 +96,6 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/FileUpload')
-def main():
-    return(render_template("test.html"))
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
-    print("here")
-    if request.method == 'POST':
-        if 'files[]' not in request.files:
-            print("here2")
-            return 'No file part'
-
-        files = request.files.getlist('file')
-
-        print("here2")
-        for file in files:
-            file.save(file.filename)
-        print("not here")
-        return "<h1>Files Uploaded Successfully.!</h1>"
-
-
-
 @app.route('/FileUpload', methods=['GET', 'POST'])
 def upload_video_folder():
     video_form = VideoForm()
@@ -157,11 +125,11 @@ def upload_video_folder():
         print(dataflag)
 
     if videoflag == True and dataflag == False:
-        return(render_template("main.html"))
+        return(render_template("visualizer.html"))
     elif videoflag == False:
-        return (render_template("main.html"))
+        return (render_template("visualizer.html"))
     else:
-        return (render_template("main.html"))
+        return (render_template("visualizer.html"))
 
 if __name__=='__main__':
     app.debug = True

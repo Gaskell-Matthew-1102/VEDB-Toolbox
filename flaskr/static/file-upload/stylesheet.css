@@ -1,8 +1,179 @@
-.heading_bar {
-    position:fixed;
-    top:0;
-    left:0;
-    width: 100%;
-    backgroud-color: #000ae3;
-    padding: 10px;
+/*I used a decent amount of Leon's code that he wrote for the login page for this
+stylesheet, modifying it to conform for the file upload pages*/
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #444;
+}
+
+.title_container {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.h1 {
+    color: white;
+    font-weight: lighter;
+    font-size: 70px;
+    text-indent: 10px;
+    margin-top: 15px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.h2 {
+    color: white;
+    font-weight: bold;
+    text-indent: 10px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.h3 {
+    color: #222287;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.body {
+    background-color: #8ca8cc79;
+    /*background-image: url('./images/journey_into_dataviz_feature.jpg');*/
+    background-repeat: repeat-x;
+    /* background-attachment: fixed; */
+    background-position: center;
+    background-position-y: 150px;
+    background-size: 50%;
+}
+
+.nav {
+    background-color: #222287;
+    margin-left: -10px;
+    margin-right: 250px;
+    border: 5px solid #07062b;
+    border-radius: 0px 50px 50px 0px;
+    /* padding: 1em; */
+    /* margin: 0 -1em; */
+    /* border-bottom: 1px solid#222287; */
+}
+
+.subtitle {
+    color: rgb(122, 196, 223);
+    font-size: 20px;
+    margin-top: -50px;
+    text-indent: 150px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.h1_title {
+    color: #222287;
+    font-weight: bold;
+    font-size: 50px;
+    /*text-indent: 10px;*/
+    text-align: center;
+    margin-top: 15px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.paragraph {
+  text-align: center;
+  color: white;
+  text-indent: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.infoblock1 {
+    background-color: #222287;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border: 5px solid #07062b;
+    border-radius: 50px 50px 50px 50px;
+ }
+
+ .infoblock2 {
+    background-color: #222287;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border: 5px solid #07062b;
+    border-radius: 50px 50px 50px 50px;
+ }
+
+ .back_button {
+     background-color: #222287;
+     color: #ffffff;
+     border: 5px solid #07062b;
+     border-radius: 10px;
+     position: absolute;
+     left: 46%;
+     font-family: "Courier New", Courier, monospace;
+     font-weight: bold;
+     font-size: 30px;
+     min-height: 40px;
+     min-width: 80px;
+ }
+
+.back_button:hover{
+    color: rgb(122, 196, 223);
+}
+
+.back_button:active{
+     background-color: #8ca8cc79;
+ }
+
+.upload-container{
+    display: inline-block;
+    width: 400px;
+    height: 400px;
+
+    background-color: #8ca8cc79;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border: 5px solid #07062b;
+    border-radius: 50px 50px 50px 50px;
+}
+
+.upload-container-text {
+    color: #222287;
+    font-weight: bold;
+    text-indent: 10px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.fail-text {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    font-family: "Courier New", Courier, monospace;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.success-text {
+    text-align: center;
+    color: greenyellow;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: "Courier New", Courier, monospace;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.vedb_img {
+    border: 5px solid #ffffff;
+    background-color: #ffffff;
+    border-radius: 25px;
+    max-width: 100%;
+    max-height:100%;
+    margin: 10px;
 }

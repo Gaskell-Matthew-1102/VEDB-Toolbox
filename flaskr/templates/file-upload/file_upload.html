@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/file-upload/stylesheet.css') }}">
+    <title>VEDB Toolbox</title>
+    <style>
+        p {
+            line-height: 1;
+        }
+    </style>
+  </head>
+  <body class="body">
+    <nav class="nav">
+        <div class="title_container">
+            <img class="vedb_imgimg" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:100px;height:100px;">
+            <h1 class="h1">VEDB Toolbox</h1>
+        </div>
+        <h1 class="subtitle">
+            The Visual Experience Database Toolbox
+        </h1>
+    </nav>
+    <br>
+    <h1 class="h1_title">Upload Files</h1>
+    <div class="container">
+        <div class="upload-container">
+            <h1 class="upload-container-text">Upload Video Files</h1>
+        {% if show_form1 %}
+            <form action = "/upload_video" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" value="Choose Video Files" multiple />
+                <input type = "submit" value="Upload Video Files">
+            </form>
+        {% endif %}
+            {% if show_form1 %}
+            <form action = "/upload_video_link" method="POST" enctype="multipart/form-data">
+                <input type="text" name="video_link"
+                       placeholder="Link to Video Download"
+                       value ="{{request.form['video_link'] }}"/>
+                <input type = "submit" value="Download Video Files">
+            </form>
+        {% endif %}
+            {% if not show_form1 %}
+            <p class="success-text">Sucess!</p>
+            <form action = "/upload_different_video" method="POST">
+                <button type="submit">Upload Different Video Files</button>
+            </form>
+        {% endif %}
+            </div>
+        <div class="upload-container">
+            <h1 class="upload-container-text">Upload Data Files</h1>
+        {% if show_form2 %}
+            <form action = "/upload_data" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" value="Choose Data Files" multiple />
+                <input type = "submit" value="Upload Data Files">
+            </form>
+        {% endif %}
+        {% if show_form2 %}
+            <form action = "/upload_data_link" method="POST" enctype="multipart/form-data">
+                <input type="text" name="data_link"
+                       placeholder="Link to Data Download"
+                       value ="{{request.form['data_link'] }}"/>
+                <input type = "submit" value="Download Data Files">
+            </form>
+        {% endif %}
+            {% if not show_form2 %}
+            <p class="success-text">Sucess!</p>
+            <form action = "/upload_different_data" method="POST">
+                <button type="submit">Upload Different Data Files</button>
+            </form>
+        {% endif %}
+            </div>
+        {% if not show_form1 and not show_form2 %}
+            <form action = '/visualizer' method="POST">
+                <button type="submit" class="back_button">Enter Visualizer</button>
+            </form>
+        {% endif %}
+        {% if failed_video_upload %}
+                <p class="fail-text">Incorrect video files uploaded. Please try again, or refer to the link below for help.</p>
+        {% endif %}
+        {% if failed_data_upload %}
+                <p class="fail-text">Incorrect data files uploaded. Please try again, or refer to the link below for help.</p>
+        {% endif %}
+        {% if failed_video_link %}
+                <p class="fail-text">Incorrect video link uploaded. Either the link was invalid or the files could not be downloaded. Please try again, or refer to the link below for help.</p>
+        {% endif %}
+        {% if failed_data_link %}
+                <p class="fail-text">Incorrect data link uploaded. Either the link was invalid or the files could not be downloaded. Please try again, or refer to the link below for help.</p>
+        {% endif %}
+    <h3 class="h3">Help</h3>
+        <p style="text-align: center">Not sure what files to upload or links to enter? Please click <a href="/upload_help">here for help.</a></p>
+    </div>
+  </body>
+</html>
