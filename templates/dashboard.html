@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+{% from 'bootstrap5/table.html' import render_table %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/dashstyle.css') }}">
+    <title>Document</title>
+</head>
+<body class="body">
+    <!-- top bar -->
+    <nav class="nav">
+        yo mr white
+    </nav>
+    <!-- Side menu -->
+    <div class="sidebar">
+        <!-- in the future you could prob click the logo to go to the homepage -->
+        <div class="container">
+            <img class="img" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:60px;height:60px;">
+            <h1 class="h1">
+                VEDB
+            </h1>
+        </div>
+        <!-- Menu buttons -->
+        <div class="down">
+            <!-- Setting button -->
+            <button class="buttons">
+                <div class="buttoncontainer">
+                    <img class="imginteract" src="../static/images/gear.png" alt="VEDB Logo" style="width:60px;height:60px;">
+                    <h2 class="h2">Settings</h2>
+                </div>
+            </button>
+            <!-- Logout button -->
+            <button class="buttons">
+                <div class="buttoncontainer">
+                    <img class="imginteract" src="../static/images/logout.png" alt="VEDB Logo" style="width:60px;height:60px;">
+                    <h2 class="h2">Logout</h2>
+                </div>
+            </button>
+        </div>
+    </div>
+    <!-- table for sessions -->
+    <!-- https://stackoverflow.com/questions/48057944/repeated-data-in-html-table -->
+    <div class="tablecontainer">
+        <!-- Search Bar -->
+        <div class="searchcontainer">
+            <div id="username-textbox-div">
+                <input class="textboxprimary" type="text" placeholder="Search user or email..">
+            </div>
+            <div id="username-textbox-div">
+                <input class="textbox" type="text" placeholder="Search by session..">
+            </div>
+            <div id="username-textbox-div">
+                <input class="textbox" type="text" placeholder="Search by file..">
+            </div>
+        </div>
+        <!-- data/session table -->
+         <!-- https://www.youtube.com/watch?app=desktop&v=mSiqZRpgrfY -->
+         {{ render_table(users, show_actions=True, model=Users) }}
+
+    </div>
+</body>
+</html>
