@@ -3,8 +3,8 @@
 from flask import render_template, redirect, flash, url_for
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, Users
-from forms import LoginForm, RegistrationForm
+from app.models import db, Users
+from app.forms import LoginForm, RegistrationForm
 
 # Home route
 def home():
