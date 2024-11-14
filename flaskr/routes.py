@@ -4,13 +4,16 @@ from flask import render_template, redirect, flash, url_for
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, Users
+from .file_upload import *
 from .forms import LoginForm, RegistrationForm
 
 # Home route
 def home():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    return render_template("home.html")
+    show_form1 = get_showform(1)
+    show_form2 = get_showform(2)
+    return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 # Register route
 def register():
@@ -70,3 +73,8 @@ def admin_dashboard():
     # to leon. work on making this not display the password hashes. bc why
     users = Users.query.all()
     return render_template('user-tools/admin-dashboard.html', users=users, Users=Users)
+
+def upload_help():
+    return render_template("file-upload/file_upload_help.html")
+
+# def visualizer():

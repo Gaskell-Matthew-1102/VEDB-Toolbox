@@ -31,6 +31,7 @@ def create_app(test_config=None):
     # Import routes here to avoid circular imports
     with app.app_context():
         from . import routes  # This import depends on the app context being active
+        from . import file_upload
 
         # Register routes (this can also be modularized into blueprints if needed)
         app.add_url_rule('/', 'home', routes.home)
@@ -38,5 +39,14 @@ def create_app(test_config=None):
         app.add_url_rule('/login', 'login', routes.login, methods=["GET", "POST"])
         app.add_url_rule('/logout', 'logout', routes.logout)
         app.add_url_rule('/admin-dashboard', 'admin_dashboard', routes.admin_dashboard)
+        app.add_url_rule('/upload_help', 'upload_help', file_upload.upload_help)
+        app.add_url_rule('/upload_video', 'upload_video', file_upload.upload_video, methods=["POST"])
+        app.add_url_rule('/upload_data', 'upload_data', file_upload.upload_data, methods=["POST"])
+        app.add_url_rule('/upload_video_link', 'upload_video_link', file_upload.upload_video_link, methods=["POST"])
+        app.add_url_rule('/upload_data_link', 'upload_data_link', file_upload.upload_data_link, methods=["POST"])
+        app.add_url_rule('/upload_different_video', 'upload_different_video', file_upload.upload_different_video, methods=["POST"])
+        app.add_url_rule('/upload_different_data', 'upload_different_data', file_upload.upload_different_data, methods=["POST"])
+        app.add_url_rule('/go_back', 'back_to_file_upload', file_upload.back_to_file_upload, methods=["POST"])
+        # app.add_url_rule('/visualizer', 'visualizer', routes.visualizer)
 
     return app

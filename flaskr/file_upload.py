@@ -1,17 +1,17 @@
 from flask import *
 import atexit
 import os
-import numpy as np
-from pathlib import Path
-import msgpack
-import collections
-import pandas as pd
+#import numpy as np
+#from pathlib import Path
+#import msgpack
+#import collections
+#import pandas as pd
 from io import BytesIO
 import zipfile
 import requests
 
 
-app = Flask(__name__)
+# app = app
 
 video_file_list = []
 data_file_list = []
@@ -177,7 +177,7 @@ def validate_data_files(file_list) -> bool:
 
 atexit.register(delete_files_on_exit)
 
-@app.route('/')
+# @app.route('/')
 def main():
     global show_form1
     show_form1 = True
@@ -187,7 +187,7 @@ def main():
 
     return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload_video', methods=['POST'])
+# @app.route('/upload_video', methods=['POST'])
 def upload_video():
     if request.method == 'POST':
         reset_failures()
@@ -236,7 +236,7 @@ def upload_video():
         set_showform(1, False)
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload_data', methods=['POST'])
+# @app.route('/upload_data', methods=['POST'])
 def upload_data():
     if request.method == 'POST':
         reset_failures()
@@ -267,7 +267,7 @@ def upload_data():
         set_showform(2, False)
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload_video_link', methods=['POST'])
+# @app.route('/upload_video_link', methods=['POST'])
 def upload_video_link():
     if request.method == 'POST':
         reset_failures()
@@ -337,7 +337,7 @@ def upload_video_link():
         else:
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload_data_link', methods=['POST'])
+# @app.route('/upload_data_link', methods=['POST'])
 def upload_data_link():
     if request.method == 'POST':
         reset_failures()
@@ -395,7 +395,7 @@ def upload_data_link():
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 #The following two functions provide functionality for uploading different files after previous file upload, for both video and data
-@app.route('/upload_different_video', methods=['POST'])
+# @app.route('/upload_different_video', methods=['POST'])
 def upload_different_video():
     if request.method == 'POST':
         reset_failures()
@@ -406,7 +406,7 @@ def upload_different_video():
         show_form1 = True
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload_different_data', methods=['POST'])
+# @app.route('/upload_different_data', methods=['POST'])
 def upload_different_data():
     if request.method == 'POST':
         reset_failures()
@@ -417,17 +417,17 @@ def upload_different_data():
         show_form2 = True
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/upload_help')
+# @app.route('/upload_help')
 def upload_help():
     reset_failures()
     return render_template("file-upload/file_upload_help.html")
 
-@app.route('/go_back', methods=['POST'])
+# @app.route('/go_back', methods=['POST'])
 def back_to_file_upload():
     if request.method == 'POST':
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-@app.route('/visualizer', methods=['POST'])
+# @app.route('/visualizer', methods=['POST'])
 def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
@@ -435,5 +435,5 @@ def load_visualizer():
         else:
             raise Exception(f"Invalid Action") #how did it get here
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
