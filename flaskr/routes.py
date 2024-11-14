@@ -3,8 +3,8 @@
 from flask import render_template, redirect, flash, url_for
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.models import db, Users
-from app.forms import LoginForm, RegistrationForm
+from .models import db, Users
+from .forms import LoginForm, RegistrationForm
 
 # Home route
 def home():
@@ -40,7 +40,7 @@ def register():
         flash("Registration successful! Welcome.", "success")
         return redirect(url_for("home"))
 
-    return render_template("login/register.html", form=form)
+    return render_template("auth/register.html", form=form)
 
 # Login route
 def login():
@@ -58,7 +58,7 @@ def login():
         else:
             flash("Invalid username/password!", "danger")
 
-    return render_template("login/login.html", form=form)
+    return render_template("auth/login.html", form=form)
 
 # Logout route
 def logout():
