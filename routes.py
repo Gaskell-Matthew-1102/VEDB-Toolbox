@@ -65,4 +65,6 @@ def home():
         return redirect(url_for('login'))  # Redirect to the login page if the user is not logged in
     return render_template("home.html")
 
-# placeholder for administration dashboard
+def dashboard():
+    users = Users.query.all()
+    return render_template('dashboard.html', users=users, Users=Users)

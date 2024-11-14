@@ -29,6 +29,7 @@ app.add_url_rule('/register', 'register', routes.register, methods=["GET", "POST
 app.add_url_rule('/login', 'login', routes.login, methods=["GET", "POST"])
 app.add_url_rule('/logout', 'logout', routes.logout)
 app.add_url_rule('/', 'home', routes.home)
+app.add_url_rule('/dashboard', 'dashboard', routes.dashboard)
 
 if __name__ == "__main__":
     app.run()
