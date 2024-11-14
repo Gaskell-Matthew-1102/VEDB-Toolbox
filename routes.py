@@ -6,6 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Users
 from forms import LoginForm, RegistrationForm
 
+# Home route
+def home():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template("home.html")
+
 # Register route
 def register():
     # create WTForm instance
@@ -34,7 +40,7 @@ def register():
         flash("Registration successful! Welcome.", "success")
         return redirect(url_for("home"))
 
-    return render_template("register.html", form=form)
+    return render_template("login/register.html", form=form)
 
 # Login route
 def login():
@@ -52,19 +58,15 @@ def login():
         else:
             flash("Invalid username/password!", "danger")
 
-    return render_template("login.html", form=form)
+    return render_template("login/login.html", form=form)
 
 # Logout route
 def logout():
     logout_user()
     return redirect(url_for("home"))
 
-# Home route
-def home():
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))  # Redirect to the login page if the user is not logged in
-    return render_template("home.html")
-
-def dashboard():
+# Dashboard Route
+def admin_dashboard():
+    # to leon. work on making this not display the password hashes. bc why
     users = Users.query.all()
-    return render_template('dashboard.html', users=users, Users=Users)
+    return render_template('user-tools/admin-dashboard.html', users=users, Users=Users)
