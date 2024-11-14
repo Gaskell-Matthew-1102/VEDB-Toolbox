@@ -1,3 +1,63 @@
-<h1>HELP</h1>
-<form action = '/go_back' method="POST">
-        <button type="submit">Go Back</button>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/file-upload.css') }}">
+    <title>VEDB Toolbox</title>
+    <style>
+        p {
+            line-height: 1;
+        }
+    </style>
+  </head>
+  <body class="body">
+    <nav class="nav">
+        <div class="title_container">
+            <img class="vedb_imgimg" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:100px;height:100px;">
+            <h1 class="h1">VEDB Toolbox</h1>
+        </div>
+        <h1 class="subtitle">
+            The Visual Experience Database Toolbox
+        </h1>
+    </nav>
+    <br>
+        <h1 class="h1_title">How To Upload Files</h1>
+  <br>
+    <div class="container">
+        <div class="infoblock1">
+            <h1 class="h2">Video Files</h1>
+<!--The noopener noreferrer code is to prevent phishing attacks (https://www.freecodecamp.org/news/how-to-use-html-to-open-link-in-new-tab/#:~:text=Security%20concerns%20with%20target%3D%22_blank%22)-->
+                <p class="paragraph">The video files for this dataset can be found on
+                    <a href="https://nyu.databrary.org/volume/1612" style="color:rgb(122, 196, 223)" target="_blank" ref="noopener noreferrer">Databury</a>.
+                    After navigating to this website,
+                    the recorded sessions can be viewed. They can be sorted by participant information, the
+                    condition of the data recording, the task performed during the recording, or the context of
+                    the setting. Once you have navigated to the session you would like to view, either click on the
+                    download for the zip file, or copy the link to that address. If you are downloading the zip file,
+                    after unzipping you should see four files, three videos (.mp4) and one comma-separated values
+                    file (.csv). All four of these files should be uploaded. If using the download via link feature,
+                    just paste the link into the text box and click download.</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="infoblock2">
+            <h1 class="h2">Data Files</h1>
+<!--The noopener noreferrer code is to prevent phishing attacks (https://www.freecodecamp.org/news/how-to-use-html-to-open-link-in-new-tab/#:~:text=Security%20concerns%20with%20target%3D%22_blank%22)-->
+                <p class = "paragraph">After uploading the video files, navigate to the
+                    <a href="https://osf.io/2gdkb/" style="color:rgb(122, 196, 223)" target="_blank" ref="noopener noreferrer">Open Source Framework (OSF)</a>
+                    website, where
+                    the data files that correspond to the video files are located. To find the correct files, look
+                    for the folder with the same name as the files downloaded from Databrary. Once you have located
+                    these files, either download the zip file, or copy the link to the zip download. Ignore the
+                    DS_Store file and the processedGaze folder (if applicable), and upload all the other files. Once
+                    both of these upload tasks have been done, you will be able to proceed to the viewer. </p>
+        </div>
+    </div>
+    <div class="item-3">
+    </div>
+        <form action = '/go_back' method="POST">
+        <button type="submit" class="back_button">Go Back</button>
+        </form>
+  </body>
+</html>

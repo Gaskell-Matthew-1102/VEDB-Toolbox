@@ -1,4 +1,4 @@
-import user
+from . import user
 from flask import Flask, redirect, request
 from flask_login import LoginManager, logout_user
 
@@ -9,6 +9,10 @@ app = Flask(__name__)
 
 #Rename to actual application name
 login_manager.init_app(app)
+
+def init_app(app):
+    app.cli.add_command(login)
+    app.cli.add_command(logout)
 
 @login_manager.user_loader
 def load_user(user_email: str):

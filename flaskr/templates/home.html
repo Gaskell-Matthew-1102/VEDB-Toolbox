@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="/visualizer">VEDB Visualizer</a></li>
+            <li><a href="/admin-dashboard">Administrator Dashboard</a></li>
+        </ul>
+    </nav>
+    {% if current_user.is_authenticated %}
+    <h1>You are logged in!</h1>
+    <a href="/logout">Log Out</a>
+    {% else %}
+    <h1>You are not logged in.</h1>
+    {% endif %}
+</body>
+
+</html>
