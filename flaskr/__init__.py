@@ -47,6 +47,7 @@ def create_app(test_config=None):
         app.add_url_rule('/upload_different_video', 'upload_different_video', file_upload.upload_different_video, methods=["POST"])
         app.add_url_rule('/upload_different_data', 'upload_different_data', file_upload.upload_different_data, methods=["POST"])
         app.add_url_rule('/go_back', 'back_to_file_upload', file_upload.back_to_file_upload, methods=["POST"])
-        # app.add_url_rule('/visualizer', 'visualizer', routes.visualizer)
+        app.add_url_rule('/visualizer', 'load_visualizer', file_upload.load_visualizer, methods=[ "POST"])
+        app.add_url_rule('/new_files', 'new_files', file_upload.new_files, methods=["POST"])
 
     return app

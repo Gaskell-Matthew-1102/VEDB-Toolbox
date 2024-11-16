@@ -215,21 +215,23 @@ def upload_video():
                                    failed_video_upload=failed_video_upload, failed_data_upload=failed_data_upload)
 
         #Runs if files are correctly uploaded and validated, naming convention for viewer (needs to be in static folder)
+        # This code works when the application is run from run_me.py (outside of flaskr folder)
+        # If that starting point is moved to init, need to modify this to take out "flaskr/" from the renames and appends
         for filename in video_file_list:
             if "worldPrivate" in filename:
-                os.rename(filename, "static/worldvideo.mp4")
+                os.rename(filename, "flaskr/static/worldvideo.mp4")
             elif "eye0" in filename:
-                os.rename(filename, "static/eye0.mp4")
+                os.rename(filename, "flaskr/static/eye0.mp4")
             elif "eye1" in filename:
-                os.rename(filename, "static/eye1.mp4")
+                os.rename(filename, "flaskr/static/eye1.mp4")
             elif "csv" in filename:
-                os.rename(filename, "static/datatable.csv")
+                os.rename(filename, "flaskr/static/datatable.csv")
 
         video_file_list.clear()
-        video_file_list.append("static/worldvideo.mp4")
-        video_file_list.append("static/eye0.mp4")
-        video_file_list.append("static/eye1.mp4")
-        video_file_list.append("static/datatable.csv")
+        video_file_list.append("flaskr/static/worldvideo.mp4")
+        video_file_list.append("flaskr/static/eye0.mp4")
+        video_file_list.append("flaskr/static/eye1.mp4")
+        video_file_list.append("flaskr/static/datatable.csv")
 
         print(video_file_list)
 
@@ -283,7 +285,8 @@ def upload_video_link():
         except:
             # Change this to form show/hide
             set_failed_link(1, True)
-            return "<h1>The download has failed.</h1>"
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         folders_list = []
         current_working_dir = os.getcwd()
@@ -352,7 +355,9 @@ def upload_data_link():
             extract_unzip(data_link)
         except:
             #Change this to form show/hide
-            return "<h1>The download has failed.</h1>"
+            set_failed_link(2, True)
+            return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
+                                   failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         folders_list = []
         current_working_dir = os.getcwd()
@@ -434,6 +439,14 @@ def load_visualizer():
             return render_template("visualizer/visualizer.html")
         else:
             raise Exception(f"Invalid Action") #how did it get here
+
+#Function ran when the viewer's exit viewer button is clicked (maybe move this to viewer.py)
+def new_files():
+    if request.method == "POST":
+        reset_failures()
+        delete_files_in_list(video_file_list)
+        delete_files_in_list(data_file_list)
+        return main()
 
 # if __name__ == '__main__':
 #     app.run(debug=True)
