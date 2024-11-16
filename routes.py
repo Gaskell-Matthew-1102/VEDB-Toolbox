@@ -66,5 +66,9 @@ def home():
     return render_template("home.html")
 
 def dashboard():
-    users = Users.query.all()
-    return render_template('dashboard.html', users=users, Users=Users)
+    user = Users.query.filter_by(username=current_user.username).first()
+    if user.administrator:
+        users = Users.query.all()
+        return render_template('dashboard.html', users=users, Users=Users)
+    else:
+        return render_template("home.html")
