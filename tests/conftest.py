@@ -31,6 +31,6 @@ def init_database(test_client, new_test_user):
 
 @pytest.fixture(scope='module')
 def test_login(test_client):
-    test_client.post('/login', data={'username': 'testlogin', 'password': 'testpassword'})
+    test_client.post('/login', data={'username': 'test', 'password': 'password'})
     yield
     test_client.get('/logout')

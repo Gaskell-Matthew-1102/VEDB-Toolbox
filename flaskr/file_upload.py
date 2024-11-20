@@ -1,3 +1,5 @@
+import shutil
+
 from flask import *
 import atexit
 import os
@@ -45,13 +47,17 @@ def set_showform(form_num: int, flag: bool) -> None:
         global show_form2
         show_form2 = flag
 
-def set_is_folder(form_num: int, flag: bool) -> None:
+def set_is_folder(form_num: int, flag: bool, name: str) -> None:
     if form_num == 1:
         global are_videos_in_folder
         are_videos_in_folder = flag
+        global video_folder_name
+        video_folder_name = name
     elif form_num == 2:
         global is_data_in_folder
         is_data_in_folder = flag
+        global data_folder_name
+        data_folder_name = name
 
 def get_is_folder(form_num: int) -> bool:
     if form_num == 1:
@@ -112,6 +118,14 @@ def delete_files_on_exit() -> None:
     for file in data_file_list:
         if os.path.isfile(file):
             os.remove(file)
+    if get_is_folder(1):
+        flask_folder = "flaskr" + "\\" + get_folder_name(1)
+        if os.path.exists(flask_folder):
+            shutil.rmtree(flask_folder)
+    if get_is_folder(2):
+        flask_folder = "flaskr" + "\\" + get_folder_name(2)
+        if os.path.exists(flask_folder):
+            shutil.rmtree(flask_folder)
 
 def validate_link(link: str, flag: int) -> bool:
     if "." not in link:
@@ -365,15 +379,21 @@ def upload_data_link():
             if folder.is_dir():
                 folders_list.append(folder)
 
+        print(folders_list)
         global data_folder_name
         for folder in folders_list:
-            if "-" not in folder and "MAC" not in folder:
-                data_folder_name = folder
-                break
+            folder_name = folder.name
+            if "fixation" not in folder_name and "static" not in folder_name and "templates" not in folder_name and "__pycache__" not in folder_name:
+                if "-" not in folder_name and "MAC" not in folder_name:
+                    data_folder_name = folder_name
+                    print(data_folder_name)
+                    break
 
-        data_dir = current_working_dir + data_folder_name
+        data_dir = current_working_dir + '\\' + "flaskr" + '\\' + data_folder_name + '\\'
+        print(data_dir)
+        files = os.listdir(data_dir)
         global data_file_list
-        for file in data_dir:
+        for file in files:
             data_file_list.append(file)
 
         print(data_file_list)
@@ -385,13 +405,14 @@ def upload_data_link():
 
         # Runs if files are correctly uploaded and validated
         set_showform(2, False)
-        set_is_folder(2, True)
+        set_is_folder(2, True, data_folder_name)
+
 
         new_data_file_list = []
         for file in data_file_list:
-            complete_file_path = data_folder_name + "/" + file
+            complete_file_path = "flaskr" + "\\" + data_folder_name + "\\" + file
             new_data_file_list.append(complete_file_path)
-            data_file_list.remove(file)
+        data_file_list.clear()
         data_file_list = new_data_file_list
 
         if get_showform(1) == False and get_showform(2) == False:
