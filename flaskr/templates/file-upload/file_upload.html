@@ -12,6 +12,7 @@
     </style>
   </head>
   <body class="body">
+  <div class="container">
     <nav class="nav">
         <div class="title_container">
             <img class="vedb_imgimg" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:100px;height:100px;">
@@ -21,6 +22,10 @@
             The Visual Experience Database Toolbox
         </h1>
     </nav>
+      <form action = '/logout'>
+          <button type="submit" class="logoutbutton">Log Out</button>
+      </form>
+  </div>
     <br>
     <h1 class="h1_title">Upload Files</h1>
     <div class="container">
@@ -87,8 +92,9 @@
         {% if failed_data_link %}
                 <p class="fail-text">Incorrect data link uploaded. Either the link was invalid or the files could not be downloaded. Please try again, or refer to the link below for help.</p>
         {% endif %}
-    <h3 class="h3">Help</h3>
-        <p style="text-align: center">Not sure what files to upload or links to enter? Please click <a href="/upload_help">here for help.</a></p>
     </div>
+   <h3 class="h3">Help</h3>
+        <p style="text-align: center">Not sure what files to upload or links to enter? Please click <a href="/upload_help">here for help.</a></p>
+
   </body>
 </html>

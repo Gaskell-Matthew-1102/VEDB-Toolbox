@@ -69,10 +69,13 @@ def logout():
     return redirect(url_for("home"))
 
 # Dashboard Route
-def admin_dashboard():
-    # to leon. work on making this not display the password hashes. bc why
-    users = Users.query.all()
-    return render_template('user-tools/admin-dashboard.html', users=users, Users=Users)
+def dashboard():
+    user = Users.query.filter_by(username=current_user.username).first()
+    if user.administrator:
+        users = Users.query.all()
+        return render_template('user-tools/dashboard.html', users=users, Users=Users)
+    else:
+        return redirect(url_for("home"))
 
 def upload_help():
     return render_template("file-upload/file_upload_help.html")
