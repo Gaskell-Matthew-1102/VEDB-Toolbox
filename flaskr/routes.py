@@ -73,9 +73,9 @@ def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
         users = Users.query.all()
-        return render_template('dashboard.html', users=users, Users=Users)
+        return render_template('user-tools/dashboard.html', users=users, Users=Users)
     else:
-        return render_template("home.html")
+        return redirect(url_for("home"))
 
 def upload_help():
     return render_template("file-upload/file_upload_help.html")
