@@ -3,8 +3,17 @@
 from flask import render_template, redirect, flash, url_for
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, Users
-from forms import LoginForm, RegistrationForm
+from .models import db, Users
+from .file_upload import *
+from .forms import LoginForm, RegistrationForm
+
+# Home route
+def home():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    show_form1 = get_showform(1)
+    show_form2 = get_showform(2)
+    return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 # Register route
 def register():
@@ -34,7 +43,7 @@ def register():
         flash("Registration successful! Welcome.", "success")
         return redirect(url_for("home"))
 
-    return render_template("register.html", form=form)
+    return render_template("auth/register.html", form=form)
 
 # Login route
 def login():
@@ -52,23 +61,20 @@ def login():
         else:
             flash("Invalid username/password!", "danger")
 
-    return render_template("login.html", form=form)
+    return render_template("auth/login.html", form=form)
 
 # Logout route
 def logout():
     logout_user()
     return redirect(url_for("home"))
 
-# Home route
-def home():
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))  # Redirect to the login page if the user is not logged in
-    return render_template("home.html")
+# Dashboard Route
+def admin_dashboard():
+    # to leon. work on making this not display the password hashes. bc why
+    users = Users.query.all()
+    return render_template('user-tools/admin-dashboard.html', users=users, Users=Users)
 
-def dashboard():
-    user = Users.query.filter_by(username=current_user.username).first()
-    if user.administrator:
-        users = Users.query.all()
-        return render_template('dashboard.html', users=users, Users=Users)
-    else:
-        return render_template("home.html")
+def upload_help():
+    return render_template("file-upload/file_upload_help.html")
+
+# def visualizer():

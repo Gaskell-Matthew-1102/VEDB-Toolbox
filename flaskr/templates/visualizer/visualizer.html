@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Waltuh</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='../static/file-upload/stylesheet.css') }}">
+        <script>
+            function play_pause(){
+                var world_video = document.getElementById("worldvideo")
+                var eye0_video = document.getElementById("eye0video")
+                var eye1_video = document.getElementById("eye1video")
+                if(world_video.paused){
+                    world_video.play();
+                    eye0_video.play();
+                    eye1_video.play();
+                }
+                else{
+                    world_video.pause();
+                    eye0_video.pause();
+                    eye1_video.pause();
+                }
+            }
+            function skip_10_forward(){
+                var world_video = document.getElementById("worldvideo")
+                var eye0_video = document.getElementById("eye0video")
+                var eye1_video = document.getElementById("eye1video")
+                world_video.currentTime += 10;
+                eye0_video.currentTime += 10;
+                eye1_video.currentTime += 10;
+            }
+            function skip_10_backward(){
+                var world_video = document.getElementById("worldvideo")
+                var eye0_video = document.getElementById("eye0video")
+                var eye1_video = document.getElementById("eye1video")
+                world_video.currentTime -= 10;
+                eye0_video.currentTime -= 10;
+                eye1_video.currentTime -= 10;
+            }
+            function stop_video(){
+                var world_video = document.getElementById("worldvideo")
+                var eye0_video = document.getElementById("eye0video")
+                var eye1_video = document.getElementById("eye1video")
+                world_video.currentTime = 0;
+                eye0_video.currentTime = 0;
+                eye1_video.currentTime = 0;
+                world_video.pause();
+                eye0_video.pause();
+                eye1_video.pause();
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+          <div class="container">
+            <h1 class="logo">VEDB ToolBox</h1>
+            <strong><nav>
+              <ul class="menu">
+    <!--            add some account information here i would say-->
+              </ul>
+            </nav></strong>
+          </div>
+        </header>
+        
+        <script src="" async defer></script>
+
+        <h1>Viewer</h1>
+
+        <video id="worldvideo" width="512" height="384">
+            <source src="{{ url_for('static', filename='../static/worldvideo.mp4') }}" type="video/mp4">
+            Browser support failed.
+        </video>
+        <video id="eye0video" width="200" height="200">
+            <source src="{{ url_for('static', filename='../static/eye0.mp4') }}" type="video/mp4">
+            Browser support failed.
+        </video>
+        <video id="eye1video" width="200" height="200">
+            <source src="{{ url_for('static', filename='../static/eye1.mp4') }}" type="video/mp4">
+            Browser support failed.
+        </video>
+        <button onclick="skip_10_backward()">Backward 10 Sec</button>
+        <button onclick="play_pause()">Play/Pause</button>
+        <button onclick="stop_video()">Stop</button>
+        <button onclick="skip_10_forward()">Forward 10 Sec</button>
+        <form action = "/new_files" method="POST">
+                <button type="submit" onclick="stop_video()">Exit Viewer</button>
+            </form>
+    </body>
+</html>
