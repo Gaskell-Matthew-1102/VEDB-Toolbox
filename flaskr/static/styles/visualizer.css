@@ -1,0 +1,18 @@
+/*Hold all of the video control buttons*/
+.controls_container {
+    border: 5px solid #000000;
+    border-radius: 50px 50px 50px 50px;
+    background-color: #000000;
+    position: fixed;
+    bottom: 0;
+    width: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100px;
+}
+
+.body{
+    margin: 0;
+    padding: 0;
+    background-color: #8ca8cc79;
+}

@@ -6,7 +6,7 @@
         <title>Waltuh</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ url_for('static', filename='../static/file-upload/stylesheet.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='../static/styles/visualizer.css') }}">
         <script>
             function play_pause(){
                 var world_video = document.getElementById("worldvideo")
@@ -52,7 +52,7 @@
             }
         </script>
     </head>
-    <body>
+    <body class="body">
         <header>
           <div class="container">
             <h1 class="logo">VEDB ToolBox</h1>
@@ -80,12 +80,14 @@
             <source src="{{ url_for('static', filename='../static/eye1.mp4') }}" type="video/mp4">
             Browser support failed.
         </video>
-        <button onclick="skip_10_backward()">Backward 10 Sec</button>
-        <button onclick="play_pause()">Play/Pause</button>
-        <button onclick="stop_video()">Stop</button>
-        <button onclick="skip_10_forward()">Forward 10 Sec</button>
-        <form action = "/new_files" method="POST">
-                <button type="submit" onclick="stop_video()">Exit Viewer</button>
-            </form>
+        <div class="controls_container">
+            <button onclick="skip_10_backward()">Backward 10 Sec</button>
+            <button onclick="play_pause()">Play/Pause</button>
+            <button onclick="stop_video()">Stop</button>
+            <button onclick="skip_10_forward()">Forward 10 Sec</button>
+            <form action = "/new_files" method="POST">
+                    <button type="submit" onclick="stop_video()">Exit Viewer</button>
+                </form>
+        </div>
     </body>
 </html>

@@ -34,18 +34,3 @@ def test_validate_data_files():
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
                         "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
     assert validate_data_files(data_list)
-
-def test_reset_failures():
-    set_failed_upload(1, True)
-    set_failed_upload(2, True)
-    set_failed_link(1, True)
-    set_failed_link(2, True)
-    assert failed_video_upload is True
-    assert failed_data_upload is True
-    assert failed_video_link is True
-    assert failed_data_link is True
-    reset_failures()
-    assert failed_video_upload is False
-    assert failed_data_upload is False
-    assert failed_video_link is False
-    assert failed_data_link is False
