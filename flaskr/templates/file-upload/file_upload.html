@@ -36,6 +36,7 @@
                 <input type="file" name="file" value="Choose Video Files" multiple />
                 <input type = "submit" value="Upload Video Files">
             </form>
+            <h3 class="h3">OR</h3>
         {% endif %}
             {% if show_form1 %}
             <form action = "/upload_video_link" method="POST" enctype="multipart/form-data">
@@ -48,7 +49,7 @@
             {% if not show_form1 %}
             <p class="success-text">Sucess!</p>
             <form action = "/upload_different_video" method="POST">
-                <button type="submit">Upload Different Video Files</button>
+                <button type="submit" class="different_files_button">Upload Different Video Files</button>
             </form>
         {% endif %}
             </div>
@@ -59,6 +60,7 @@
                 <input type="file" name="file" value="Choose Data Files" multiple />
                 <input type = "submit" value="Upload Data Files">
             </form>
+            <h3 class="h3">OR</h3>
         {% endif %}
         {% if show_form2 %}
             <form action = "/upload_data_link" method="POST" enctype="multipart/form-data">
@@ -71,15 +73,17 @@
             {% if not show_form2 %}
             <p class="success-text">Sucess!</p>
             <form action = "/upload_different_data" method="POST">
-                <button type="submit">Upload Different Data Files</button>
+                <button type="submit" class="different_files_button">Upload Different Data Files</button>
             </form>
         {% endif %}
             </div>
-        {% if not show_form1 and not show_form2 %}
-            <form action = '/visualizer' method="POST">
-                <button type="submit" class="back_button">Enter Visualizer</button>
-            </form>
-        {% endif %}
+        </div>
+<!--        {% if not show_form1 and not show_form2 %}-->
+<!--            <form action = '/visualizer' method="POST">-->
+<!--                <button type="submit" class="back_button">Enter Visualizer</button>-->
+<!--            </form>-->
+<!--        {% endif %}-->
+
         {% if failed_video_upload %}
                 <p class="fail-text">Incorrect video files uploaded. Please try again, or refer to the link below for help.</p>
         {% endif %}
@@ -92,7 +96,12 @@
         {% if failed_data_link %}
                 <p class="fail-text">Incorrect data link uploaded. Either the link was invalid or the files could not be downloaded. Please try again, or refer to the link below for help.</p>
         {% endif %}
-    </div>
+        {% if not show_form1 and not show_form2 %}
+            <form action = '/visualizer' method="POST">
+                <button type="submit" class="back_button">Enter Visualizer</button>
+            </form>
+        {% endif %}
+<!--    </div>-->
    <h3 class="h3">Help</h3>
         <p style="text-align: center">Not sure what files to upload or links to enter? Please click <a href="/upload_help">here for help.</a></p>
 

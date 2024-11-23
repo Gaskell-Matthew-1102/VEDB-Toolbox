@@ -32,6 +32,7 @@ def create_app(test_config=None):
     with app.app_context():
         from . import routes  # This import depends on the app context being active
         from . import file_upload
+        from . import visualizer
 
         # Register routes (this can also be modularized into blueprints if needed)
         app.add_url_rule('/', 'home', routes.home)
@@ -48,6 +49,6 @@ def create_app(test_config=None):
         app.add_url_rule('/upload_different_data', 'upload_different_data', file_upload.upload_different_data, methods=["POST"])
         app.add_url_rule('/go_back', 'back_to_file_upload', file_upload.back_to_file_upload, methods=["POST"])
         app.add_url_rule('/visualizer', 'load_visualizer', file_upload.load_visualizer, methods=[ "POST"])
-        app.add_url_rule('/new_files', 'new_files', file_upload.new_files, methods=["POST"])
+        app.add_url_rule('/new_files', 'upload_new_files', visualizer.upload_new_files, methods=["POST"])
 
     return app

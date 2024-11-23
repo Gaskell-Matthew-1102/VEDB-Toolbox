@@ -212,6 +212,7 @@ def main():
     global show_form2
     show_form2 = True
     reset_failures()
+    new_files()
 
     return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
@@ -438,7 +439,6 @@ def upload_data_link():
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 #The following two functions provide functionality for uploading different files after previous file upload, for both video and data
-# @app.route('/upload_different_video', methods=['POST'])
 def upload_different_video():
     if request.method == 'POST':
         reset_failures()
@@ -449,7 +449,6 @@ def upload_different_video():
         show_form1 = True
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-# @app.route('/upload_different_data', methods=['POST'])
 def upload_different_data():
     if request.method == 'POST':
         reset_failures()
@@ -460,17 +459,17 @@ def upload_different_data():
         show_form2 = True
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-# @app.route('/upload_help')
+# This function renders the page that has helpful information on file upload conventions
 def upload_help():
     reset_failures()
     return render_template("file-upload/file_upload_help.html")
 
-# @app.route('/go_back', methods=['POST'])
+# Return to main file upload from help, renders saved state
 def back_to_file_upload():
     if request.method == 'POST':
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-# @app.route('/visualizer', methods=['POST'])
+# Loads the visualizer once files have been correctly uploaded
 def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
@@ -480,11 +479,7 @@ def load_visualizer():
 
 #Function ran when the viewer's exit viewer button is clicked (maybe move this to viewer.py)
 def new_files():
-    if request.method == "POST":
-        reset_failures()
-        delete_files_in_list(video_file_list)
-        delete_files_in_list(data_file_list)
-        return main()
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
+    reset_failures()
+    delete_files_in_list(video_file_list)
+    delete_files_in_list(data_file_list)
+    return

@@ -81,13 +81,11 @@ def get_video_duration(vid_file):
 
 #This function will run when user presses an Upload New Files button, removes current files, returns to file upload screen
 @app.route("/new_files", methods=["POST"])
-def upload_new_files() -> None:
+def upload_new_files():
     if request.method == "POST":
-        #code here likely to end/close video playback, anything that is using a file
-
-        file_upload.delete_files_in_list(video_list)
-        file_upload.delete_files_in_list(data_list)
-        file_upload.main()
+         return file_upload.main()
+        # file_upload.delete_files_in_list(video_list)
+        # file_upload.delete_files_in_list(data_list)
 
 # This function will run when a user chooses to log out, NEEDS CODE TO RETURN TO LOGIN SCREEN
 @app.route("/visualizer_logout", methods=["POST"])
@@ -108,6 +106,7 @@ def logout() -> None:
 
 @app.route("/visualizer")
 def main():
+    setup()
     return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
                            worldvideo_filename=worldvideo_filename)
 

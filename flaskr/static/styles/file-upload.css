@@ -207,3 +207,8 @@ body {
 .logoutbutton:active{
      background-color: #8ca8cc79;
 }
+
+.different_files_button{
+    display: block;
+    margin: auto;
+}
