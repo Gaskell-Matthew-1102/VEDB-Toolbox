@@ -1,0 +1,155 @@
+<!doctype html>
+
+{% from 'bootstrap5/form.html' import render_form %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+      
+  
+  
+  .card{
+  
+  width: 400px;
+  border:none;
+
+}
+
+
+
+
+.btr{
+
+  border-top-right-radius: 5px !important;
+}
+
+
+.btl{
+
+  border-top-left-radius: 5px !important;
+}
+
+.btn-dark {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+
+.btn-dark:hover {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+
+.nav-pills{
+
+  display:table !important;
+  width:100%;
+}
+
+.nav-pills .nav-link {
+    border-radius: 0px;
+        border-bottom: 1px solid #0d6efd40;
+
+}
+
+.nav-item{
+      display: table-cell;
+       background: #0d6efd2e;
+}
+
+
+.form{
+
+  padding: 10px;
+      height: 300px;
+}
+
+.form input{
+
+  margin-bottom: 12px;
+  border-radius: 3px;
+}
+
+
+.form input:focus{
+
+  box-shadow: none;
+}
+
+
+.form button{
+
+  margin-top: 20px;
+}
+    </style>
+  </head>
+
+  <body>
+
+    <div class="px-4 py-5 my-5 text-center">
+        <img class="d-block mx-auto mb-4" src="vedblogo.png" alt="" width="72" height="72">
+        <h1 class="display-5 fw-bold text-body-emphasis">Welcome to the VEDB Toolbox</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4">The Visual Experiences Database is a large dataset of egocentric videos and associated data that can be used for vision science research. To make it more accessible, we have developed a Toolbox to view the stuff easier.</p>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center mt-5">
+      <div class="card">
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+              <li class="nav-item text-center">
+                <a class="nav-link active btl" id="pills-home-tab" data-bs-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Login</a>
+              </li>
+              <li class="nav-item text-center">
+                <a class="nav-link btr" id="pills-profile-tab" data-bs-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Signup</a>
+              </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                {{ render_form(login_form) }}
+              </div>
+  
+              <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                {{ render_form(signup_form) }}
+              </div>
+            </div>             
+        </div>
+      </div>
+
+      <div class="container col-xxl-8 px-4 py-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+          <div class="col-10 col-sm-8 col-lg-6">
+            <img src="vedblogo.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+          </div>
+          <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">What is the VEDB?</h1>
+            <p class="lead">Lorem ipsum odor amet, consectetuer adipiscing elit. Magna mi potenti potenti quisque feugiat porttitor. Arcu litora consectetur metus vehicula, inceptos lobortis. Nascetur nullam augue commodo tincidunt tortor curae laoreet quis.</p>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <div class="container col-xxl-8 px-4 py-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+          <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">What kind of data can you see?</h1>
+            <p class="lead">Lorem ipsum odor amet, consectetuer adipiscing elit. Magna mi potenti potenti quisque feugiat porttitor. Arcu litora consectetur metus vehicula, inceptos lobortis. Nascetur nullam augue commodo tincidunt tortor curae laoreet quis.</p>
+          </div>
+          <div class="col-10 col-sm-8 col-lg-6">
+            <img src="vedblogo.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+          </div>
+
+        </div>
+      </div>
+
+  </body>
+</html>
