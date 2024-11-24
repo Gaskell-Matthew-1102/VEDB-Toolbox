@@ -16,3 +16,7 @@
     padding: 0;
     background-color: #8ca8cc79;
 }
+
+.eye0_video{
+    transform: rotate(180deg);
+}

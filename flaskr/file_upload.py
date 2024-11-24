@@ -144,7 +144,7 @@ def delete_files_on_exit() -> None:
     for file in data_file_list:
         if os.path.isfile(file):
             os.remove(file)
-    delete_folder()
+    delete_folders()
 
 #This function validates that the link submitted is an actual link, and goes to the correct website w/ downloadable (can't really go further)
 def validate_link(link: str, flag: int) -> bool:

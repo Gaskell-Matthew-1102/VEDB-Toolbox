@@ -1,5 +1,10 @@
+import io
+import msgpack
+import pandas as pd
+import plotly.express as px
+import matplotlib.pyplot as plt
 from flaskr import file_upload
-from .file_upload import *
+from flaskr.file_upload import *
 
 import cv2
 app = Flask(__name__)
@@ -95,11 +100,58 @@ def logout() -> None:
             shutil.rmtree("__MACOSX")
         #some code here to run logout functionality
 
-@app.route("/visualizer")
 def main():
-    setup()
-    return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
-                           worldvideo_filename=worldvideo_filename)
+    print("here")
+    graphing()
+
+    # setup()
+    # return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
+    #                        worldvideo_filename=worldvideo_filename)
+
+# The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
+# of Paul MacNeilage's Self Motion Lab
+def read_pldata(path):
+    with open(path, 'rb') as file:
+        unpacker = msgpack.Unpacker(file, raw=False)
+        data = []
+        for packet in unpacker:
+            data.append(packet)
+    return data
+
+def parse_pldata(data):
+    unpacker = msgpack.Unpacker(io.BytesIO(data), raw=False)
+    parsed_data = next(unpacker)
+
+    flattened = {}
+    for key, value in parsed_data.items():
+        if isinstance(value, list):
+            for i, item in enumerate(value):
+                flattened[f"{key}_{i}"] = item
+        else:
+            flattened[key] = value
+
+    return flattened
+
+def graphing():
+    # if get_is_folder(2):
+    #     path = "flaskr/" + data_folder_name + "/odometry.pldata"
+    #     odometry_data = read_pldata(path)
+    # else:
+    #     odometry_data = read_pldata("flaskr/odometry.pldata")
+
+    odometry_data = read_pldata("odometry.pldata")
+
+    df = pd.DataFrame(odometry_data)
+    parsed_data = parse_pldata(pd.DataFrame(odometry_data)[1].iloc[0])
+    list_all = []
+    for i in range(len(df)):
+        list_all.append(parse_pldata(df[1].iloc[0]))
+
+    print(parsed_data)
+
+    # fig = px.line(list_all, x='timestamp', y='position_0')
+    # fig.write_image("odometry.png")
+    # fig.show(renderer="png")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()

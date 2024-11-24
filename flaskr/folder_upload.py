@@ -1,5 +1,5 @@
 import os
-from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askdirectory # needs reconfiguring to flask
 
 from flask import Flask, render_template, request, flash, redirect, url_for
 from wtforms import Form, StringField, SubmitField
@@ -7,12 +7,8 @@ from wtforms import Form, StringField, SubmitField
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'csv', 'pldata', 'npy', 'yaml', 'intrinsics', 'extrinsics'}
 
-
 #This code was not used for our current method of handling files, but may be used next semester
 #for a simpler way of utilizing locally downloaded files from a user's machine
-app = Flask(__name__)
-app.secret_key = 'paint THE sky'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 #Opens file explorer, allowing user to select the folder containing their video files, RECONFIGURE
 def get_video_path():
@@ -95,42 +91,3 @@ def validate_data_path(dpath) -> bool:
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/FileUpload', methods=['GET', 'POST'])
-def upload_video_folder():
-    video_form = VideoForm()
-    data_form = DataForm()
-
-    videoflag = False
-    dataflag = False
-
-    if video_form.submitV.data and video_form.validate():
-        videoflag = validate_video_path(video_form.submitV.data)
-
-
-    if request.method == 'POST':
-
-        vpath = request.form['video_directory']
-        dpath = request.form['data_directory']
-
-        videoflag = False
-        dataflag = False
-
-        if videoflag == False:
-            videoflag = validate_video_path(vpath)
-        elif dataflag == False:
-            dataflag = validate_data_path(dpath)
-
-        print(videoflag)
-        print(dataflag)
-
-    if videoflag == True and dataflag == False:
-        return(render_template("visualizer.html"))
-    elif videoflag == False:
-        return (render_template("visualizer.html"))
-    else:
-        return (render_template("visualizer.html"))
-
-if __name__=='__main__':
-    app.debug = True
-    app.run()
