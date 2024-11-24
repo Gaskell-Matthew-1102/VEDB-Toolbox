@@ -118,6 +118,22 @@ def delete_files_in_list(listed_files) -> None:
         if os.path.isfile(file):
             os.remove(file)
 
+def clear_lists():
+    global video_file_list
+    global data_file_list
+    video_file_list.clear()
+    data_file_list.clear()
+
+def delete_folders():
+    if get_is_folder(1):
+        flask_folder = "flaskr" + "\\" + get_folder_name(1)
+        if os.path.exists(flask_folder):
+            shutil.rmtree(flask_folder)
+    if get_is_folder(2):
+        flask_folder = "flaskr" + "\\" + get_folder_name(2)
+        if os.path.exists(flask_folder):
+            shutil.rmtree(flask_folder)
+
 #Automatically deletes populated files on exit of python program
 #could add a feature where users choose to keep these files(??)
 #If a link download was accomplished, deletes the folder created from that action
@@ -128,14 +144,7 @@ def delete_files_on_exit() -> None:
     for file in data_file_list:
         if os.path.isfile(file):
             os.remove(file)
-    if get_is_folder(1):
-        flask_folder = "flaskr" + "\\" + get_folder_name(1)
-        if os.path.exists(flask_folder):
-            shutil.rmtree(flask_folder)
-    if get_is_folder(2):
-        flask_folder = "flaskr" + "\\" + get_folder_name(2)
-        if os.path.exists(flask_folder):
-            shutil.rmtree(flask_folder)
+    delete_folder()
 
 #This function validates that the link submitted is an actual link, and goes to the correct website w/ downloadable (can't really go further)
 def validate_link(link: str, flag: int) -> bool:
@@ -444,6 +453,7 @@ def upload_different_video():
         reset_failures()
         global video_file_list
         delete_files_in_list(video_file_list)
+        video_file_list.clear()
 
         global show_form1
         show_form1 = True
@@ -454,6 +464,7 @@ def upload_different_data():
         reset_failures()
         global data_file_list
         delete_files_in_list(data_file_list)
+        data_file_list.clear()
 
         global show_form2
         show_form2 = True
@@ -477,9 +488,13 @@ def load_visualizer():
         else:
             raise Exception(f"Invalid Action") #how did it get here
 
-#Function ran when the viewer's exit viewer button is clicked (maybe move this to viewer.py)
+#Function ran when the viewer's exit viewer button is clicked
 def new_files():
-    reset_failures()
+    global video_file_list
+    global data_file_list
+
     delete_files_in_list(video_file_list)
     delete_files_in_list(data_file_list)
-    return
+
+    delete_folders()
+    clear_lists()

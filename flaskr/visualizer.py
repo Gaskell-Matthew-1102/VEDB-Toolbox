@@ -1,15 +1,7 @@
-import shutil
-
-from flask import *
-import os
-
 from flaskr import file_upload
-from moviepy.editor import *
+from .file_upload import *
 
 import cv2
-
-# from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list, get_is_folder, get_folder_name
-
 app = Flask(__name__)
 
 #Global variables for the list of video files and data files
@@ -79,13 +71,12 @@ def get_video_duration(vid_file):
     length = frames/frame_rate
     return length
 
-#This function will run when user presses an Upload New Files button, removes current files, returns to file upload screen
-@app.route("/new_files", methods=["POST"])
-def upload_new_files():
+#This function will run when user presses the Exit Visualizer button, returns to file upload with state of files saved
+def exit_visualizer():
     if request.method == "POST":
-         return file_upload.main()
-        # file_upload.delete_files_in_list(video_list)
-        # file_upload.delete_files_in_list(data_list)
+        show_form_video = get_showform(1)
+        show_form_data = get_showform(2)
+        return render_template("file-upload/file_upload.html", show_form1=show_form_video, show_form2=show_form_data)
 
 # This function will run when a user chooses to log out, NEEDS CODE TO RETURN TO LOGIN SCREEN
 @app.route("/visualizer_logout", methods=["POST"])

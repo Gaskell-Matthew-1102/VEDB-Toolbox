@@ -65,6 +65,15 @@ def login():
 
 # Logout route
 def logout():
+    show_form1 = get_showform(1)
+    show_form2 = get_showform(2)
+    if not show_form1:
+        video_files = get_video_list()
+        delete_files_in_list(video_files)
+    if not show_form2:
+        data_files = get_data_file_list()
+        delete_files_in_list(data_files)
+    clear_lists()
     logout_user()
     return redirect(url_for("home"))
 
