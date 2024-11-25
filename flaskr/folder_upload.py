@@ -79,11 +79,13 @@ def validate_data_path(dpath) -> bool:
     folder_count = count_folders(dpath)
     if folder_count > 1 and 20 >= file_count <= 10:
         return False
-    required_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
-                      "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata"]
+    acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
+                        "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
+                        "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
+                        "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
     file_list = list_files(dpath)
     for filename in file_list:
-        if filename not in required_files:
+        if filename not in acceptable_files:
             return False
     return True
 

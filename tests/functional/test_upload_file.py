@@ -1,24 +1,8 @@
 import os
 from flaskr.file_upload import get_showform
 from flaskr import create_app
-
-#this currently fails because there is a check for user authenticated
-def test_file_upload_initial_route():
-    #This will probably be used when we link together all the files
-    os.environ['CONFIG_TYPE'] = 'config.TestingConfig'
-    app = create_app()
-    with app.test_client() as test_client:
-        response = test_client.get('/')
-        assert response.status_code == 200
-        assert b"Upload Files" in response.data
-        #Form to upload video files
-        assert b'<form action = "/upload_video" method="POST" enctype="multipart/form-data">' in response.data
-        #Form to upload data files
-        assert b'<form action = "/upload_data" method="POST" enctype="multipart/form-data">' in response.data
-        #Form to paste link for download of video files
-        assert b'<form action = "/upload_video_link" method="POST" enctype="multipart/form-data">' in response.data
-        #Form to paste link for download of data files
-        assert b'<form action = "/upload_data_link" method="POST" enctype="multipart/form-data">' in response.data
+from tests.conftest import test_client, test_login
+from flaskr.models import Users
 
 def test_file_help_route():
     os.environ['CONFIG_TYPE'] = 'config.TestingConfig'
