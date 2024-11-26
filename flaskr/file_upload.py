@@ -7,10 +7,13 @@ import os
 #from pathlib import Path
 #import msgpack
 #import collections
-#import pandas as pd
+import pandas as pd
 from io import BytesIO
 import zipfile
 import requests
+import matplotlib.pyplot as plt
+from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
+
 
 #Global variables
 #File lists
@@ -480,10 +483,62 @@ def back_to_file_upload():
     if request.method == 'POST':
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
+# Generates static graphs for display in the visualizer
+def generate_graphs(filename_list: list[str]):
+    print("enter function")
+    for filename in filename_list:
+        odometry_data = read_pldata(filename)
+        df = pd.DataFrame(odometry_data)
+        linear_vel_0_list = []
+        linear_vel_1_list = []
+        linear_vel_2_list = []
+
+        linear_acceleration_0_list = []
+        linear_acceleration_1_list = []
+        linear_acceleration_2_list = []
+
+        timestamp_list = []
+        first_timestamp = parse_pldata(df[1].iloc[0])['timestamp']
+
+        for i in range(len(df)):
+            data_frame = parse_pldata(df[1].iloc[i])
+
+            data_type_1 = 'linear_velocity_0'
+            data_type_2 = 'linear_velocity_1'
+            data_type_3 = 'linear_velocity_2'
+
+            data_type_4 = 'linear_acceleration_0'
+            data_type_5 = 'linear_acceleration_1'
+            data_type_6 = 'linear_acceleration_2'
+
+            linear_vel_0_list.append(data_frame[data_type_1])
+            linear_vel_1_list.append(data_frame[data_type_2])
+            linear_vel_2_list.append(data_frame[data_type_3])
+
+            linear_acceleration_0_list.append(data_frame[data_type_4])
+            linear_acceleration_1_list.append(data_frame[data_type_5])
+            linear_acceleration_2_list.append(data_frame[data_type_6])
+
+            timestamp_list.append(data_frame['timestamp'] - first_timestamp)
+        
+        plt.plot(timestamp_list, linear_vel_0_list, label=data_type_1)
+        plt.plot(timestamp_list, linear_vel_1_list, label=data_type_2)
+        plt.plot(timestamp_list, linear_vel_2_list, label=data_type_3)
+        plt.legend()
+        plt.savefig('linear_velocity_graph.png')
+
+        plt.clf()
+        plt.plot(timestamp_list, linear_acceleration_0_list, label=data_type_4)
+        plt.plot(timestamp_list, linear_acceleration_1_list, label=data_type_5)
+        plt.plot(timestamp_list, linear_acceleration_2_list, label=data_type_6)
+        plt.legend()
+        plt.savefig('linear_acceleration_graph.png')    
+
 # Loads the visualizer once files have been correctly uploaded
 def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
+            generate_graphs(["odometry.pldata"])
             return render_template("visualizer/visualizer.html")
         else:
             raise Exception(f"Invalid Action") #how did it get here
