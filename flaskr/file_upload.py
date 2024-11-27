@@ -12,6 +12,7 @@ from io import BytesIO
 import zipfile
 import requests
 import matplotlib.pyplot as plt
+import urllib
 # from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
 
 #Global variables
@@ -182,42 +183,20 @@ def download_from_url(link: str):
     return response
 
 # Downloads video files when presented with a Databrary link. The logic for downloading a file from this site is a little different, so a new function :)
-def download_video_files(link: str) -> requests.Response:
-    cookies = {
-        'cf_clearance': 'WRiqWdK.GPHYJftBXKmzXgkJGQKmNYxHLXG.Fir.k.E-1732657382-1.2.1.1-n_QjzeWHvDnWuTRY1ktsfiXF3GrPzF.vT30gOEA1yABgBkzV5mWvDa4pAGZgHwstiUlx16qj6i6e3dJTzVBbhzF0heUGxKNch2pP3X.ib08f0ZkF4RBble2.NcvcTbaYir.Jz1CwphVwXjjTK94FDPaKIQgW2JzlIQwkcRo9XhBCrtYrhXLaGKMCCoy3HUbt3Sg936ushfQQGayilj_pfHhx4y.0DHypQgF6zsbzxsQd9ZbCnyOmwg0zN2CDy0lMZrrH3tkdrnK.ODZTvak9QdESfyVhVRV9BO3nYcY55zDYtc3tdCxtwlpHcgLDbWU0XN2P_ovDZ6ohrvXQNzuX8Nav4nNyikxsh4BsDLo9KLm.xwF6qm02q1UPNEakv4Cu',
-    }
+def download_video_files(link: str):
+    req = urllib.request.Request(link)
+    req.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7')
+    req.add_header('referer', 'https://nyu.databrary.org/volume/1612/slot/65955/zip/false')
+    req.add_header('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36')
 
-    headers = {
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'accept-language': 'en-US,en;q=0.9',
-        # 'cookie': 'cf_clearance=WRiqWdK.GPHYJftBXKmzXgkJGQKmNYxHLXG.Fir.k.E-1732657382-1.2.1.1-n_QjzeWHvDnWuTRY1ktsfiXF3GrPzF.vT30gOEA1yABgBkzV5mWvDa4pAGZgHwstiUlx16qj6i6e3dJTzVBbhzF0heUGxKNch2pP3X.ib08f0ZkF4RBble2.NcvcTbaYir.Jz1CwphVwXjjTK94FDPaKIQgW2JzlIQwkcRo9XhBCrtYrhXLaGKMCCoy3HUbt3Sg936ushfQQGayilj_pfHhx4y.0DHypQgF6zsbzxsQd9ZbCnyOmwg0zN2CDy0lMZrrH3tkdrnK.ODZTvak9QdESfyVhVRV9BO3nYcY55zDYtc3tdCxtwlpHcgLDbWU0XN2P_ovDZ6ohrvXQNzuX8Nav4nNyikxsh4BsDLo9KLm.xwF6qm02q1UPNEakv4Cu',
-        'dnt': '1',
-        'priority': 'u=0, i',
-        'referer': 'https://nyu.databrary.org/volume/1612/slot/65955/zip/false',
-        'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'same-origin',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-    }
-
-    response = requests.get('https://nyu.databrary.org/volume/1612/slot/65955/zip/false', cookies=cookies, headers=headers)
-    if(response.status_code != 200):
-        print(f"FAILED TO DOWNLOAD VIDEO FROM URL. STATUS CODE: {response.status_code}")
-    return response
+    r = urllib.request.urlopen(req).read()
+    return r
 
 # The original code for this function was given to us by Brian Szekely, a PhD student and former student of
 # Dr. MacNeilage's Self-Motion Lab. It has been slightly altered to fit our code.
 # This function takes in a respinse from a GET response and unzips it
-def extract_unzip(response: requests.Response) -> bool:
-    print(f"Response status code: {response.status_code}")
-    print(f"Response content: {response.content}")
-    zip_file = zipfile.ZipFile(BytesIO(response.content)) # get the zip file
-    print("AAA")
+def extract_unzip(response) -> bool:
+    zip_file = zipfile.ZipFile(BytesIO(response)) # get the zip file
     filepath = os.path.abspath(os.path.dirname( __file__ ))
     zip_file.extractall(filepath)
     return True
@@ -371,7 +350,6 @@ def upload_video_link():
 
         try:
             response = download_video_files(vid_link)
-            print(f"AAAAAA: {response.status_code}")
             extract_unzip(response)
         except:
             # Change this to form show/hide
@@ -389,25 +367,23 @@ def upload_video_link():
         for folder in folders_list:
             #Should pick out unzipped folder containing videos
             folder_name = folder.name
-            if "-" in folder and "pycache" not in folder:
+            if "-" in folder_name and "pycache" not in folder_name:
                 video_folder_name = folder_name
                 break
 
         video_dir = current_working_dir + '\\' + "flaskr" + '\\' + video_folder_name + '\\'
+        files = os.listdir(video_dir)
         global video_file_list
-        for file in video_dir:
+        for file in files:
             video_file_list.append(file)
-
         if validate_video_files(video_file_list) is False:
             delete_files_in_list(video_file_list)
             set_failed_upload(1, True)
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
                                    failed_data_link=failed_data_link, failed_video_link=failed_video_link)
-
         # Runs if files are correctly uploaded and validated
-        set_showform(2, False)
-        set_is_folder(2, True, video_folder_name)
-
+        set_showform(1, False)
+        set_is_folder(1, True, video_folder_name)
         new_video_file_list = []
         for file in video_file_list:
             complete_file_path = "flaskr" + "\\" + video_folder_name + "\\" + file
@@ -450,7 +426,7 @@ def upload_data_link():
 
         try:
             response = download_from_url(data_link)
-            extract_unzip(response)
+            extract_unzip(response.content)
         except:
             #Change this to form show/hide
             set_failed_link(2, True)
@@ -539,12 +515,17 @@ def back_to_file_upload():
 # The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
 # of Paul MacNeilage's Self Motion Lab.
 # They work with the pldata files, turning them into readable format for our graphing code
-def read_pldata(file_path):
-    with open(file_path, 'rb') as file:
-        unpacker = msgpack.Unpacker(file, raw=False)
-        data = []
-        for packet in unpacker:
-            data.append(packet)
+def read_pldata(file_path):    
+    try:
+        with open(file_path, 'rb') as file:
+            unpacker = msgpack.Unpacker(file, raw=False)
+            data = []
+            for packet in unpacker:
+                data.append(packet)
+    except OSError:
+        print(f'File path: "{file_path}" not found.')
+        print(f"Current working directory: {os.getcwd()}")
+        raise OSError
     return data
 
 def parse_pldata(data):
@@ -564,7 +545,7 @@ def parse_pldata(data):
 
 # Generates static graphs for display in the visualizer
 def generate_graphs(filename_list: list[str]):
-    print("enter function")
+    # assuming either 1. both files exist, 2. neither file exists
     global graph_file_list
     for filename in filename_list:
         odometry_data = read_pldata(filename)
