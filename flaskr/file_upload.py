@@ -5,15 +5,14 @@ import atexit
 import os
 #import numpy as np
 #from pathlib import Path
-#import msgpack
+import msgpack
 #import collections
 import pandas as pd
 from io import BytesIO
 import zipfile
 import requests
 import matplotlib.pyplot as plt
-from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
-
+# from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
 
 #Global variables
 #File lists
@@ -37,6 +36,7 @@ is_data_in_folder = False
 #Folder name variables (definitely need these)
 video_folder_name = ""
 data_folder_name = ""
+processed_gaze_folder = ""
 
 #FOR THE FOLLOWING GETTERS AND SETTERS: form_num is 1 for videos, 2 for data
 def get_showform(form_num: int) -> int:
@@ -136,6 +136,9 @@ def delete_folders():
         flask_folder = "flaskr" + "\\" + get_folder_name(2)
         if os.path.exists(flask_folder):
             shutil.rmtree(flask_folder)
+        mac_folder = "flaskr" + "\\" + "__MACOSX"
+        if os.path.exists(mac_folder):
+            shutil.rmtree(mac_folder)
 
 #Automatically deletes populated files on exit of python program
 #could add a feature where users choose to keep these files(??)
@@ -202,16 +205,17 @@ def validate_video_files(file_list) -> bool:
 # This function validates that the files uploaded for data are correct, can do this from naming convention
 def validate_data_files(file_list) -> bool:
     file_count = len(file_list)
-    if file_count > 15 or file_count < 10:
+    if file_count > 20 or file_count < 10:
         return False
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
                       "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
-                        "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
+                        "world_timestamps.npy", "marker_times.yaml", "world.pldata", "processedGaze", ".DS_Store"]
 
     for filename in file_list:
         if filename not in acceptable_files:
+            print(filename)
             return False
     return True
 
@@ -420,12 +424,12 @@ def upload_data_link():
                     data_folder_name = folder_name
                     break
 
+
         data_dir = current_working_dir + '\\' + "flaskr" + '\\' + data_folder_name + '\\'
         files = os.listdir(data_dir)
         global data_file_list
         for file in files:
             data_file_list.append(file)
-
 
         if validate_data_files(data_file_list) is False:
             delete_files_in_list(data_file_list)
@@ -468,6 +472,7 @@ def upload_different_data():
         global data_file_list
         delete_files_in_list(data_file_list)
         data_file_list.clear()
+        delete_folders()
 
         global show_form2
         show_form2 = True
@@ -482,6 +487,33 @@ def upload_help():
 def back_to_file_upload():
     if request.method == 'POST':
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+
+
+# The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
+# of Paul MacNeilage's Self Motion Lab.
+# They work with the pldata files, turning them into readable format for our graphing code
+def read_pldata(file_path):
+    with open(file_path, 'rb') as file:
+        unpacker = msgpack.Unpacker(file, raw=False)
+        data = []
+        for packet in unpacker:
+            data.append(packet)
+    return data
+
+def parse_pldata(data):
+    unpacker = msgpack.Unpacker(BytesIO(data), raw=False)
+    parsed_data = next(unpacker)
+
+    # flatten nested structures
+    flattened = {}
+    for key, value in parsed_data.items():
+        if isinstance(value, list):
+            for i, item in enumerate(value):
+                flattened[f"{key}_{i}"] = item
+        else:
+            flattened[key] = value
+
+    return flattened
 
 # Generates static graphs for display in the visualizer
 def generate_graphs(filename_list: list[str]):
