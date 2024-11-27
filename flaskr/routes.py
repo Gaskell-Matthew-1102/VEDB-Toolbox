@@ -11,9 +11,9 @@ from .forms import LoginForm, RegistrationForm
 def home():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-    show_form1 = get_showform(1)
-    show_form2 = get_showform(2)
-    return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+    form1 = True
+    form2 = True
+    return render_template("file-upload/file_upload.html", show_form1=form1, show_form2=form2)
 
 # Register route
 def register():
@@ -73,6 +73,9 @@ def logout():
     if not show_form2:
         data_files = get_data_file_list()
         delete_files_in_list(data_files)
+    if not show_form1 and not show_form2:
+        graph_files = get_graph_file_list()
+        delete_files_in_list(graph_files)
     clear_lists()
     logout_user()
     return redirect(url_for("home"))
