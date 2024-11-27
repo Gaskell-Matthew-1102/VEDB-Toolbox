@@ -17,6 +17,105 @@
     background-color: #8ca8cc79;
 }
 
+.header_bar{
+    width: 100%;
+    background-color: #222287;
+    height: 40px;
+    top: 0;
+    margin: 0;
+}
+
+.header_text {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.parent_container{
+    width: 100%;
+    background-color: #8ca8cc79;
+    margin: auto;
+}
+
+.video_container{
+    width: 63%;
+    float: left;
+}
+
+.world_video_container{
+    width: 76%;
+    float: left;
+}
+
+.eye_videos_container{
+    width: 24%;
+    display: flex;
+    float: right;
+    position: relative
+}
+
+.graph_container{
+    width: 32%;
+    float: right;
+    position: relative;
+    justify-content: center;
+}
+
+.graph1{
+    position: absolute;
+    top: 0;
+    border: 1px black solid;
+}
+
+.graph2{
+    position: absolute;
+    border: 1px black solid;
+    top: 240px;
+}
+
+.title_container {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.container {
+    flex-direction: row;
+    display: flex;
+    column-gap: 0px;
+    align-items: center;
+    justify-content: left;
+    width: 100%;
+    overflow: hidden;
+}
+
+.nav {
+    background-color: #222287;
+    margin-left: -10px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    border: 5px solid #07062b;
+    border-radius: 0px 50px 50px 0px;
+    padding-right: 550px;
+}
+
+.h1 {
+    color: white;
+    font-weight: lighter;
+    font-size: 40px;
+    text-indent: 10px;
+    margin-top: 15px;
+    font-family: "Courier New", Courier, monospace;
+}
+
 .eye0_video{
+    position: absolute;
     transform: rotate(180deg);
+}
+
+.eye1_video{
+    position: absolute;
+    top: 300px;
 }

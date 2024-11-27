@@ -47,7 +47,7 @@
             </form>
         {% endif %}
             {% if not show_form1 %}
-            <p class="success-text">Sucess!</p>
+            <p class="success-text">Success!</p>
             <form action = "/upload_different_video" method="POST">
                 <button type="submit" class="different_files_button">Upload Different Video Files</button>
             </form>
@@ -71,7 +71,7 @@
             </form>
         {% endif %}
             {% if not show_form2 %}
-            <p class="success-text">Sucess!</p>
+            <p class="success-text">Success!</p>
             <form action = "/upload_different_data" method="POST">
                 <button type="submit" class="different_files_button">Upload Different Data Files</button>
             </form>
@@ -83,7 +83,7 @@
 <!--                <button type="submit" class="back_button">Enter Visualizer</button>-->
 <!--            </form>-->
 <!--        {% endif %}-->
-
+    <div class="bottom_container">
         {% if failed_video_upload %}
                 <p class="fail-text">Incorrect video files uploaded. Please try again, or refer to the link below for help.</p>
         {% endif %}
@@ -98,12 +98,18 @@
         {% endif %}
         {% if not show_form1 and not show_form2 %}
             <form action = '/visualizer' method="POST">
-                <button type="submit" class="back_button">Enter Visualizer</button>
+                <button type="submit" class="enter_button">Enter Visualizer</button>
             </form>
+        <br>
+        <br>
+        <br>
         {% endif %}
-<!--    </div>-->
+    </div>
+  <div class="bottom_container">
    <h3 class="h3">Help</h3>
+      </div>
+      <div class="bottom_container">
         <p style="text-align: center">Not sure what files to upload or links to enter? Please click <a href="/upload_help">here for help.</a></p>
-
+    </div>
   </body>
 </html>
