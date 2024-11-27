@@ -583,7 +583,7 @@ def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
             if get_is_folder(2):
-                file_to_graph = get_folder_name(2) + "\\" + "odometry.pldata"
+                file_to_graph = "flaskr/" + get_folder_name(2) + "/odometry.pldata"
             else:
                 file_to_graph = "odometry.pldata"
             generate_graphs([file_to_graph])
