@@ -73,6 +73,9 @@ def logout():
     if not show_form2:
         data_files = get_data_file_list()
         delete_files_in_list(data_files)
+    if not show_form1 and not show_form2:
+        graph_files = get_graph_file_list()
+        delete_files_in_list(graph_files)
     clear_lists()
     logout_user()
     return redirect(url_for("home"))

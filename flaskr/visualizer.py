@@ -101,7 +101,7 @@ def logout() -> None:
         #some code here to run logout functionality
 
 def main():
-    # setup()
+    setup()
     # return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
     #                        worldvideo_filename=worldvideo_filename)
 

@@ -72,14 +72,16 @@
             <source src="{{ url_for('static', filename='../static/worldvideo.mp4') }}" type="video/mp4">
             Browser support failed.
         </video>
-        <video id="eye0video" width="200" height="200" class="eye0_video" controls>
+        <video id="eye0video" width="200" height="200" class="eye0_video">
             <source src="{{ url_for('static', filename='../static/eye0.mp4') }}" type="video/mp4">
             Browser support failed.
         </video>
-        <video id="eye1video" width="200" height="200" controls>
+        <video id="eye1video" width="200" height="200">
             <source src="{{ url_for('static', filename='../static/eye1.mp4') }}" type="video/mp4">
             Browser support failed.
         </video>
+        <img src="{{ url_for('static', filename='../static/linear_velocity_graph.png') }}" alt="Linear Velocity Graph">
+        <img src="{{ url_for('static', filename='../static/linear_acceleration_graph.png') }}" alt="Linear Acceleration Graph">
         <div class="controls_container">
             <button onclick="skip_10_backward()">Backward 10 Sec</button>
             <button onclick="play_pause()">Play/Pause</button>

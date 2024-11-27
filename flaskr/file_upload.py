@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 #File lists
 video_file_list = []
 data_file_list = []
+graph_file_list = []
 
 #Forms for file/link upload
 show_form1 = True
@@ -108,6 +109,9 @@ def get_video_list() -> list:
 def get_data_file_list() -> list:
     return data_file_list
 
+def get_graph_file_list() -> list:
+    return graph_file_list
+
 # Used for the name of the folder holding video/data files when downloaded from a link
 def get_folder_name(form_num: int) -> str:
     if form_num == 1:
@@ -124,8 +128,10 @@ def delete_files_in_list(listed_files) -> None:
 def clear_lists():
     global video_file_list
     global data_file_list
+    global graph_file_list
     video_file_list.clear()
     data_file_list.clear()
+    graph_file_list.clear()
 
 def delete_folders():
     if get_is_folder(1):
@@ -148,6 +154,9 @@ def delete_files_on_exit() -> None:
         if os.path.isfile(file):
             os.remove(file)
     for file in data_file_list:
+        if os.path.isfile(file):
+            os.remove(file)
+    for file in graph_file_list:
         if os.path.isfile(file):
             os.remove(file)
     delete_folders()
@@ -518,6 +527,7 @@ def parse_pldata(data):
 # Generates static graphs for display in the visualizer
 def generate_graphs(filename_list: list[str]):
     print("enter function")
+    global graph_file_list
     for filename in filename_list:
         odometry_data = read_pldata(filename)
         df = pd.DataFrame(odometry_data)
@@ -557,20 +567,26 @@ def generate_graphs(filename_list: list[str]):
         plt.plot(timestamp_list, linear_vel_1_list, label=data_type_2)
         plt.plot(timestamp_list, linear_vel_2_list, label=data_type_3)
         plt.legend()
-        plt.savefig('linear_velocity_graph.png')
+        plt.savefig('flaskr/static/linear_velocity_graph.png')
+        graph_file_list.append('flaskr/static/linear_velocity_graph.png')
 
         plt.clf()
         plt.plot(timestamp_list, linear_acceleration_0_list, label=data_type_4)
         plt.plot(timestamp_list, linear_acceleration_1_list, label=data_type_5)
         plt.plot(timestamp_list, linear_acceleration_2_list, label=data_type_6)
         plt.legend()
-        plt.savefig('linear_acceleration_graph.png')    
+        plt.savefig('flaskr/static/linear_acceleration_graph.png')
+        graph_file_list.append('flaskr/static/linear_acceleration_graph.png')
 
 # Loads the visualizer once files have been correctly uploaded
 def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
-            generate_graphs(["odometry.pldata"])
+            if get_is_folder(2):
+                file_to_graph = get_folder_name(2) + "\\" + "odometry.pldata"
+            else:
+                file_to_graph = "odometry.pldata"
+            generate_graphs([file_to_graph])
             return render_template("visualizer/visualizer.html")
         else:
             raise Exception(f"Invalid Action") #how did it get here
