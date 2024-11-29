@@ -129,6 +129,28 @@ body {
      background-color: #8ca8cc79;
  }
 
+ .enter_button {
+     background-color: #222287;
+     color: #ffffff;
+     border: 5px solid #07062b;
+     border-radius: 10px;
+     position: absolute;
+     left: 40%;
+     font-family: "Courier New", Courier, monospace;
+     font-weight: bold;
+     font-size: 30px;
+     min-height: 40px;
+     min-width: 80px;
+ }
+
+.enter_button:hover{
+    color: rgb(122, 196, 223);
+}
+
+.enter_button:active{
+     background-color: #8ca8cc79;
+ }
+
 .upload-container{
     display: inline-block;
     width: 400px;
@@ -178,6 +200,7 @@ body {
     max-height:100%;
     margin: 10px;
 }
+
 .container {
     flex-direction: row;
     display: flex;
@@ -206,4 +229,19 @@ body {
 
 .logoutbutton:active{
      background-color: #8ca8cc79;
+}
+
+.different_files_button{
+    display: block;
+    margin: auto;
+}
+
+.bottom_container{
+    flex-direction: column;
+    display: flex;
+    column-gap: 0px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
 }

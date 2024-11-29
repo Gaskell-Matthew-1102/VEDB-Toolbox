@@ -2,7 +2,7 @@ import pytest
 import flaskr.file_upload
 from flaskr.file_upload import app, validate_link, validate_video_files, validate_data_files, set_failed_upload, \
     set_failed_link, reset_failures, failed_data_upload, failed_video_link, failed_data_link, failed_video_upload
-
+from flaskr.folder_upload import validate_video_path, validate_data_path
 
 def test_validate_link():
     assert not validate_link('falselink.com', 1)
@@ -34,3 +34,10 @@ def test_validate_data_files():
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
                         "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
     assert validate_data_files(data_list)
+
+# This uses file paths from my own machine, edit if running this test elsewhere
+def test_validate_paths():
+    vpath = "C:\\Users\mattg\Downloads\VEDB Toolbox Test Files\\65967-2021_03_16_17_18_42"
+    dpath = "C:\\Users\mattg\Downloads\VEDB Toolbox Test Files\\2021_03_16_17_18_42"
+    assert validate_video_path(vpath)
+    assert validate_data_path(dpath)

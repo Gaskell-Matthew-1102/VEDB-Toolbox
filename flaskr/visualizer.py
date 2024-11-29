@@ -1,15 +1,12 @@
-import shutil
-
-from flask import *
-import os
-
+import io
+import msgpack
+import pandas as pd
+import plotly.express as px
+import matplotlib.pyplot as plt
 from flaskr import file_upload
-from moviepy.editor import *
+from flaskr.file_upload import *
 
 import cv2
-
-# from flaskr.file_upload import get_video_list, get_data_file_list, delete_files_in_list, get_is_folder, get_folder_name
-
 app = Flask(__name__)
 
 #Global variables for the list of video files and data files
@@ -79,17 +76,14 @@ def get_video_duration(vid_file):
     length = frames/frame_rate
     return length
 
-#This function will run when user presses an Upload New Files button, removes current files, returns to file upload screen
-@app.route("/new_files", methods=["POST"])
-def upload_new_files() -> None:
+#This function will run when user presses the Exit Visualizer button, returns to file upload with state of files saved
+def exit_visualizer():
     if request.method == "POST":
-        #code here likely to end/close video playback, anything that is using a file
+        show_form_video = get_showform(1)
+        show_form_data = get_showform(2)
+        return render_template("file-upload/file_upload.html", show_form1=show_form_video, show_form2=show_form_data)
 
-        file_upload.delete_files_in_list(video_list)
-        file_upload.delete_files_in_list(data_list)
-        file_upload.main()
-
-# This function will run when a user chooses to log out, NEEDS CODE TO RETURN TO LOGIN SCREEN
+# This function will run when a user chooses to log out, NEEDS CODE TO RETURN TO LOG IN SCREEN
 @app.route("/visualizer_logout", methods=["POST"])
 def logout() -> None:
     if request.method == "POST":
@@ -106,10 +100,10 @@ def logout() -> None:
             shutil.rmtree("__MACOSX")
         #some code here to run logout functionality
 
-@app.route("/visualizer")
 def main():
-    return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
-                           worldvideo_filename=worldvideo_filename)
+    setup()
+    # return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
+    #                        worldvideo_filename=worldvideo_filename)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()

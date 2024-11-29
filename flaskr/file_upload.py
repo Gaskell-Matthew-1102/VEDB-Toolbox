@@ -5,17 +5,21 @@ import atexit
 import os
 #import numpy as np
 #from pathlib import Path
-#import msgpack
+import msgpack
 #import collections
-#import pandas as pd
+import pandas as pd
 from io import BytesIO
 import zipfile
 import requests
+import matplotlib.pyplot as plt
+import urllib
+# from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
 
 #Global variables
 #File lists
 video_file_list = []
 data_file_list = []
+graph_file_list = []
 
 #Forms for file/link upload
 show_form1 = True
@@ -34,6 +38,7 @@ is_data_in_folder = False
 #Folder name variables (definitely need these)
 video_folder_name = ""
 data_folder_name = ""
+processed_gaze_folder = ""
 
 #FOR THE FOLLOWING GETTERS AND SETTERS: form_num is 1 for videos, 2 for data
 def get_showform(form_num: int) -> int:
@@ -105,6 +110,9 @@ def get_video_list() -> list:
 def get_data_file_list() -> list:
     return data_file_list
 
+def get_graph_file_list() -> list:
+    return graph_file_list
+
 # Used for the name of the folder holding video/data files when downloaded from a link
 def get_folder_name(form_num: int) -> str:
     if form_num == 1:
@@ -118,6 +126,27 @@ def delete_files_in_list(listed_files) -> None:
         if os.path.isfile(file):
             os.remove(file)
 
+def clear_lists():
+    global video_file_list
+    global data_file_list
+    global graph_file_list
+    video_file_list.clear()
+    data_file_list.clear()
+    graph_file_list.clear()
+
+def delete_folders():
+    if get_is_folder(1):
+        flask_folder = "flaskr" + "\\" + get_folder_name(1)
+        if os.path.exists(flask_folder):
+            shutil.rmtree(flask_folder)
+    if get_is_folder(2):
+        flask_folder = "flaskr" + "\\" + get_folder_name(2)
+        if os.path.exists(flask_folder):
+            shutil.rmtree(flask_folder)
+        mac_folder = "flaskr" + "\\" + "__MACOSX"
+        if os.path.exists(mac_folder):
+            shutil.rmtree(mac_folder)
+
 #Automatically deletes populated files on exit of python program
 #could add a feature where users choose to keep these files(??)
 #If a link download was accomplished, deletes the folder created from that action
@@ -128,14 +157,10 @@ def delete_files_on_exit() -> None:
     for file in data_file_list:
         if os.path.isfile(file):
             os.remove(file)
-    if get_is_folder(1):
-        flask_folder = "flaskr" + "\\" + get_folder_name(1)
-        if os.path.exists(flask_folder):
-            shutil.rmtree(flask_folder)
-    if get_is_folder(2):
-        flask_folder = "flaskr" + "\\" + get_folder_name(2)
-        if os.path.exists(flask_folder):
-            shutil.rmtree(flask_folder)
+    for file in graph_file_list:
+        if os.path.isfile(file):
+            os.remove(file)
+    delete_folders()
 
 #This function validates that the link submitted is an actual link, and goes to the correct website w/ downloadable (can't really go further)
 def validate_link(link: str, flag: int) -> bool:
@@ -148,17 +173,30 @@ def validate_link(link: str, flag: int) -> bool:
     #Passes first check, still forced to hit others (exception)
     return True
 
-# The original code for this function was given to us by Brian Szekely, a PhD student and former student of
-# Dr. MacNeilage's Self-Motion Lab. It has been slightly altered to fit our code.
-# This function takes in a link, downloads a zip file from that destination, and unzips it
-def extract_unzip(link: str) -> bool:
-    zip_url = link
-    response = requests.get(zip_url)
+# Downloads files from a given link
+def download_from_url(link: str):
+    response = requests.get(link)
 
     if response.status_code != 200:
+        print(f"FAILED TO DOWNLOAD DATA FROM URL. STATUS CODE: {response.status_code}")
         raise Exception(f"Failed to download file: {response.status_code}")
+    return response
 
-    zip_file = zipfile.ZipFile(BytesIO(response.content)) # get the zip file
+# Downloads video files when presented with a Databrary link. The logic for downloading a file from this site is a little different, so a new function :)
+def download_video_files(link: str):
+    req = urllib.request.Request(link)
+    req.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7')
+    req.add_header('referer', 'https://nyu.databrary.org/volume/1612/slot/65955/zip/false')
+    req.add_header('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36')
+
+    r = urllib.request.urlopen(req).read()
+    return r
+
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of
+# Dr. MacNeilage's Self-Motion Lab. It has been slightly altered to fit our code.
+# This function takes in a respinse from a GET response and unzips it
+def extract_unzip(response) -> bool:
+    zip_file = zipfile.ZipFile(BytesIO(response)) # get the zip file
     filepath = os.path.abspath(os.path.dirname( __file__ ))
     zip_file.extractall(filepath)
     return True
@@ -190,16 +228,17 @@ def validate_video_files(file_list) -> bool:
 # This function validates that the files uploaded for data are correct, can do this from naming convention
 def validate_data_files(file_list) -> bool:
     file_count = len(file_list)
-    if file_count > 15 or file_count < 10:
+    if file_count > 20 or file_count < 10:
         return False
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
                       "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
-                        "world_timestamps.npy", "marker_times.yaml", "world.pldata"]
+                        "world_timestamps.npy", "marker_times.yaml", "world.pldata", "processedGaze", ".DS_Store"]
 
     for filename in file_list:
         if filename not in acceptable_files:
+            print(filename)
             return False
     return True
 
@@ -212,6 +251,7 @@ def main():
     global show_form2
     show_form2 = True
     reset_failures()
+    new_files()
 
     return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
@@ -309,7 +349,8 @@ def upload_video_link():
                                    failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         try:
-            extract_unzip(vid_link)
+            response = download_video_files(vid_link)
+            extract_unzip(response)
         except:
             # Change this to form show/hide
             set_failed_link(1, True)
@@ -326,25 +367,23 @@ def upload_video_link():
         for folder in folders_list:
             #Should pick out unzipped folder containing videos
             folder_name = folder.name
-            if "-" in folder and "pycache" not in folder:
+            if "-" in folder_name and "pycache" not in folder_name:
                 video_folder_name = folder_name
                 break
 
         video_dir = current_working_dir + '\\' + "flaskr" + '\\' + video_folder_name + '\\'
+        files = os.listdir(video_dir)
         global video_file_list
-        for file in video_dir:
+        for file in files:
             video_file_list.append(file)
-
         if validate_video_files(video_file_list) is False:
             delete_files_in_list(video_file_list)
             set_failed_upload(1, True)
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2,
                                    failed_data_link=failed_data_link, failed_video_link=failed_video_link)
-
         # Runs if files are correctly uploaded and validated
-        set_showform(2, False)
-        set_is_folder(2, True, video_folder_name)
-
+        set_showform(1, False)
+        set_is_folder(1, True, video_folder_name)
         new_video_file_list = []
         for file in video_file_list:
             complete_file_path = "flaskr" + "\\" + video_folder_name + "\\" + file
@@ -386,7 +425,8 @@ def upload_data_link():
                                    failed_data_link=failed_data_link, failed_video_link=failed_video_link)
 
         try:
-            extract_unzip(data_link)
+            response = download_from_url(data_link)
+            extract_unzip(response.content)
         except:
             #Change this to form show/hide
             set_failed_link(2, True)
@@ -407,12 +447,12 @@ def upload_data_link():
                     data_folder_name = folder_name
                     break
 
+
         data_dir = current_working_dir + '\\' + "flaskr" + '\\' + data_folder_name + '\\'
         files = os.listdir(data_dir)
         global data_file_list
         for file in files:
             data_file_list.append(file)
-
 
         if validate_data_files(data_file_list) is False:
             delete_files_in_list(data_file_list)
@@ -438,53 +478,145 @@ def upload_data_link():
             return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
 #The following two functions provide functionality for uploading different files after previous file upload, for both video and data
-# @app.route('/upload_different_video', methods=['POST'])
 def upload_different_video():
     if request.method == 'POST':
         reset_failures()
         global video_file_list
         delete_files_in_list(video_file_list)
+        video_file_list.clear()
 
         global show_form1
         show_form1 = True
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-# @app.route('/upload_different_data', methods=['POST'])
 def upload_different_data():
     if request.method == 'POST':
         reset_failures()
         global data_file_list
         delete_files_in_list(data_file_list)
+        data_file_list.clear()
+        delete_folders()
 
         global show_form2
         show_form2 = True
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-# @app.route('/upload_help')
+# This function renders the page that has helpful information on file upload conventions
 def upload_help():
     reset_failures()
     return render_template("file-upload/file_upload_help.html")
 
-# @app.route('/go_back', methods=['POST'])
+# Return to main file upload from help, renders saved state
 def back_to_file_upload():
     if request.method == 'POST':
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
-# @app.route('/visualizer', methods=['POST'])
+
+# The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
+# of Paul MacNeilage's Self Motion Lab.
+# They work with the pldata files, turning them into readable format for our graphing code
+def read_pldata(file_path):    
+    try:
+        with open(file_path, 'rb') as file:
+            unpacker = msgpack.Unpacker(file, raw=False)
+            data = []
+            for packet in unpacker:
+                data.append(packet)
+    except OSError:
+        print(f'File path: "{file_path}" not found.')
+        print(f"Current working directory: {os.getcwd()}")
+        raise OSError
+    return data
+
+def parse_pldata(data):
+    unpacker = msgpack.Unpacker(BytesIO(data), raw=False)
+    parsed_data = next(unpacker)
+
+    # flatten nested structures
+    flattened = {}
+    for key, value in parsed_data.items():
+        if isinstance(value, list):
+            for i, item in enumerate(value):
+                flattened[f"{key}_{i}"] = item
+        else:
+            flattened[key] = value
+
+    return flattened
+
+# Generates static graphs for display in the visualizer
+def generate_graphs(filename_list: list[str]):
+    # assuming either 1. both files exist, 2. neither file exists
+    global graph_file_list
+    for filename in filename_list:
+        odometry_data = read_pldata(filename)
+        df = pd.DataFrame(odometry_data)
+        linear_vel_0_list = []
+        linear_vel_1_list = []
+        linear_vel_2_list = []
+
+        linear_acceleration_0_list = []
+        linear_acceleration_1_list = []
+        linear_acceleration_2_list = []
+
+        timestamp_list = []
+        first_timestamp = parse_pldata(df[1].iloc[0])['timestamp']
+
+        for i in range(len(df)):
+            data_frame = parse_pldata(df[1].iloc[i])
+
+            data_type_1 = 'linear_velocity_0'
+            data_type_2 = 'linear_velocity_1'
+            data_type_3 = 'linear_velocity_2'
+
+            data_type_4 = 'linear_acceleration_0'
+            data_type_5 = 'linear_acceleration_1'
+            data_type_6 = 'linear_acceleration_2'
+
+            linear_vel_0_list.append(data_frame[data_type_1])
+            linear_vel_1_list.append(data_frame[data_type_2])
+            linear_vel_2_list.append(data_frame[data_type_3])
+
+            linear_acceleration_0_list.append(data_frame[data_type_4])
+            linear_acceleration_1_list.append(data_frame[data_type_5])
+            linear_acceleration_2_list.append(data_frame[data_type_6])
+
+            timestamp_list.append(data_frame['timestamp'] - first_timestamp)
+        
+        plt.plot(timestamp_list, linear_vel_0_list, label=data_type_1)
+        plt.plot(timestamp_list, linear_vel_1_list, label=data_type_2)
+        plt.plot(timestamp_list, linear_vel_2_list, label=data_type_3)
+        plt.legend()
+        plt.savefig('flaskr/static/linear_velocity_graph.png')
+        graph_file_list.append('flaskr/static/linear_velocity_graph.png')
+
+        plt.clf()
+        plt.plot(timestamp_list, linear_acceleration_0_list, label=data_type_4)
+        plt.plot(timestamp_list, linear_acceleration_1_list, label=data_type_5)
+        plt.plot(timestamp_list, linear_acceleration_2_list, label=data_type_6)
+        plt.legend()
+        plt.savefig('flaskr/static/linear_acceleration_graph.png')
+        graph_file_list.append('flaskr/static/linear_acceleration_graph.png')
+
+# Loads the visualizer once files have been correctly uploaded
 def load_visualizer():
     if request.method == 'POST':
         if not show_form1 and not show_form2:
+            if get_is_folder(2):
+                file_to_graph = "flaskr/" + get_folder_name(2) + "/odometry.pldata"
+            else:
+                file_to_graph = "odometry.pldata"
+            generate_graphs([file_to_graph])
             return render_template("visualizer/visualizer.html")
         else:
             raise Exception(f"Invalid Action") #how did it get here
 
-#Function ran when the viewer's exit viewer button is clicked (maybe move this to viewer.py)
+#Function ran when the viewer's exit viewer button is clicked
 def new_files():
-    if request.method == "POST":
-        reset_failures()
-        delete_files_in_list(video_file_list)
-        delete_files_in_list(data_file_list)
-        return main()
+    global video_file_list
+    global data_file_list
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+    delete_files_in_list(video_file_list)
+    delete_files_in_list(data_file_list)
+
+    delete_folders()
+    clear_lists()

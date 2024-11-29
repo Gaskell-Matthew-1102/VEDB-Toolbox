@@ -23,7 +23,7 @@ def test_client():
 @pytest.fixture(scope='module')
 def init_database(test_client, new_test_user):
     db.create_all()
-    default_user = new_test_user
+    default_user = Users(username='test', email='test@unr.edu', password='password', administrator=True)
     db.session.add(default_user)
     db.session.commit()
     yield
