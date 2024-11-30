@@ -78,8 +78,21 @@
         </div>
         <!-- data/session table -->
          <!-- https://www.youtube.com/watch?app=desktop&v=mSiqZRpgrfY -->
-         {{ render_table(users, show_actions=True, model=Users) }}
-
+        <table>
+            <tr>
+                {% for header in headings %}
+                <td>{{ header }}</td>
+                {% endfor %}
+            </tr>
+        {% for row in userlist %}
+            <tr>
+            {% for cell in row %}
+                <td>{{ cell }}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        </table>
+{#         {{ render_table(users, show_actions=True, model=Users) }}#}
     </div>
 </body>
 </html>
