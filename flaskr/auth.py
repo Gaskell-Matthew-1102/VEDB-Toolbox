@@ -76,8 +76,9 @@ def logout():
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
-        users = Users.query.all()
-        return render_template('user-tools/dashboard.html', users=users, Users=Users)
+        userlist = Users.query.with_entities(Users.username, Users.email, Users.administrator).all()
+        headings = ("Username", "Email", "Administrator")
+        return render_template('user-tools/dashboard.html', userlist=userlist, headings=headings)
     else:
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
 
