@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, Users
 from .file_upload import *
 from .forms import LoginForm, RegistrationForm
+from .search import searchBar
 
 # Home route
 def home():
@@ -76,7 +77,12 @@ def logout():
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
-        userlist = Users.query.with_entities(Users.username, Users.email, Users.administrator).all()
+        # if request.form['user_search', "none"] == "none":
+        #     filter = "none"
+        #     userlist = searchBar(filter)
+        # else:
+        #     userlist = searchBar(request.form['user_search', "none"])
+        userlist = searchBar(request.form.get('user_search', "none"))
         headings = ("Username", "Email", "Administrator")
         return render_template('user-tools/dashboard.html', userlist=userlist, headings=headings)
     else:
