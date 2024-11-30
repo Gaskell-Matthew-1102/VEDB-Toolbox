@@ -66,9 +66,14 @@
     <div class="tablecontainer">
         <!-- Search Bar -->
         <div class="searchcontainer">
+            <form action='/dashboard' method="POST">
             <div id="username-textbox-div">
-                <input class="textboxprimary" type="text" placeholder="Search user or email..">
+                <input class="textboxprimary" type="text" name="user_search" placeholder="Search user or email..">
             </div>
+                <div>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
             <div id="session-textbox-div">
                 <input class="textbox" type="text" placeholder="Search by session..">
             </div>

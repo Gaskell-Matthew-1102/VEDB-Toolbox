@@ -38,7 +38,7 @@ def create_app(test_config=None):
         app.add_url_rule('/', 'home', auth.home)
         app.add_url_rule('/landing', 'landing', auth.landing, methods=["GET", "POST"])
         app.add_url_rule('/logout', 'logout', auth.logout)
-        app.add_url_rule('/dashboard', 'dashboard', auth.dashboard)
+        app.add_url_rule('/dashboard', 'dashboard', auth.dashboard, methods=["GET", "POST"])
 
         app.add_url_rule('/upload_help', 'upload_help', file_upload.upload_help)
         app.add_url_rule('/upload_video', 'upload_video', file_upload.upload_video, methods=["POST"])
