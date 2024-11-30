@@ -69,17 +69,17 @@
             <div id="username-textbox-div">
                 <input class="textboxprimary" type="text" placeholder="Search user or email..">
             </div>
-            <div id="username-textbox-div">
+            <div id="session-textbox-div">
                 <input class="textbox" type="text" placeholder="Search by session..">
             </div>
-            <div id="username-textbox-div">
+            <div id="file-textbox-div">
                 <input class="textbox" type="text" placeholder="Search by file..">
             </div>
         </div>
         <!-- data/session table -->
          <!-- https://www.youtube.com/watch?app=desktop&v=mSiqZRpgrfY -->
         <table>
-            <tr>
+            <tr class="headings">
                 {% for header in headings %}
                 <td>{{ header }}</td>
                 {% endfor %}
