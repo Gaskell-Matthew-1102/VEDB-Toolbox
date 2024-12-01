@@ -13,3 +13,4 @@ pathlib
 scipy
 matplotlib
 opencv-python
+zipfile
