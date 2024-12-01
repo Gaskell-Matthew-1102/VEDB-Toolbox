@@ -145,10 +145,11 @@
 .headings {
     display: flex;
     align-items: center;
-    justify-content: left;
-    column-gap: 90px;
+    justify-content: center;
+    column-gap: 300px;
     background-color: #6a6a5a;
     border-radius: 10px;
-    padding-bottom: 10px;
-    width: 900px;
+    padding: 5px;
+    width: 1000px;
+    margin-left: 30px;
 }
