@@ -1,13 +1,3 @@
-.nav {
-    top: 0;
-    left: 0;
-    border-bottom: 5px solid #001c2e;
-    height: 6%;
-    width: 100%;
-    overflow: hidden;
-    position: fixed;
-    background-color: rgb(189, 189, 189);
-}
 .body {
     background-color: antiquewhite;
 }
