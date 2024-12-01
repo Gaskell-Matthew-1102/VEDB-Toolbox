@@ -49,18 +49,6 @@ body {
     background-size: 50%;
 }
 
-.nav {
-    background-color: #222287;
-    margin-left: -10px;
-    margin-right: 0px;
-    border: 5px solid #07062b;
-    border-radius: 0px 50px 50px 0px;
-    padding-right: 550px;
-    /* padding: 1em; */
-    /* margin: 0 -1em; */
-    /* border-bottom: 1px solid#222287; */
-}
-
 .subtitle {
     color: rgb(122, 196, 223);
     font-size: 20px;
