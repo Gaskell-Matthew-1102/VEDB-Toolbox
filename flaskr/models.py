@@ -1,3 +1,8 @@
+"""
+initial version took inspiration GeeksForGeeks tutorial that has
+since been reworked to only do database stuff. 100% Brian's work nonetheless
+"""
+
 # models.py
 
 from flask_sqlalchemy import SQLAlchemy

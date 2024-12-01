@@ -1,3 +1,8 @@
+"""
+an attempt to abide by Flask directory structure standards.
+100% Brian's work
+"""
+
 # app/app.py
 
 from app import create_app
