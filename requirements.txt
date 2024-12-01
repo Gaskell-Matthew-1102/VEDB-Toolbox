@@ -3,5 +3,14 @@ Flask-Login
 Flask-WTF
 Flask-SQLAlchemy
 Bootstrap-Flask
-requests
+
 plotly
+numpy
+pandas
+msgpack
+requests
+pathlib
+scipy
+matplotlib
+opencv-python
+zipfile
