@@ -65,22 +65,18 @@
     <!-- https://stackoverflow.com/questions/48057944/repeated-data-in-html-table -->
     <div class="tablecontainer">
         <!-- Search Bar -->
-        <div class="searchcontainer">
-            <form action='/dashboard' method="POST">
+        <form class="searchcontainer" action='/dashboard' method="POST">
             <div id="username-textbox-div">
-                <input class="textboxprimary" type="text" name="user_search" placeholder="Search user or email..">
+                <input class="textbox" type="text" name="user_search" placeholder="Search user or email..">
             </div>
-                <div>
-                    <input type="submit" value="Submit">
-                </div>
-            </form>
             <div id="session-textbox-div">
                 <input class="textbox" type="text" placeholder="Search by session..">
             </div>
             <div id="file-textbox-div">
                 <input class="textbox" type="text" placeholder="Search by file..">
             </div>
-        </div>
+            <div><input type="submit" value="Search"></div>
+        </form>
         <!-- data/session table -->
          <!-- https://www.youtube.com/watch?app=desktop&v=mSiqZRpgrfY -->
         <table>
