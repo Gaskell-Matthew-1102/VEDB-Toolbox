@@ -1,3 +1,10 @@
+"""
+1st version of this file was based on a DigitalOcean tutorial that has
+since been rewritten constantly to suit our needs. originally a single file
+based on that tutorial that has since been split into 5 files.
+doing so means this is 100% our (Brian, Leon, Matt, Tyler) work
+"""
+
 # app/__init__.py
 
 from flask import Flask

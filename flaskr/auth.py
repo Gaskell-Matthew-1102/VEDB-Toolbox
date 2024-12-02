@@ -1,3 +1,9 @@
+"""
+1st version of this file was based on a DigitalOcean tutorial that has
+since been rewritten constantly to suit our needs. at this point this is
+100% our (Brian, Leon) work
+"""
+
 # auth.py
 
 from flask import render_template, redirect, flash, url_for

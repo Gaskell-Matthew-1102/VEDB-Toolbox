@@ -1,3 +1,7 @@
+"""
+100% Brian's work after reading the documentation for Flask-WTF and WTForms
+"""
+
 # forms.py
 
 from flask_wtf import FlaskForm, RecaptchaField

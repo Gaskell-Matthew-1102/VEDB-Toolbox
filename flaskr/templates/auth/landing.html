@@ -1,3 +1,11 @@
+<!-- Bootstrap code heavily borrows Bootstrap examples found on their
+website, but is nonetheless rewritten to suit our needs. I would argue
+that the code is 50-50 me and official documentation. - Brian -->
+
+<!-- Tabbed login system takes a few pointers from a 10 year old online
+example that was written for Bootstrap pre-5.0. Fixes had to be applied
+to bring the code up to 5.3.3 standards. 75-25 example:me. - Brian-->
+
 <!doctype html>
 
 {% from 'bootstrap5/form.html' import render_form %}
@@ -42,7 +50,7 @@
       </div>
   
       <div class="px-4 py-5 my-5 text-center">
-        <img class="d-block mx-auto mb-4" src="{{ url_for('static',filename='images/Nevada-Wolf-Pack-Emblem.png') }}" alt="" width="640" height="360">
+        <img class="d-block mx-auto mb-4" src="{{ url_for('static',filename='images/Nevada-Wolf-Pack-Emblem.png') }}" alt="" width="320" height="180">
         <h1 class="display-5 fw-bold text-body-emphasis">Welcome to the VEDB Toolbox</h1>
         <div class="col-lg-6 mx-auto">
           <p class="lead mb-4">The Visual Experiences Database is a large dataset of egocentric videos and associated data that can be used for vision science research...</p>

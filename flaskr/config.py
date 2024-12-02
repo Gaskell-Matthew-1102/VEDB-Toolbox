@@ -1,3 +1,8 @@
+"""
+file structure based on a DigitalOcean tutorial, but is only relevant
+to our project. Brian's work
+"""
+
 # config.py
 
 import os
