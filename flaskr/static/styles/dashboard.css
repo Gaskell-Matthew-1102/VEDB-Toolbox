@@ -158,17 +158,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    column-gap: 300px;
+    column-gap: 400px;
     background-color: #babed1;
     border-radius: 5px;
     padding: 5px;
     width: 1000px;
     margin-left: 30px;
     margin-top: 10px;
+    /*right: 0;*/
+    border: 20px;
 }
 .data_individual {
     align-items: center;
+    margin-left: -100px;
+    /*margin-right: -75px;*/
     justify-content: center;
+    width: 50px;
+    padding-left: 70px;
 }
 .buttons_stacked {
     overflow: hidden;
@@ -177,4 +183,29 @@
     flex-direction: column;
     row-gap: 5px;
     margin: 10px;
+}
+.table_button_img {
+    align-items: center;
+    justify-content: center;
+    width: 10%;
+    height: 10%;
+    background-color: transparent;
+    margin-right: -175px;
+    margin-left: -350px;
+    border: none;
+}
+.table_button{
+    border: none;
+    background-color: transparent;
+}
+.table_button:hover {
+    background-color:#d4d4d4;
+    transition: 0.4s;
+    border-radius: 10px;
+    border: none;
+}
+.table_button:active {
+    background-color:#aaaaaa;
+    border-radius: 10px;
+    border: none;
 }
