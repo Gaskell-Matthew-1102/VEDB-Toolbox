@@ -1,3 +1,5 @@
+# This testing code was written by Matthew. For full credit information please consult conftest.py
+
 from tests.conftest import *
 
 # Base test to assure that login site is visible initially

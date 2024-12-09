@@ -1,4 +1,8 @@
-# When writing a lot of this testing code I referenced this resource for some assistance: https://testdriven.io/blog/flask-pytest/
+# This testing configuration file was written by Matthew
+# Additionally, Matthew wrote all the other tests contained in the functional folder (test_login.py, test_upload_file.py,
+# test_viewer.py) and in the unit folder (test_file_upload.py, test_models.py, test_visualizer.py)
+# When writing a lot of this testing code (mainly configuration, but also some of the other tests) I referenced this resource
+# for some assistance: https://testdriven.io/blog/flask-pytest/
 
 import os
 import pytest

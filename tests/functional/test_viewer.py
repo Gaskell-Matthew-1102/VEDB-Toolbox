@@ -1,3 +1,5 @@
+# This testing code was written by Matthew. For full credit information please consult conftest.py
+
 from tests.conftest import *
 from flaskr.file_upload import set_showform
 import os

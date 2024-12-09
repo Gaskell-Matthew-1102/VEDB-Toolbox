@@ -10,6 +10,8 @@ ALLOWED_EXTENSIONS = {'mp4', 'csv', 'pldata', 'npy', 'yaml', 'intrinsics', 'extr
 #This code was not used for our current method of handling files, but may be used next semester
 #for a simpler way of utilizing locally downloaded files from a user's machine
 
+#All of this code is our own, except for the last function which has been credited
+
 #Opens file explorer, allowing user to select the folder containing their video files, RECONFIGURE
 def get_video_path():
     video_path = '{}'.format(askdirectory(title='Choose a directory', initialdir=r'C:\ '))
@@ -89,7 +91,7 @@ def validate_data_path(dpath) -> bool:
             return False
     return True
 
-#https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
+# This function was sourced from: https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

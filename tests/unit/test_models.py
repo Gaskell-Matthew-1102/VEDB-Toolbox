@@ -1,3 +1,5 @@
+# This testing code was written by Matthew. For full credit information please consult conftest.py
+
 from flaskr.models import Users
 from werkzeug.security import generate_password_hash
 from tests.conftest import new_test_user
