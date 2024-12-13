@@ -1,3 +1,4 @@
+# All code in this file is our own work.
 # Steps 5, 6, 7
 import numpy as np
 from math import sqrt

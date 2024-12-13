@@ -1,3 +1,5 @@
+# All code in this file is our own work.
+
 import numpy as np
 import pandas as pd
 import msgpack

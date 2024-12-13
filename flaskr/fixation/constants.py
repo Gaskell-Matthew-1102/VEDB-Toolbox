@@ -1,3 +1,5 @@
+# Constants file for use in the module. Our own work.
+
 # ingestion (0)
 DOWNLOAD_URL = "https://osf.io/85usz/download"
 DATE_OF_URL_DATA = "2023_06_01_18_47_34"       # "2023_06_01_18_47_34" was original

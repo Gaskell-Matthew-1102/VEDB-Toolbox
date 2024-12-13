@@ -1,3 +1,5 @@
+# Mix of cited and original code.
+
 import numpy as np
 import pandas as pd
 import msgpack
@@ -19,6 +21,8 @@ PLDATA_TO_LOAD = "accel.pldata"
 # HEAD TRACKING MODULE (RealSense T265): 30fps
 # EYE TRACKING (Pupil Labs Pupil-Core): 120fps
 
+
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of Dr. MacNeilage's Self-Motion Lab
 def quat_to_euler(quaternions):
     """
     Convert quaternions to Euler angles.
@@ -37,6 +41,7 @@ def quat_to_euler(quaternions):
 
     return np.column_stack((roll, pitch, yaw))
 
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of Dr. MacNeilage's Self-Motion Lab. It has been heavily modified to suit our needs.
 def read_pldata(file_path):
     with open(file_path, 'rb') as file:
         unpacker = msgpack.Unpacker(file, raw=False)
@@ -45,6 +50,7 @@ def read_pldata(file_path):
             data.append(packet)
     return data
 
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of Dr. MacNeilage's Self-Motion Lab. It has been heavily modified to suit our needs.
 def parse_pldata(data):
     unpacker = msgpack.Unpacker(BytesIO(data), raw=False)
     parsed_data = next(unpacker)
@@ -60,6 +66,7 @@ def parse_pldata(data):
     
     return flattened
 
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of Dr. MacNeilage's Self-Motion Lab. It has been heavily modified to suit our needs.
 def extract_unzip(file):
     zip_url = file
     response = requests.get(zip_url)
@@ -71,6 +78,7 @@ def extract_unzip(file):
     filepath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test'))
     zip_file.extractall(filepath)
 
+# Our own work.
 def main():
     # extract_unzip(DOWNLOAD_URL)
 

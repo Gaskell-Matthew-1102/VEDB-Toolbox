@@ -1,3 +1,5 @@
+# All code in this file is our own work.
+
 from fixation_packages.ingestion import extract_unzip, read_pldata, parse_pldata
 from fixation_packages import gaze_processing
 from fixation_packages.IMU_processing import calculate_optic_flow_vec, quat_to_euler

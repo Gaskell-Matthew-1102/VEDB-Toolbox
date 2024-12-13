@@ -1,12 +1,15 @@
+# Code was borrowed from https://www.geeksforgeeks.org/python-opencv-optical-flow-with-lucas-kanade-method/
+# Little more in depth below
 
 import numpy as np 
 import cv2 
   
-
+# This function was borrowed and modified from https://www.geeksforgeeks.org/python-opencv-optical-flow-with-lucas-kanade-method/
+# Just a test function to demonstrate the Lucas-Kanade method for estimating optic flow
 def do_it():
 
     cap = cv2.VideoCapture('flaskr/fixation/test/videos/video.mp4')
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 25000)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 10000)
     frame_count = 0
     
     # params for corner detection 
@@ -70,7 +73,7 @@ def do_it():
             
         img = cv2.add(frame, mask) 
     
-        cv2.putText(frame, f"{frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)
+        cv2.putText(img, f"{frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)
         cv2.imshow('frame', img) 
         
         k = cv2.waitKey(25) 

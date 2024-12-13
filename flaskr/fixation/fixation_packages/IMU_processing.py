@@ -1,7 +1,10 @@
+# Mix of cited and original code.
+
 # Steps 3, 4
 import numpy as np
 from scipy import integrate
 
+# The original code for this function was given to us by Brian Szekely, a PhD student and former student of Dr. MacNeilage's Self-Motion Lab
 def quat_to_euler(quaternions):
     """
     Convert quaternions to Euler angles.
@@ -20,6 +23,7 @@ def quat_to_euler(quaternions):
 
     return np.column_stack((roll, pitch, yaw))
 
+# This function is our original work.
 # calculates the optic flow vector given two IMU dataframes
 def calculate_optic_flow_vec(IMU_frame, next_frame):
     VEL_X = 'linear_velocity_0'

@@ -1,3 +1,5 @@
+# All code in this file is our own work.
+
 # Module to process the gaze data stream
 # First, low pass filter using Savitzky-Golay filter with 55ms window length and 3rd grade polynomial
 # Steps 1, 2
