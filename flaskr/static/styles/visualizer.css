@@ -1,3 +1,8 @@
+/*Matt used a decent amount of Leon's code that he wrote for the login page for this
+stylesheet, modifying it to conform for the file upload pages
+Additionally, I used this link for some container reference:
+https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-another-in-html*/
+
 /*Hold all of the video control buttons*/
 .controls_container {
     border: 5px solid #000000;

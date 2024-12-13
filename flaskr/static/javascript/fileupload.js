@@ -1,3 +1,5 @@
+// This code was written by Matt
+
 function play_pause(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")
