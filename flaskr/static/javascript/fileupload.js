@@ -1,6 +1,17 @@
 // This code was written by Matt
 
-function play_pause(){
+// const play_button = document.getElementById('playbutton');
+//
+// play_button.addEventListener('click', function() {
+//     console.log('here');
+//     play_pause();
+// });
+
+// const world_video = document.getElementById("worldvideo");
+// const eye0_video = document.getElementById("eye0video");
+// const eye1_video = document.getElementById("eye1video");
+
+function play(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")
     var eye1_video = document.getElementById("eye1video")
@@ -9,12 +20,19 @@ function play_pause(){
         eye0_video.play();
         eye1_video.play();
     }
-    else{
+}
+
+function pause(){
+    var world_video = document.getElementById("worldvideo")
+    var eye0_video = document.getElementById("eye0video")
+    var eye1_video = document.getElementById("eye1video")
+    if(!world_video.paused){
         world_video.pause();
         eye0_video.pause();
         eye1_video.pause();
     }
 }
+
 function skip_10_forward(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")

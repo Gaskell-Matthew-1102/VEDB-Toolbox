@@ -11,14 +11,20 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static', filename='../static/styles/visualizer.css') }}">
+        <!--Font Awesome icons: https://www.w3schools.com/icons/fontawesome_icons_intro.asp-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="{{ url_for('static',filename='javascript/fileupload.js') }}"></script>
     </head>
     <body class="body">
+
     <div class="container">
         <nav class="nav">
         <div class="title_container">
             <img class="vedb_img" src="../static/images/vedblogo.png" alt="VEDB Logo" style="width:50px;height:50px;">
             <h1 class="h1">VEDB Viewer</h1>
+            <form action = "/exit_visualizer" method="POST">
+                <button type="submit" onclick="stop_video()">Exit Viewer</button>
+            </form>
         </div>
         </nav>
     </div>
@@ -49,13 +55,23 @@
             </div>
         </div>
         <div class="controls_container">
-            <button onclick="skip_10_backward()">Backward 10 Sec</button>
-            <button onclick="play_pause()">Play/Pause</button>
-            <button onclick="stop_video()">Stop</button>
-            <button onclick="skip_10_forward()">Forward 10 Sec</button>
-            <form action = "/exit_visualizer" method="POST">
-                    <button type="submit" onclick="stop_video()">Exit Viewer</button>
-                </form>
+            <div class="button_container">
+                <button class="icon-button" onclick="skip_10_backward()">
+                    <i class="fa fa-step-backward fa-clickable fa-2x" style="color:#fff;"></i>
+                </button>
+                <button class="icon-button" onclick="play()">
+                    <i class="fa fa-play fa-clickable fa-2x" style="color:#fff;"></i>
+                </button>
+                <button class="icon-button" onclick="pause()">
+                    <i class="fa fa-pause fa-clickable fa-2x" style="color:#fff;"></i>
+                </button>
+                <button class="icon-button" onclick="stop_video()">
+                    <i class="fa fa-stop fa-clickable fa-2x" style="color:#fff;"></i>
+                </button>
+                <button class="icon-button" onclick="skip_10_forward()">
+                    <i class="fa fa-step-forward fa-clickable fa-2x" style="color:#fff;"></i>
+                </button>
+            </div>
         </div>
     </body>
 </html>

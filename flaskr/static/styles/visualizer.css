@@ -14,6 +14,15 @@ https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-
     left: 50%;
     transform: translate(-50%, -50%);
     height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button_container{
+    display: flex;
+    justify-content: space-between;
+    width: 35%;
 }
 
 .body{
@@ -123,4 +132,22 @@ https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-
 .eye1_video{
     position: absolute;
     top: 300px;
+}
+
+.fa-clickable{
+    cursor: pointer;
+    outline: none;
+    pointer-events: all;
+}
+
+/*https://stackoverflow.com/questions/22672368/how-to-make-a-transparent-html-button*/
+.icon-button {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    width: 35px;
+    height: 35px;
 }
