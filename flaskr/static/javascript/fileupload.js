@@ -41,6 +41,7 @@ function skip_10_forward(){
     eye0_video.currentTime += 10;
     eye1_video.currentTime += 10;
 }
+
 function skip_10_backward(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")
@@ -49,6 +50,7 @@ function skip_10_backward(){
     eye0_video.currentTime -= 10;
     eye1_video.currentTime -= 10;
 }
+
 function stop_video(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")
