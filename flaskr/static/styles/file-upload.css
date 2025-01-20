@@ -1,12 +1,20 @@
 /*Matt used a decent amount of Leon's code that he wrote for the login page for this
 stylesheet, modifying it to conform for the file upload pages*/
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #444;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+*{
+    font-family: 'Montserrat', sans-serif;
 }
+
+
+
+/*body {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+/*  color: #444;*/
+/*}*/
 
 .title_container {
     display: flex;
@@ -19,7 +27,7 @@ body {
     font-weight: lighter;
     font-size: 70px;
     text-indent: 10px;
-    margin-top: 15px;
+    /*margin-top: 15px;*/
     font-family: "Courier New", Courier, monospace;
 }
 
@@ -39,15 +47,16 @@ body {
     font-family: "Courier New", Courier, monospace;
 }
 
-.body {
-    background-color: #8ca8cc79;
-    /*background-image: url('./images/journey_into_dataviz_feature.jpg');*/
-    background-repeat: repeat-x;
-    /* background-attachment: fixed; */
-    background-position: center;
-    background-position-y: 150px;
-    background-size: 50%;
-}
+/*.body {*/
+/*    background-color: #8ca8cc79;*/
+/*    background: linear-gradient(to right, #e2e2e2, #8ca8cc79);*/
+/*    !*background-image: url('./images/journey_into_dataviz_feature.jpg');*!*/
+/*    background-repeat: repeat-x;*/
+/*    !* background-attachment: fixed; *!*/
+/*    background-position: center;*/
+/*    background-position-y: 150px;*/
+/*    background-size: 50%;*/
+/*}*/
 
 .subtitle {
     color: rgb(122, 196, 223);
@@ -63,8 +72,8 @@ body {
     font-size: 50px;
     /*text-indent: 10px;*/
     text-align: center;
-    margin-top: 15px;
-    font-family: "Courier New", Courier, monospace;
+    /*margin-top: 15px;*/
+    font-family: 'Montserrat', sans-serif;
 }
 
 .paragraph {
@@ -139,33 +148,33 @@ body {
      background-color: #8ca8cc79;
  }
 
-.upload-container{
-    display: inline-block;
-    width: 400px;
-    height: 400px;
+/*.upload-container{*/
+/*    display: inline-block;*/
+/*    width: 400px;*/
+/*    height: 400px;*/
 
-    background-color: #8ca8cc79;
-    margin-left: 200px;
-    margin-right: 200px;
-    margin-top: 20px;
-    margin-bottom: 50px;
-    border: 5px solid #07062b;
-    border-radius: 50px 50px 50px 50px;
-}
+/*    background-color: #8ca8cc79;*/
+/*    margin-left: 200px;*/
+/*    margin-right: 200px;*/
+/*    margin-top: 20px;*/
+/*    margin-bottom: 50px;*/
+/*    border: 5px solid #07062b;*/
+/*    border-radius: 50px 50px 50px 50px;*/
+/*}*/
 
 .upload-container-text {
     color: #222287;
     font-weight: bold;
     text-indent: 10px;
     text-align: center;
-    font-family: "Courier New", Courier, monospace;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .fail-text {
     text-align: center;
     color: red;
     font-weight: bold;
-    font-family: "Courier New", Courier, monospace;
+    font-family: 'Montserrat', sans-serif;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -189,15 +198,15 @@ body {
     margin: 10px;
 }
 
-.container {
-    flex-direction: row;
-    display: flex;
-    column-gap: 0px;
-    align-items: center;
-    justify-content: left;
-    width: 100%;
-    overflow: hidden;
-}
+/*.container {*/
+/*    flex-direction: row;*/
+/*    display: flex;*/
+/*    column-gap: 0px;*/
+/*    align-items: center;*/
+/*    justify-content: left;*/
+/*    width: 100%;*/
+/*    overflow: hidden;*/
+/*}*/
 .logoutbutton {
      background-color: #222287;
      color: #ffffff;
@@ -232,4 +241,76 @@ body {
     justify-content: center;
     width: 100%;
     overflow: hidden;
+}
+
+body{
+    background-color: #8ca8cc79;
+    background: linear-gradient(to right, #e2e2e2, #8ca8cc79);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /*height: 100vh;*/
+}
+
+.upload-container{
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    width: 760px;
+    max-width: 100%;
+    min-height: 480px;
+    margin: 50px;
+}
+
+.upload-form-container{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    left: 0;
+    width: 50%;
+    z-index: 2;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+}
+
+.description-container{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 150px 0 0 100px;
+    z-index: 1000;
+}
+
+.description{
+    background-color: #222287;
+    height: 100%;
+    background: linear-gradient(to right, #2C2CB0, #222287);
+    color: #ffffff;
+    position: relative;
+    left: -100%;
+    /*height: 100%;*/
+    width: 200%;
+}
+
+.description-area{
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 30px;
+    text-align: center;
+    top: 0;
+    right: 0;
 }
