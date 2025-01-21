@@ -1,20 +1,13 @@
 /*Matt used a decent amount of Leon's code that he wrote for the login page for this
 stylesheet, modifying it to conform for the file upload pages*/
 
+/*Some of these classes are borrowed from a tutorial found here: https://github.com/AsmrProg-YT/Modern-Login*/
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 *{
     font-family: 'Montserrat', sans-serif;
 }
-
-
-
-/*body {*/
-/*  margin: 0;*/
-/*  padding: 0;*/
-/*  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-/*  color: #444;*/
-/*}*/
 
 .title_container {
     display: flex;
@@ -46,17 +39,6 @@ stylesheet, modifying it to conform for the file upload pages*/
     text-align: center;
     font-family: "Courier New", Courier, monospace;
 }
-
-/*.body {*/
-/*    background-color: #8ca8cc79;*/
-/*    background: linear-gradient(to right, #e2e2e2, #8ca8cc79);*/
-/*    !*background-image: url('./images/journey_into_dataviz_feature.jpg');*!*/
-/*    background-repeat: repeat-x;*/
-/*    !* background-attachment: fixed; *!*/
-/*    background-position: center;*/
-/*    background-position-y: 150px;*/
-/*    background-size: 50%;*/
-/*}*/
 
 .subtitle {
     color: rgb(122, 196, 223);
@@ -111,7 +93,7 @@ stylesheet, modifying it to conform for the file upload pages*/
      border-radius: 10px;
      position: absolute;
      left: 46%;
-     font-family: "Courier New", Courier, monospace;
+     font-family: 'Montserrat', sans-serif;
      font-weight: bold;
      font-size: 30px;
      min-height: 40px;
@@ -129,11 +111,10 @@ stylesheet, modifying it to conform for the file upload pages*/
  .enter_button {
      background-color: #222287;
      color: #ffffff;
-     border: 5px solid #07062b;
+     border: 1px solid transparent;
      border-radius: 10px;
-     position: absolute;
-     left: 40%;
-     font-family: "Courier New", Courier, monospace;
+     position: relative;
+     font-family: 'Montserrat', sans-serif;
      font-weight: bold;
      font-size: 30px;
      min-height: 40px;
@@ -147,20 +128,6 @@ stylesheet, modifying it to conform for the file upload pages*/
 .enter_button:active{
      background-color: #8ca8cc79;
  }
-
-/*.upload-container{*/
-/*    display: inline-block;*/
-/*    width: 400px;*/
-/*    height: 400px;*/
-
-/*    background-color: #8ca8cc79;*/
-/*    margin-left: 200px;*/
-/*    margin-right: 200px;*/
-/*    margin-top: 20px;*/
-/*    margin-bottom: 50px;*/
-/*    border: 5px solid #07062b;*/
-/*    border-radius: 50px 50px 50px 50px;*/
-/*}*/
 
 .upload-container-text {
     color: #222287;
@@ -198,15 +165,6 @@ stylesheet, modifying it to conform for the file upload pages*/
     margin: 10px;
 }
 
-/*.container {*/
-/*    flex-direction: row;*/
-/*    display: flex;*/
-/*    column-gap: 0px;*/
-/*    align-items: center;*/
-/*    justify-content: left;*/
-/*    width: 100%;*/
-/*    overflow: hidden;*/
-/*}*/
 .logoutbutton {
      background-color: #222287;
      color: #ffffff;
