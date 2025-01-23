@@ -7,7 +7,7 @@ def run():
     app = create_app()
 
     # Run the app
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=10000)
 
 if __name__ == "__main__":
     run()
