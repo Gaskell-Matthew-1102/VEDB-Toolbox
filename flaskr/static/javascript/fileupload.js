@@ -62,3 +62,34 @@ function stop_video(){
     eye0_video.pause();
     eye1_video.pause();
 }
+
+// I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
+// THIS NEEDS REFACTORING or honestly just changing entirely, right now it shows progress but seeking does not work
+jQuery(function ($) {
+    $("#worldvideo").on("timeupdate", function(){
+        var wvideo = $(this)[0];
+        var val = (100/wvideo.duration) * wvideo.currentTime;
+        $("#seek-bar").val(val);
+    });
+    $("#seek-bar").on("mousedown", function(){
+        var wvideo = $("#worldvideo")[0];
+        var e0video = $("#eye0video")[0];
+        var e1video = $("#eye1video")[0];
+        wvideo.pause();
+        e0video.pause();
+        e1video.pause();
+    });
+    $("seek-bar").on("mouseup", function(){
+        var wvideo = $("#worldvideo")[0];
+        var e0video = $("#eye0video")[0];
+        var e1video = $("#eye1video")[0];
+
+        var seekingTime = $("#seek-bar").val() / (100 / wvideo.duration);
+        wvideo.currentTime = seekingTime;
+        e0video.currentTime = seekingTime;
+        e1video.currentTime = seekingTime;
+        wvideo.play();
+        e0video.play();
+        e1video.play();
+    });
+});
