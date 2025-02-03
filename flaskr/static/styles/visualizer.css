@@ -108,7 +108,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    /*flex-direction: column;*/
+    flex-direction: column;
 }
 
 .label_text{
@@ -196,7 +196,6 @@ body{
     height: 35px;
 }
 
-. #seek-bar{
+.seek-bar{
     width: 80%;
-    color: white;
 }

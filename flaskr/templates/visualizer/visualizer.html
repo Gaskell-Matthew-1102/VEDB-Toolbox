@@ -22,6 +22,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/box.css') }}">
 
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 <!--&lt;!&ndash;        The following imports are Vuejs, Chartjs, a Chartjs wrapper, and the Vue Client&ndash;&gt;-->
 <!--        <script src="https://unpkg.com/vue"></script>-->
 <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>-->
@@ -92,13 +94,15 @@
                 </div>
             </div>
             <div class="graph_container">
-                <img class="graph1" src="{{ url_for('static', filename='../static/linear_velocity_graph.png') }}" alt="Linear Velocity Graph" width="320" height="240">
-                <img class="graph2" src="{{ url_for('static', filename='../static/linear_acceleration_graph.png') }}" alt="Linear Acceleration Graph" width="320" height="240">
+<!--                <img class="graph1" src="{{ url_for('static', filename='../static/linear_velocity_graph.png') }}" alt="Linear Velocity Graph" width="320" height="240">-->
+<!--                <img class="graph2" src="{{ url_for('static', filename='../static/linear_acceleration_graph.png') }}" alt="Linear Acceleration Graph" width="320" height="240">-->
+                <div id='linear_velocity'></div>
+                <div id='angular_velocity'></div>
             </div>
         </div>
         <div class="controls_container">
             <label for="seek-bar" class="label_text">Video Controls</label>
-            <input type="range" id="seek-bar" value="0">
+            <input type="range" class="seek-bar" id="seek-bar" value="0">
             <div class="button_container">
                 <button class="icon-button" onclick="skip_10_backward()">
                     <i class="fa fa-step-backward fa-clickable fa-2x" style="color:#000000;"></i>
@@ -118,6 +122,15 @@
             </div>
         </div>
     </body>
+
+    <script type="text/javascript">
+        var linear_graph = {{linear_vel_JSON | safe}};
+        var angular_graph = {{angular_vel_JSON | safe}};
+
+        Plotly.plot("linear_velocity", linear_graph, {});
+        Plotly.plot("angular_velocity", angular_graph, {});
+
+    </script>
 
 <!--    Right now this code isn't being used, but could be in the future, this would be for a video progress/seek bar in Vue    -->
 <!--    <script>-->
