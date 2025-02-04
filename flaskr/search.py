@@ -4,10 +4,23 @@ from .models import db, Users
 from .file_upload import *
 
 def searchBar(search_filter):
+    userList = userMatch(search_filter)
+    #list = []
+
     if search_filter == "none":
         list = Users.query.with_entities(Users.username, Users.email, Users.administrator).all()
-    elif '@' in search_filter:
+    elif '@' in search_filter:  #Search by Email
         list = Users.query.with_entities(Users.username, Users.email, Users.administrator).filter_by(email=search_filter).all()
-    else:
-        list = Users.query.with_entities(Users.username, Users.email, Users.administrator).filter_by(username=search_filter).all()
+    else:   #Search by username
+        for user in userList:
+            list = Users.query.with_entities(Users.username, Users.email, Users.administrator).filter_by(username=user).all()
     return list
+
+def userMatch(key):
+    listOfUsers = Users.query.with_entities(Users.username).all()
+    matchedList = []
+    for user in listOfUsers:
+        if key in user:
+            matchedList.append(user)
+    print(listOfUsers)
+    return matchedList
