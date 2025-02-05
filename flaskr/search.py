@@ -5,7 +5,7 @@ from .file_upload import *
 
 def searchBar(search_filter):
     userList = userMatch(search_filter)
-    #list = []
+    list = []
 
     if search_filter == "none":
         list = Users.query.with_entities(Users.username, Users.email, Users.administrator).all()
@@ -20,7 +20,8 @@ def userMatch(key):
     listOfUsers = Users.query.with_entities(Users.username).all()
     matchedList = []
     for user in listOfUsers:
-        if key in user:
-            matchedList.append(user)
-    print(listOfUsers)
+        for a in user:  # TEMP FIX NOT PERM JUST CAUSE LISTS ARE BEIN WEIRD
+            if key in a:
+                matchedList.append(a)
+    print(matchedList)
     return matchedList
