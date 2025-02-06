@@ -83,7 +83,7 @@ def logout():
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
-        userlist = searchBar(request.form.get('user_search', "none"))
+        userlist = searchBar(request.form.get('user_search', ""))
         headings = ("Username", "Email", "Administrator")
         return render_template('user-tools/dashboard.html', userlist=userlist, headings=headings)
     else:

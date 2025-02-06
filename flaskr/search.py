@@ -7,7 +7,7 @@ def searchBar(search_filter):
     userList = userMatch(search_filter)
     list = []
 
-    if search_filter == "none":
+    if search_filter == "":
         list = Users.query.with_entities(Users.username, Users.email, Users.administrator).all()
     elif '@' in search_filter:  #Search by Email
         list = Users.query.with_entities(Users.username, Users.email, Users.administrator).filter_by(email=search_filter).all()
@@ -23,5 +23,4 @@ def userMatch(key):
         for a in user:  # TEMP FIX NOT PERM JUST CAUSE LISTS ARE BEIN WEIRD
             if key in a:
                 matchedList.append(a)
-    print(matchedList)
     return matchedList
