@@ -14,6 +14,7 @@ from io import BytesIO
 import zipfile
 import requests
 import matplotlib.pyplot as plt
+import math
 import urllib
 # from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
 
@@ -549,60 +550,6 @@ def parse_pldata(data):
 
     return flattened
 
-# Generates static graphs for display in the visualizer
-# def generate_graphs(filename_list: list[str]):
-#     # assuming either 1. both files exist, 2. neither file exists
-#     global graph_file_list
-#     for filename in filename_list:
-#         odometry_data = read_pldata(filename)
-#         df = pd.DataFrame(odometry_data)
-#         linear_vel_0_list = []
-#         linear_vel_1_list = []
-#         linear_vel_2_list = []
-#
-#         linear_acceleration_0_list = []
-#         linear_acceleration_1_list = []
-#         linear_acceleration_2_list = []
-#
-#         timestamp_list = []
-#         first_timestamp = parse_pldata(df[1].iloc[0])['timestamp']
-#
-#         for i in range(len(df)):
-#             data_frame = parse_pldata(df[1].iloc[i])
-#
-#             data_type_1 = 'linear_velocity_0'
-#             data_type_2 = 'linear_velocity_1'
-#             data_type_3 = 'linear_velocity_2'
-#
-#             data_type_4 = 'linear_acceleration_0'
-#             data_type_5 = 'linear_acceleration_1'
-#             data_type_6 = 'linear_acceleration_2'
-#
-#             linear_vel_0_list.append(data_frame[data_type_1])
-#             linear_vel_1_list.append(data_frame[data_type_2])
-#             linear_vel_2_list.append(data_frame[data_type_3])
-#
-#             linear_acceleration_0_list.append(data_frame[data_type_4])
-#             linear_acceleration_1_list.append(data_frame[data_type_5])
-#             linear_acceleration_2_list.append(data_frame[data_type_6])
-#
-#             timestamp_list.append(data_frame['timestamp'] - first_timestamp)
-#
-#         plt.plot(timestamp_list, linear_vel_0_list, label=data_type_1)
-#         plt.plot(timestamp_list, linear_vel_1_list, label=data_type_2)
-#         plt.plot(timestamp_list, linear_vel_2_list, label=data_type_3)
-#         plt.legend()
-#         plt.savefig('flaskr/static/linear_velocity_graph.png')
-#         graph_file_list.append('flaskr/static/linear_velocity_graph.png')
-#
-#         plt.clf()
-#         plt.plot(timestamp_list, linear_acceleration_0_list, label=data_type_4)
-#         plt.plot(timestamp_list, linear_acceleration_1_list, label=data_type_5)
-#         plt.plot(timestamp_list, linear_acceleration_2_list, label=data_type_6)
-#         plt.legend()
-#         plt.savefig('flaskr/static/linear_acceleration_graph.png')
-#         graph_file_list.append('flaskr/static/linear_acceleration_graph.png')
-
 def generate_graphs(filename_list: list[str]):
     # assuming either 1. both files exist, 2. neither file exists
     global graph_file_list
@@ -631,29 +578,16 @@ def generate_graphs(filename_list: list[str]):
             data_type_5 = 'angular_velocity_1'
             data_type_6 = 'angular_velocity_2'
 
-            linear_vel_0_list.append(data_frame[data_type_1])
-            linear_vel_1_list.append(data_frame[data_type_2])
-            linear_vel_2_list.append(data_frame[data_type_3])
+            if not math.isnan(data_frame[data_type_1]):
+                linear_vel_0_list.append(data_frame[data_type_1])
+                linear_vel_1_list.append(data_frame[data_type_2])
+                linear_vel_2_list.append(data_frame[data_type_3])
 
-            angular_velocity_0_list.append(data_frame[data_type_4])
-            angular_velocity_1_list.append(data_frame[data_type_5])
-            angular_velocity_2_list.append(data_frame[data_type_6])
+                angular_velocity_0_list.append(data_frame[data_type_4])
+                angular_velocity_1_list.append(data_frame[data_type_5])
+                angular_velocity_2_list.append(data_frame[data_type_6])
 
-            timestamp_list.append(data_frame['timestamp'] - first_timestamp)
-
-        #Matplotlib Plots: Static image plots
-        # plt.plot(timestamp_list, linear_vel_0_list, label=data_type_1)
-        # plt.plot(timestamp_list, linear_vel_1_list, label=data_type_2)
-        # plt.plot(timestamp_list, linear_vel_2_list, label=data_type_3)
-        # plt.legend()
-        # plt.show()
-        #
-        # plt.clf()
-        # plt.plot(timestamp_list, angular_velocity_0_list, label=data_type_4)
-        # plt.plot(timestamp_list, angular_velocity_1_list, label=data_type_5)
-        # plt.plot(timestamp_list, angular_velocity_2_list, label=data_type_6)
-        # plt.legend()
-        # plt.show()
+                timestamp_list.append(data_frame['timestamp'] - first_timestamp)
 
         #Plotly Plots: Dynamic interactable plots
         fig = go.Figure()
@@ -672,7 +606,7 @@ def generate_graphs(filename_list: list[str]):
 
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_0_list, name='Angular Velocity 0'))
-        print("AngVel ", len(angular_velocity_0_list), " Times ", len(timestamp_list))
+        # print("AngVel ", len(angular_velocity_0_list), " Times ", len(timestamp_list))
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_1_list, name='Angular Velocity 1'))
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_2_list, name='Angular Velocity 2'))
         fig.update_layout(title='Angular Velocity', xaxis_title='Time', yaxis_title='Angular Velocity',
@@ -693,6 +627,7 @@ def load_visualizer():
                 file_to_graph = "flaskr/" + get_folder_name(2) + "/odometry.pldata"
             else:
                 file_to_graph = "odometry.pldata"
+            # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
             graphs = generate_graphs([file_to_graph])
             return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
         else:
