@@ -31,14 +31,3 @@ def calculate_v_thr(v_0, gain, rms):
 
 def calculate_v_thr(v_0, gain, optic_flow_vec_list:list[np.ndarray[2]], start_sample:int, samples_in_window:int):
     return v_0 + gain*calculate_RMS_of_window(optic_flow_vec_list, start_sample, samples_in_window)
-
-vec1 = np.column_stack( (1, 2) )
-vec2 = np.column_stack( (6, 1) )
-vec3 = np.column_stack( (0, -1, -10) )
-vec4 = np.column_stack( (1, 2, 3) )
-vec5 = np.column_stack( (6, 6, 5) )
-
-
-vec_list = [vec1, vec2, vec3, vec4, vec5]
-print(calculate_RMS_of_window(vec_list, 0, 5))
-print(calculate_samples_in_window(200, 2000))

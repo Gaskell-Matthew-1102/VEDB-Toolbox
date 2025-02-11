@@ -1,5 +1,6 @@
 # All code in this file is our own work.
 
+import fixation_packages.event
 from fixation_packages.ingestion import extract_unzip, read_pldata, parse_pldata
 from fixation_packages import gaze_processing
 from fixation_packages.IMU_processing import calculate_optic_flow_vec, quat_to_euler
@@ -25,31 +26,13 @@ from constants import *       # import all global constants as defined in consta
 
 
 def main():
-    # extract_unzip(DOWNLOAD_URL)
-
-    data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test', DATE_OF_URL_DATA))
-
-    # time_array = np.load(f'{data_path}/{NPY_TO_LOAD}')
-    # time_series = pd.to_datetime(time_array, unit='s')
-    # print(time_series)
-
+    data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', DATE_OF_URL_DATA))
     pldata_data = read_pldata(f'{data_path}/{PLDATA_TO_LOAD}')
 
     df = pd.DataFrame(pldata_data)
     parsed_data = parse_pldata(df[1].iloc[0])
-    list_all = []
-    # for i in range(len(df)):
-    #     # list_all.append(parse_pldata(df[1].iloc[i]))
-    #     temp = parse_pldata(df[1].iloc[i])
 
-    #     guh = 'position_0'
-    #     hug = "linear_velocity_0"
-
-
-    #     print(temp[hug], "         " , temp[guh])
-        # print(parse_pldata(df[1].iloc[i+1])['timestamp'] - parse_pldata(df[1].iloc[i])['timestamp'])
-
-    # print(parsed_data['timestamp'])
+    print(parsed_data)
     # print(parse_pldata(df[1].iloc[1])['timestamp'])
 
     dt = parse_pldata(df[1].iloc[1])['timestamp'] - parse_pldata(df[1].iloc[0])['timestamp']
@@ -59,6 +42,8 @@ def main():
     print()
     print(parse_pldata(df[1].iloc[0])['linear_velocity_0'])
     print(parse_pldata(df[1].iloc[1])['linear_velocity_0'])
+
+
 
     # print(time_series[1] - time_series[0])
     # print(pd.to_datetime(parse_pldata(df[1].iloc[1])['source_timestamp'], unit='s'))
@@ -84,15 +69,32 @@ def main():
 
     print("It Begins...")
 
-    vec_list = do_it()
-    new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(30, 200, vec_list, len(vec_list))
-    print(len(vec_list))
-    print(len(new_vec_list))
-    for i in range(10):
-        print(new_vec_list[i*50])
+    global_vec_list = []
+    vec_list = do_it()  # Needs to be averaged before upsampled
+    for i in range(len(vec_list)):
+        global_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list[i]))
+    print(len(global_vec_list))
+
+
+    new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(30, 200, global_vec_list, len(global_vec_list))
+    print("New vec list length:", len(new_vec_list))
+
 
     samples_in_window = calculate_samples_in_window(200, 300)
-    calculate_v_thr(MIN_VEL_THRESH, GAIN_FACTOR, new_vec_list, 0, samples_in_window)
+    print(samples_in_window)
+
+    v_thr_list = []
+    for i in range(len(new_vec_list)- (samples_in_window-1) ):
+        v_thr_list.append(calculate_v_thr(MIN_VEL_THRESH, GAIN_FACTOR, new_vec_list, i, samples_in_window))
+
+    print(len(v_thr_list))
+
+    # Begin classification
+    for sample in range(len(v_thr_list)):
+        if fixation_packages.event.classify_event()
+
+
+
 
 
     # OUTPUT OF print(parsed_data):
