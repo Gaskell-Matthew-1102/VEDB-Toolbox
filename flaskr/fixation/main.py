@@ -32,9 +32,9 @@ def main():
     df = pd.DataFrame(pldata_data)
     parsed_data = parse_pldata(df[1].iloc[0])
 
-    print(parsed_data)
+    print(parsed_data.keys())
     # print(parse_pldata(df[1].iloc[1])['timestamp'])
-
+    input()
     dt = parse_pldata(df[1].iloc[1])['timestamp'] - parse_pldata(df[1].iloc[0])['timestamp']
     dpos = parse_pldata(df[1].iloc[1])['position_0'] - parse_pldata(df[1].iloc[0])['position_0']
     print(dpos/dt)
@@ -90,8 +90,8 @@ def main():
     print(len(v_thr_list))
 
     # Begin classification
-    for sample in range(len(v_thr_list)):
-        if fixation_packages.event.classify_event()
+    # for sample in range(len(v_thr_list)):
+    #     if fixation_packages.event.classify_event()
 
 
 
