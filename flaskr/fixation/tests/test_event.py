@@ -34,3 +34,17 @@ class TestEvent:
         thresh = 3.0
         output = classify_event(rel_gaze_vel, thresh)
         assert output == Event.Sample_Type.GAP
+
+    def test_event_classification_border(self):
+        rel_gaze_vel = 4.0
+        thresh = 4.0
+        output = classify_event(rel_gaze_vel, thresh)
+        assert output == Event.Sample_Type.GAP
+
+    def test_build_event_fixation(self):
+        rel_gaze_vel = 4.0
+        thresh = 5.0
+        start_time = 0.0
+        end_time = 0.5
+        event = Event.build_event(rel_gaze_vel, thresh, start_time, end_time)
+        assert event.type == Event.Sample_Type.FIXATION
