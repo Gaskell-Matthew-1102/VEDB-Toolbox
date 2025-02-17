@@ -3,9 +3,10 @@
 import numpy as np
 from math import sqrt
 
+# Returns the magnitude of the resulting vector calculated by subtracting the global optic flow from the gaze velocity
 def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_flow: np.ndarray[2]):
     relative_gaze_vel = gaze_velocity_vector - global_optic_flow
-    return relative_gaze_vel
+    return np.linalg.norm(relative_gaze_vel)
 
 # old header: calculate_samples_in_window(sample_list: list[np.ndarray], sample_rate_hz: int, window_size_ms:int):
 def calculate_samples_in_window(sample_rate_hz: int, window_size_ms:int):
@@ -19,7 +20,7 @@ def calculate_RMS_of_window(optic_flow_vec_list:list[np.ndarray[2]], start_sampl
     summation = 0.0
     for sample in range(samples_in_window):
         o_hat_x = optic_flow_vec_list[start_sample+sample][0][0]
-        o_hat_y = optic_flow_vec_list[start_sample+sample][0][1]
+        o_hat_y = optic_flow_vec_list[start_sample+sample][1][0]
 
         summation += o_hat_x ** 2 + o_hat_y ** 2
 

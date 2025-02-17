@@ -12,8 +12,8 @@ class Event:
         self.start_time = start_time
         self.end_time = end_time
     
-def classify_event(velocity, threshold):
-    if velocity < threshold:
+def classify_event(relative_gaze_velocity, threshold):
+    if relative_gaze_velocity < threshold:
         return Event.Sample_Type.FIXATION
     else:
         return Event.Sample_Type.GAP
