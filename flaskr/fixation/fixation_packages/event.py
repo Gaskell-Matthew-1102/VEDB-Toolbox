@@ -6,7 +6,6 @@ class Event:
     class Sample_Type(Enum):
         FIXATION = 1
         GAP = 2
-        UNDEFINED = 3     # this is used in steps 8.1 and 8.2, as I don't know what happens to "removed" events
     
     def __init__(self, type:Sample_Type, start_time_ms:float, end_time_ms:float):
         self.type = type
@@ -15,6 +14,19 @@ class Event:
 
     def build_event(relative_gaze_velocity:float, threshold:float, start_time_ms:float, end_time_ms:float):
         return Event(classify_event(relative_gaze_velocity, threshold), start_time_ms, end_time_ms)
+    
+    def __str__(self):
+        working_string = ""
+        match self.type:
+            case Event.Sample_Type.FIXATION:
+                working_string += "FIXATION"
+            case Event.Sample_Type.GAP:
+                working_string += "GAP"
+        working_string += f", start: {self.start_time_ms}, end: {self.end_time_ms}"
+        return working_string
+    
+    def __eq__(self, value):
+        return (self.type == value.type) and (self.start_time_ms == value.start_time_ms) and (self.end_time_ms == value.end_time_ms)
     
 def classify_event(relative_gaze_velocity, threshold):
     if relative_gaze_velocity < threshold:
