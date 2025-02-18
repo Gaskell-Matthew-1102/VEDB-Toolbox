@@ -22,7 +22,7 @@ class EventList:
                     print("Error")
         return (fixation_count, gap_count)
     
-    # Goes through the event list, automatically merging and consolidating all neighoring events. Used after all processing to clean up list
+    # Goes through the event list, automatically merging and consolidating all neighoring events. Used before (and after?) classification
     def consolidate_list(self):
         transition_list = []
         # Build a list of transition events
