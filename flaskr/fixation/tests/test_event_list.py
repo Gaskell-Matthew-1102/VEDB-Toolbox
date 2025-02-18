@@ -30,3 +30,5 @@ class TestEventList:
         expected_list = EventList(np.array([Event(Event.Sample_Type.FIXATION, 0, 1), Event(Event.Sample_Type.GAP, 1, 2.0), Event(Event.Sample_Type.FIXATION, 2.0, 2.5)]))
         setup.consolidate_list()
         assert expected_list == setup
+
+

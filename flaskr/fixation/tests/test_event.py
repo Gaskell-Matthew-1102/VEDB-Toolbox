@@ -48,3 +48,17 @@ class TestEvent:
         end_time = 0.5
         event = Event.build_event(rel_gaze_vel, thresh, start_time, end_time)
         assert event.type == Event.Sample_Type.FIXATION
+
+    def test_event_amplitude_calculation(self):
+        assert False
+
+    def test_event_microsaccade_filter(self):
+        assert False
+
+    def test_event_short_fixation_pass(self):
+        obj = Event(Event.Sample_Type.FIXATION, 50, 75)
+        assert obj.short_fixation_filter() == False
+    
+    def test_event_short_fixation_fail(self):
+        obj = Event(Event.Sample_Type.FIXATION, 50, 100)
+        assert obj.short_fixation_filter() == True
