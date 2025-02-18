@@ -19,6 +19,7 @@ ADAP_WINDOW_SIZE_MS = 300           # milliseconds
 MIN_SACCADE_AMP = 1.0               # degrees
 MIN_SACCADE_DUR_MS = 10             # milliseconds
 MIN_FIXATION_DUR_MS = 70            # milliseconds
+HFOV_DEG = 70                       # THIS VALUE IS COMPLETELY AND UTTERLY MADE UP
 
 # Vectors are represented in this project as a 2 by X np.ndarray, where X is the number of components in the vector
 #                       
