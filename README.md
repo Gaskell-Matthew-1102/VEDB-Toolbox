@@ -3,13 +3,3 @@ A Toolbox viewer and statistical analyzer for the Visual Experience Dataset deve
 
 ## How to run
 Ensure all required packages are installed, and run run_me.py. this file is only for convenience; it breaks conventional Flask directory structures.
-
-## Administrator
-**Username:** test
-
-**Password:** password
-
-## Non-administrator
-**Username:** nonAdmin
-
-**Password:** password
