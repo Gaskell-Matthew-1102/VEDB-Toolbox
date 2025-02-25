@@ -8,7 +8,7 @@ import cv2
 # Just a test function to demonstrate the Lucas-Kanade method for estimating optic flow
 def do_it():
 
-    cap = cv2.VideoCapture('flaskr/fixation/test/videos/video.mp4')
+    cap = cv2.VideoCapture('flaskr/fixation/test_data/videos/video.mp4')
     cap.set(cv2.CAP_PROP_POS_FRAMES, 10000)
     frame_count = 0
     
@@ -57,24 +57,27 @@ def do_it():
         good_new = p1[st == 1] 
         good_old = p0[st == 1] 
     
+        frame_vec_list = []
         # draw the tracks 
         for i, (new, old) in enumerate(zip(good_new,  
                                         good_old)): 
             a, b = new.ravel() 
             c, d = old.ravel() 
 
-            vec_list.append( np.column_stack((c-a, d-b)) )
+            
+            frame_vec_list.append( np.column_stack((c-a, d-b)) )
 
             mask = cv2.line(mask, (int(a), int(b)), (int(c), int(d)), 
                             color[i].tolist(), 2) 
             
             frame = cv2.circle(frame, (int(a), int(b)), 5, 
                             color[i].tolist(), -1) 
-            
+        vec_list.append( frame_vec_list )
         img = cv2.add(frame, mask) 
     
+
         cv2.putText(img, f"{frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)
-        cv2.imshow('frame', img) 
+        # cv2.imshow('frame', img) 
         
         k = cv2.waitKey(25) 
         if k == 27: 
@@ -84,6 +87,9 @@ def do_it():
         old_gray = frame_gray.copy() 
         p0 = good_new.reshape(-1, 1, 2) 
         frame_count += 1
+
+        if(frame_count == 120):
+            break
     
     cv2.destroyAllWindows() 
     cap.release() 

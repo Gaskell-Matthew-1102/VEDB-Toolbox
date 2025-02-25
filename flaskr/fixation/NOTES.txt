@@ -1,0 +1,16 @@
+validation_orig_times = when nt normalised to zero
+when there are four values in the .ymal for validation_X, then use the last two values
+the last validation frame is with respect to the world sampling frequency (30Hz)
+
+orig_times may be in reference to zero
+using frames will throw off the data due to sampling frequency mismatch
+using validation times is better
+
+62.5Hz is gyro sampling sample_rate_hz
+200hz is odometry sample rate
+
+Brian guesses that Python is doing 20 * 10^2 (put into scientific notation without telling us), which is hte mismatch between the graphing axes and the 
+
+attempt list comprehension
+or change x-axis display values for the x axis
+

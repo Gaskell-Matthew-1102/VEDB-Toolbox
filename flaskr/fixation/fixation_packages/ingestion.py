@@ -57,6 +57,58 @@ def extract_unzip(file):
     filepath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test'))
     zip_file.extractall(filepath)
 
+# This function was taken from Michelle, an individual who has worked on the VEDB and specifically published some
+# information about accessing and visualizing the VEDB, in which this function was found.
+# That can be found here: https://github.com/vedb/vedb-demos/blob/main/VEDB_demo_explore_session.ipynb
+def load_as_dict(path):
+    tmp = np.load(path, allow_pickle=True)
+    params = {}
+    for k, v in tmp.items():
+        if isinstance(v, np.ndarray) and (v.dtype==np.dtype("O")):
+            if v.shape==():
+              params[k] = v.item()
+            else:
+              params[k] = v
+    return params
+
+# This function was taken from my teammate Matt
+def generate_gaze_data(filename):
+    # Pass in "gaze.npz"
+    gaze_dict = load_as_dict(filename)
+    print(f"Params: {gaze_dict}")
+    left_gaze = gaze_dict['left']
+    right_gaze = gaze_dict['right']
+
+    left_timestamps = []
+    right_timestamps = []
+    left_norm_pos_x = []
+    left_norm_pos_y = []
+    right_norm_pos_x = []
+    right_norm_pos_y = []
+
+    left_first_timestamp = left_gaze['timestamp'][0]
+    for value in left_gaze['timestamp']:
+        left_timestamps.append(value - left_first_timestamp)
+    for value in left_gaze['norm_pos']:
+        left_norm_pos_x.append(value[0])
+        left_norm_pos_y.append(value[1])
+
+    right_first_timestamp = right_gaze['timestamp'][0]
+    for value in  right_gaze['timestamp']:
+        right_timestamps.append(value - right_first_timestamp)
+    for value in  right_gaze['norm_pos']:
+        right_norm_pos_x.append(value[0])
+        right_norm_pos_y.append(value[1])
+    return {
+        "left_timestamps" : left_timestamps,
+        "right_timestamps" : right_timestamps,
+        "left_norm_pos_x" : left_norm_pos_x,
+        "left_norm_pos_y" : left_norm_pos_y,
+        "right_norm_pos_x" : right_norm_pos_x,
+        "right_norm_pos_y" : right_norm_pos_y
+    }
+
+
 def main():
     pass
     # extract_unzip(DOWNLOAD_URL)

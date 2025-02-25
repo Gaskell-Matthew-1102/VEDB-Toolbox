@@ -5,8 +5,6 @@ import numpy as np
 def calculateGlobalOpticFlowVec(local_vecs: list[np.ndarray[2]]):
     return np.average(local_vecs, axis=0)
 
-vec1 = np.column_stack((0,0,0))
-vec2 = np.column_stack((6,9,12))
 
 def linear_upsample(initial_Hz: float, desired_Hz: float, vec_1: np.ndarray[2], vec_2: np.ndarray[2]):
     """
