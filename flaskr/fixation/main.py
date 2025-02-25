@@ -1,8 +1,8 @@
 # All code in this file is our own work.
 
 import fixation_packages.event
-from fixation_packages.ingestion import extract_unzip, read_pldata, parse_pldata
-from fixation_packages import gaze_processing
+from fixation_packages.ingestion import extract_unzip, read_pldata, parse_pldata, generate_gaze_data
+from fixation_packages.gaze_processing import savgol
 from fixation_packages.IMU_processing import calculate_optic_flow_vec, quat_to_euler
 from fixation_packages.lucas_kanade import do_it
 import fixation_packages.spatial_average
@@ -28,13 +28,12 @@ from constants import *       # import all global constants as defined in consta
 def main():
     data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', DATE_OF_URL_DATA))
     pldata_data = read_pldata(f'{data_path}/{PLDATA_TO_LOAD}')
-
     df = pd.DataFrame(pldata_data)
     parsed_data = parse_pldata(df[1].iloc[0])
+    gaze_data_dict = generate_gaze_data(f'{data_path}\\processedGaze\\{NPZ_TO_LOAD}')
 
     print(parsed_data.keys())
     # print(parse_pldata(df[1].iloc[1])['timestamp'])
-    input()
     dt = parse_pldata(df[1].iloc[1])['timestamp'] - parse_pldata(df[1].iloc[0])['timestamp']
     dpos = parse_pldata(df[1].iloc[1])['position_0'] - parse_pldata(df[1].iloc[0])['position_0']
     print(dpos/dt)
@@ -43,7 +42,11 @@ def main():
     print(parse_pldata(df[1].iloc[0])['linear_velocity_0'])
     print(parse_pldata(df[1].iloc[1])['linear_velocity_0'])
 
-
+    # Step 1
+    savgol_left_x = savgol(gaze_data_dict["left_norm_pos_x"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
+    savgol_left_y = savgol(gaze_data_dict["left_norm_pos_y"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
+    savgol_right_x = savgol(gaze_data_dict["right_norm_pos_x"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
+    savgol_right_y = savgol(gaze_data_dict["right_norm_pos_y"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
 
     # print(time_series[1] - time_series[0])
     # print(pd.to_datetime(parse_pldata(df[1].iloc[1])['source_timestamp'], unit='s'))
@@ -56,16 +59,16 @@ def main():
     # for i in range(len(list_all)-1):
     #     calculate_optic_flow_vec(list_all[i], list_all[i+1])
 
-    W_QUAT = parsed_data['orientation_0']
-    X_QUAT = parsed_data['orientation_1']
-    Y_QUAT = parsed_data['orientation_2']
-    Z_QUAT = parsed_data['orientation_3']
+    # W_QUAT = parsed_data['orientation_0']
+    # X_QUAT = parsed_data['orientation_1']
+    # Y_QUAT = parsed_data['orientation_2']
+    # Z_QUAT = parsed_data['orientation_3']
 
-    quaternion_vec = np.column_stack((W_QUAT, X_QUAT, Y_QUAT, Z_QUAT))
-    print()
-    print(quat_to_euler(quaternion_vec))
+    # quaternion_vec = np.column_stack((W_QUAT, X_QUAT, Y_QUAT, Z_QUAT))
+    # print()
+    # print(quat_to_euler(quaternion_vec))
 
-    calculate_optic_flow_vec(parse_pldata(df[1].iloc[1]), parse_pldata(df[1].iloc[2]))
+    # calculate_optic_flow_vec(parse_pldata(df[1].iloc[1]), parse_pldata(df[1].iloc[2]))
 
     print("It Begins...")
 
@@ -88,6 +91,7 @@ def main():
         v_thr_list.append(calculate_v_thr(MIN_VEL_THRESH, GAIN_FACTOR, new_vec_list, i, samples_in_window))
 
     print(len(v_thr_list))
+    print("DONE!")
 
     # Begin classification
     # for sample in range(len(v_thr_list)):

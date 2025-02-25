@@ -5,6 +5,7 @@ DOWNLOAD_URL = "https://osf.io/85usz/download"
 DATE_OF_URL_DATA = "2023_06_01_18_47_34"       # "2023_06_01_18_47_34" was original
 NPY_TO_LOAD = "odometry_timestamps.npy"
 PLDATA_TO_LOAD = "odometry.pldata"
+NPZ_TO_LOAD = "gaze.npz"
 
 # gaze processing (1, 2)
 GAZE_WINDOW_SIZE_MS = 55            # milliseconds
