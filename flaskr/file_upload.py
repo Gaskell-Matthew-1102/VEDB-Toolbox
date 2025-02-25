@@ -5,7 +5,7 @@ import shutil
 from flask import *
 import atexit
 import os
-#import numpy as np
+import numpy as np
 #from pathlib import Path
 import msgpack
 #import collections
@@ -550,7 +550,28 @@ def parse_pldata(data):
 
     return flattened
 
-def generate_graphs(filename_list: list[str]):
+# This function was taken from Michelle, an individual who has worked on the VEDB and specifically published some
+# information about accessing and visualizing the VEDB, in which this function was found.
+# That can be found here: https://github.com/vedb/vedb-demos/blob/main/VEDB_demo_explore_session.ipynb
+def load_as_dict(path):
+    tmp = np.load(path, allow_pickle=True)
+    params = {}
+    for k, v in tmp.items():
+        if isinstance(v, np.ndarray) and (v.dtype==np.dtype("O")):
+            if v.shape==():
+              params[k] = v.item()
+            else:
+              params[k] = v
+    return params
+
+# Some data files in the VEDB record NANs when the hardware stops recording (for whatever reason)
+def count_nans(vel_list):
+    nan_count = sum(1 for value in vel_list if isinstance(value, float) and math.isnan(value))
+    print("Nan Count Ratio:", nan_count / len(vel_list))
+    print("Nan Count:", nan_count)
+    return nan_count
+
+def generate_velocity_graphs(filename_list: list[str]):
     # assuming either 1. both files exist, 2. neither file exists
     global graph_file_list
     for filename in filename_list:
@@ -592,32 +613,58 @@ def generate_graphs(filename_list: list[str]):
         #Plotly Plots: Dynamic interactable plots
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_0_list, name='Linear Velocity 0'))
-        print("LinVel ", len(linear_vel_0_list), " Times ", len(timestamp_list))
         fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_1_list, name='Linear Velocity 1'))
         fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_2_list, name='Linear Velocity 2'))
         fig.update_layout(title='Linear Velocity', xaxis_title='Time', yaxis_title='Linear Velocity',
                           legend_title='Lines')
-        # fig.show()
-        last_timestamp = timestamp_list[len(timestamp_list) - 1] - first_timestamp
-        # fig.update_xaxes(range = [0, last_timestamp])
         fig.update_layout(width=400, height=257)
         lin_vel_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
 
-
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_0_list, name='Angular Velocity 0'))
-        # print("AngVel ", len(angular_velocity_0_list), " Times ", len(timestamp_list))
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_1_list, name='Angular Velocity 1'))
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_2_list, name='Angular Velocity 2'))
         fig.update_layout(title='Angular Velocity', xaxis_title='Time', yaxis_title='Angular Velocity',
                           legend_title='Lines')
-        # fig.show()
-        # fig.update_xaxes(range=[0, last_timestamp])
         fig.update_layout(width=400, height=257)
         ang_vel_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
         json_list = [lin_vel_json, ang_vel_json]
         return json_list
 
+def generate_gaze_graph(filename_list):
+    for filename in filename_list:
+        gaze_dict = load_as_dict(filename)
+        left_gaze = gaze_dict['left']
+        right_gaze = gaze_dict['right']
+
+        left_timestamps = []
+        right_timestamps = []
+        left_norm_pos_x = []
+        left_norm_pos_y = []
+        right_norm_pos_x = []
+        right_norm_pos_y = []
+
+        left_first_timestamp = left_gaze['timestamp'][0]
+        for value in left_gaze['timestamp']:
+            left_timestamps.append(value - left_first_timestamp)
+        for value in left_gaze['norm_pos']:
+            left_norm_pos_x.append(value[0])
+            left_norm_pos_y.append(value[1])
+
+        right_first_timestamp = right_gaze['timestamp'][0]
+        for value in  right_gaze['timestamp']:
+            right_timestamps.append(value - right_first_timestamp)
+        for value in  right_gaze['norm_pos']:
+            right_norm_pos_x.append(value[0])
+            right_norm_pos_y.append(value[1])
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=left_timestamps, y=left_norm_pos_x, name='Left Norm Pos X'))
+        fig.add_trace(go.Scatter(x=left_timestamps, y=left_norm_pos_y, name='Left Norm Pos Y'))
+        fig.add_trace(go.Scatter(x=right_timestamps, y=right_norm_pos_x, name='Right Norm Pos X'))
+        fig.add_trace(go.Scatter(x=right_timestamps, y=right_norm_pos_y, name='Right Norm Pos Y'))
+        gaze_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
+        return gaze_json
 
 # Loads the visualizer once files have been correctly uploaded
 def load_visualizer():
@@ -628,7 +675,13 @@ def load_visualizer():
             else:
                 file_to_graph = "odometry.pldata"
             # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
-            graphs = generate_graphs([file_to_graph])
+            graphs = generate_velocity_graphs([file_to_graph])
+            # if get_is_folder(2):
+            #     file_to_graph = "flaskr/" + get_folder_name(2) + "/processedGaze/gaze.npz"
+            # else:
+            #     file_to_graph = "processedGaze/gaze.npz"
+            # graphs.append(generate_gaze_graph([file_to_graph]))
+            # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
             return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
         else:
             raise Exception(f"Invalid Action") #how did it get here

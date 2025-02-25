@@ -94,10 +94,9 @@
                 </div>
             </div>
             <div class="graph_container">
-<!--                <img class="graph1" src="{{ url_for('static', filename='../static/linear_velocity_graph.png') }}" alt="Linear Velocity Graph" width="320" height="240">-->
-<!--                <img class="graph2" src="{{ url_for('static', filename='../static/linear_acceleration_graph.png') }}" alt="Linear Acceleration Graph" width="320" height="240">-->
                 <div id='linear_velocity'></div>
                 <div id='angular_velocity'></div>
+<!--                <div id='gaze'></div>-->
             </div>
         </div>
         <div class="controls_container">
@@ -126,101 +125,11 @@
     <script type="text/javascript">
         var linear_graph = {{linear_vel_JSON | safe}};
         var angular_graph = {{angular_vel_JSON | safe}};
+        // var gaze_graph = {{gaze_JSON | safe}}
 
         Plotly.plot("linear_velocity", linear_graph, {});
         Plotly.plot("angular_velocity", angular_graph, {});
+        // Plotly.plot("gaze", gaze_graph, {});
 
     </script>
-
-<!--    Right now this code isn't being used, but could be in the future, this would be for a video progress/seek bar in Vue    -->
-<!--    <script>-->
-<!--        const { createApp } = Vue;-->
-<!--        const { createProgress } = window;-->
-
-<!--        const app = createApp({-->
-<!--            data() {-->
-<!--                return{-->
-<!--                    progress: 0,-->
-<!--                };-->
-<!--            },-->
-<!--            methods: {-->
-<!--                handleProgressClick(event){-->
-<!--                    const progressBarWidth = event.target.offsetWidth;-->
-<!--                    const clickPosition = event.offsetX;-->
-<!--                    const newProgress = (clickPosition/progressBarWidth) * 100;-->
-<!--                    this.progress = newProgress;-->
-
-<!--                    const wvideo = document.getElementById('worldvideo');-->
-<!--                    const evideo1 = document.getElementById('eye0video');-->
-<!--                    const evideo2 = document.getElementById('eye1video');-->
-<!--                    const wVidLength = wvideo.duration;-->
-<!--                    const eVid1Length = evideo1.duration;-->
-<!--                    const eVid2Length = evideo2.duration;-->
-<!--                    const wNewTime = (newProgress/100) * wVidLength;-->
-<!--                    const e1NewTime = (newProgress/100) * eVid1Length;-->
-<!--                    const e2NewTime = (newProgress/100) * eVid2Length;-->
-<!--                    wvideo.currentTime = wNewTime;-->
-<!--                    evideo1.currentTime = e1NewTime;-->
-<!--                    evideo2.currentTime = e2NewTime;-->
-<!--                },-->
-<!--            },-->
-<!--        });-->
-
-<!--        app.use(createProgress());-->
-<!--        app.mount('app');-->
-<!--    </script>-->
-
-<!--    <script>-->
-<!--        Vue.component('graph', {extends: VueChartJs.Line, props: ['ChartData'],-->
-<!--            data: function(){-->
-<!--                return{-->
-<!--                    options: {-->
-<!--                        tooltips: {-->
-<!--                            mode: 'index', intersect: false,-->
-<!--                        },-->
-<!--                        scales: {-->
-<!--                            xAxes: [{display: true, scaleLabel: {display: true, labelString: "Time"}}],-->
-<!--                            yAxes: [{display: true, scaleLabel: {display: true, labelString: "Linear Velocity"}}]-->
-<!--                        },-->
-<!--                        responsive: true,-->
-<!--                        maintainAspectRatio: false,-->
-<!--                    }-->
-<!--                }-->
-<!--            },-->
-<!--            watch: {-->
-<!--                'chartData.updateFlag': function(nv, ov) {-->
-<!--                    this.$data._chart.update();-->
-<!--                }-->
-<!--            },-->
-<!--            mounted() {-->
-<!--                this.renderChart(this.chartData, this.options);-->
-<!--            }-->
-<!--        })-->
-
-<!--        new Vue({-->
-<!--            el: '#app',-->
-<!--            data() {-->
-<!--                return {-->
-<!--                    chartData: {-->
-<!--                        'update_flag':0, 'labels': [], 'datasets': []-->
-<!--                    },-->
-
-<!--                }-->
-<!--            },-->
-<!--            methods: {-->
-<!--                fillData(limit, offset){-->
-<!--                    Vue.http.get('http://127.0.0.1:5000/?limit=' +limit+ '&offset=' +offset).then(res => {-->
-<!--                        if (offset === 0){-->
-<!--                            this.chartData.labels = res.body.chart_data.labels;-->
-<!--                            this.chartData.datasets = res.body.chart_data.datasets;-->
-<!--                        }-->
-<!--                        else{-->
-
-<!--                        }-->
-<!--                    })-->
-<!--                }-->
-<!--            }-->
-<!--        })-->
-<!--    </script>-->
-
 </html>
