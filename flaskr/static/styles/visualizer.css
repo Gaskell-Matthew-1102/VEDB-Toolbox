@@ -3,24 +3,47 @@ stylesheet, modifying it to conform for the file upload pages
 Additionally, I used this link for some container reference:
 https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-another-in-html*/
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 /*Hold all of the video control buttons*/
 .controls_container {
     border: 5px solid #000000;
     border-radius: 50px 50px 50px 50px;
-    background-color: #000000;
+    background-color: #E2E1E1;
+    background: linear-gradient(to right, #FBFBFB, #E2E1E1);
     position: fixed;
     bottom: 0;
     width: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-.body{
-    margin: 0;
-    padding: 0;
-    background-color: #8ca8cc79;
+.button_container{
+    display: flex;
+    justify-content: space-between;
+    width: 35%;
 }
+
+body{
+    background-color: #8ca8cc79;
+    background: linear-gradient(to right, #e2e2e2, #8ca8cc79);
+    display: flex;
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    flex-direction: column;
+    /*height: 100vh;*/
+}
+
+/*.body{*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    background-color: #8ca8cc79;*/
+/*}*/
 
 .header_bar{
     width: 100%;
@@ -40,32 +63,57 @@ https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-
 
 .parent_container{
     width: 100%;
-    background-color: #8ca8cc79;
     margin: auto;
+    display: flex;
 }
 
 .video_container{
-    width: 63%;
+    border: 5px solid #000000;
+    border-radius: 50px 50px 50px 50px;
+    width: 60%;
     float: left;
+    background-color: #E2E1E1;
+    background: linear-gradient(to right, #FBFBFB, #E2E1E1);
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    /*position: relative;*/
+    overflow: hidden;
+    max-width: 100%;
+    margin: 5px 5px 5px 5px;
 }
 
 .world_video_container{
-    width: 76%;
+    width: 72%;
     float: left;
 }
 
 .eye_videos_container{
-    width: 24%;
+    width: 28%;
     display: flex;
-    float: right;
-    position: relative
-}
-
-.graph_container{
-    width: 32%;
     float: right;
     position: relative;
     justify-content: center;
+}
+
+.graph_container{
+    border: 5px solid #000000;
+    width: 35%;
+    background-color: #E2E1E1;
+    background: linear-gradient(to right, #FBFBFB, #E2E1E1);
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    float: right;
+    margin: 5px 5px 5px 5px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.label_text{
+    font-family: 'Montserrat', sans-serif;
+    color: #000000;
 }
 
 .graph1{
@@ -86,25 +134,25 @@ https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-
     justify-content: left;
 }
 
-.container {
-    flex-direction: row;
-    display: flex;
-    column-gap: 0px;
-    align-items: center;
-    justify-content: left;
-    width: 100%;
-    overflow: hidden;
-}
+/*.container {*/
+/*    flex-direction: row;*/
+/*    display: flex;*/
+/*    column-gap: 0px;*/
+/*    align-items: center;*/
+/*    justify-content: left;*/
+/*    width: 100%;*/
+/*    overflow: hidden;*/
+/*}*/
 
-.nav {
-    background-color: #222287;
-    margin-left: -10px;
-    margin-right: 0px;
-    margin-bottom: 10px;
-    border: 5px solid #07062b;
-    border-radius: 0px 50px 50px 0px;
-    padding-right: 550px;
-}
+/*.nav {*/
+/*    background-color: #222287;*/
+/*    margin-left: -10px;*/
+/*    margin-right: 0px;*/
+/*    margin-bottom: 10px;*/
+/*    border: 5px solid #07062b;*/
+/*    border-radius: 0px 50px 50px 0px;*/
+/*    padding-right: 550px;*/
+/*}*/
 
 .h1 {
     color: white;
@@ -114,13 +162,40 @@ https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-
     margin-top: 15px;
     font-family: "Courier New", Courier, monospace;
 }
+.world_video{
+    /*margin: 10px;*/
+}
 
 .eye0_video{
     position: absolute;
     transform: rotate(180deg);
+    /*margin: 10px 10px 5px;*/
 }
 
 .eye1_video{
     position: absolute;
     top: 300px;
+    /*margin: 5px 10px 10px;*/
+}
+
+.fa-clickable{
+    cursor: pointer;
+    outline: none;
+    pointer-events: all;
+}
+
+/*https://stackoverflow.com/questions/22672368/how-to-make-a-transparent-html-button*/
+.icon-button {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    width: 35px;
+    height: 35px;
+}
+
+.seek-bar{
+    width: 80%;
 }

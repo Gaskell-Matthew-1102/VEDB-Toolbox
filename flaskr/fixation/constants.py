@@ -5,6 +5,7 @@ DOWNLOAD_URL = "https://osf.io/85usz/download"
 DATE_OF_URL_DATA = "2023_06_01_18_47_34"       # "2023_06_01_18_47_34" was original
 NPY_TO_LOAD = "odometry_timestamps.npy"
 PLDATA_TO_LOAD = "odometry.pldata"
+NPZ_TO_LOAD = "gaze.npz"
 
 # gaze processing (1, 2)
 GAZE_WINDOW_SIZE_MS = 55            # milliseconds
@@ -19,6 +20,7 @@ ADAP_WINDOW_SIZE_MS = 300           # milliseconds
 MIN_SACCADE_AMP = 1.0               # degrees
 MIN_SACCADE_DUR_MS = 10             # milliseconds
 MIN_FIXATION_DUR_MS = 70            # milliseconds
+HFOV_DEG = 70                       # THIS VALUE IS COMPLETELY AND UTTERLY MADE UP
 
 # Vectors are represented in this project as a 2 by X np.ndarray, where X is the number of components in the vector
 #                       
