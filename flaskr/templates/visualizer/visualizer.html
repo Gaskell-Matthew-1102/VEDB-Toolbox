@@ -96,7 +96,7 @@
             <div class="graph_container">
                 <div id='linear_velocity'></div>
                 <div id='angular_velocity'></div>
-<!--                <div id='gaze'></div>-->
+                <div id='gaze'></div>
             </div>
         </div>
         <div class="controls_container">
@@ -125,11 +125,11 @@
     <script type="text/javascript">
         var linear_graph = {{linear_vel_JSON | safe}};
         var angular_graph = {{angular_vel_JSON | safe}};
-        // var gaze_graph = {{gaze_JSON | safe}}
+        var gaze_graph = {{gaze_JSON | safe}}
 
         Plotly.plot("linear_velocity", linear_graph, {});
         Plotly.plot("angular_velocity", angular_graph, {});
-        // Plotly.plot("gaze", gaze_graph, {});
+        Plotly.plot("gaze", gaze_graph, {});
 
     </script>
 </html>

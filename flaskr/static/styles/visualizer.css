@@ -11,10 +11,11 @@ https://stackoverflow.com/questions/48474/how-do-i-position-one-image-on-top-of-
     border-radius: 50px 50px 50px 50px;
     background-color: #E2E1E1;
     background: linear-gradient(to right, #FBFBFB, #E2E1E1);
-    position: fixed;
     bottom: 0;
     width: 40%;
-    left: 50%;
+    left: 30%;
+    position: relative;
+    margin: 5px 5px 5px 5px;
     transform: translate(-50%, -50%);
     height: 100px;
     display: flex;
@@ -71,6 +72,7 @@ body{
     border: 5px solid #000000;
     border-radius: 50px 50px 50px 50px;
     width: 60%;
+    height: 610px;
     float: left;
     background-color: #E2E1E1;
     background: linear-gradient(to right, #FBFBFB, #E2E1E1);
@@ -81,7 +83,6 @@ body{
     max-width: 100%;
     margin: 5px 5px 5px 5px;
 }
-
 .world_video_container{
     width: 72%;
     float: left;

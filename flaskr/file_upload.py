@@ -241,7 +241,7 @@ def validate_data_files(file_list) -> bool:
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
                       "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
-                        "world_timestamps.npy", "marker_times.yaml", "world.pldata", "processedGaze", ".DS_Store"]
+                        "world_timestamps.npy", "marker_times.yaml", "world.pldata", "processedGaze", ".DS_Store", "gaze.npz"]
 
     for filename in file_list:
         if filename not in acceptable_files:
@@ -617,7 +617,8 @@ def generate_velocity_graphs(filename_list: list[str]):
         fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_2_list, name='Linear Velocity 2'))
         fig.update_layout(title='Linear Velocity', xaxis_title='Time', yaxis_title='Linear Velocity',
                           legend_title='Lines')
-        fig.update_layout(width=400, height=257)
+        fig.update_layout(width=500, height=257)
+
         lin_vel_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
 
         fig = go.Figure()
@@ -626,7 +627,8 @@ def generate_velocity_graphs(filename_list: list[str]):
         fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_2_list, name='Angular Velocity 2'))
         fig.update_layout(title='Angular Velocity', xaxis_title='Time', yaxis_title='Angular Velocity',
                           legend_title='Lines')
-        fig.update_layout(width=400, height=257)
+        fig.update_layout(width=500, height=257)
+
         ang_vel_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
         json_list = [lin_vel_json, ang_vel_json]
         return json_list
@@ -663,6 +665,10 @@ def generate_gaze_graph(filename_list):
         fig.add_trace(go.Scatter(x=left_timestamps, y=left_norm_pos_y, name='Left Norm Pos Y'))
         fig.add_trace(go.Scatter(x=right_timestamps, y=right_norm_pos_x, name='Right Norm Pos X'))
         fig.add_trace(go.Scatter(x=right_timestamps, y=right_norm_pos_y, name='Right Norm Pos Y'))
+        fig.update_layout(title='Normalized Gaze Position', xaxis_title='Time', yaxis_title='Norm Position',
+                          legend_title='Lines')
+        fig.update_layout(width=500, height=257)
+
         gaze_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
         return gaze_json
 
@@ -676,13 +682,13 @@ def load_visualizer():
                 file_to_graph = "odometry.pldata"
             # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
             graphs = generate_velocity_graphs([file_to_graph])
-            # if get_is_folder(2):
-            #     file_to_graph = "flaskr/" + get_folder_name(2) + "/processedGaze/gaze.npz"
-            # else:
-            #     file_to_graph = "processedGaze/gaze.npz"
-            # graphs.append(generate_gaze_graph([file_to_graph]))
+            if get_is_folder(2):
+                file_to_graph = "flaskr/" + get_folder_name(2) + "/gaze.npz"
+            else:
+                file_to_graph = "gaze.npz"
+            graphs.append(generate_gaze_graph([file_to_graph]))
             # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
-            return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
+            return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1], gaze_JSON=graphs[2])
         else:
             raise Exception(f"Invalid Action") #how did it get here
 
