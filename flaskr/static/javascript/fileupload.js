@@ -1,15 +1,8 @@
 // This code was written by Matt
 
-// const play_button = document.getElementById('playbutton');
-//
-// play_button.addEventListener('click', function() {
-//     console.log('here');
-//     play_pause();
-// });
-
-// const world_video = document.getElementById("worldvideo");
-// const eye0_video = document.getElementById("eye0video");
-// const eye1_video = document.getElementById("eye1video");
+var world_video = document.getElementById("worldvideo");
+var eye0_video = document.getElementById("eye0video");
+var eye1_video = document.getElementById("eye1video");
 
 function play(){
     var world_video = document.getElementById("worldvideo")
