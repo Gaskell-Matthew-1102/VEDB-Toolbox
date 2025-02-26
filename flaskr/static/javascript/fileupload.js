@@ -63,6 +63,33 @@ function stop_video(){
     eye1_video.pause();
 }
 
+// Functionality for manipulating videos using Space, Escape, and arrow keys for accessibility and convenience
+window.addEventListener('keydown', function(event) {
+   var world_video = document.getElementById("worldvideo")
+   var eye0_video = document.getElementById("eye0video")
+   var eye1_video = document.getElementById("eye1video")
+
+   switch(event.key) {
+       case ' ':
+           if (world_video.paused) {
+               play();
+           }
+           else if (!world_video.paused) {
+               pause();
+           }
+           break;
+       case 'Escape':
+           stop_video();
+           break;
+       case 'ArrowLeft':
+           skip_10_backward();
+           break;
+       case 'ArrowRight':
+           skip_10_forward();
+           break;
+   }
+});
+
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
 // THIS NEEDS REFACTORING or honestly just changing entirely, right now it shows progress but seeking does not work
 jQuery(function ($) {
