@@ -1,8 +1,8 @@
 // This code was written by Matt
 
-var world_video = document.getElementById("worldvideo");
-var eye0_video = document.getElementById("eye0video");
-var eye1_video = document.getElementById("eye1video");
+// var world_video = document.getElementById("worldvideo");
+// var eye0_video = document.getElementById("eye0video");
+// var eye1_video = document.getElementById("eye1video");
 
 function play(){
     var world_video = document.getElementById("worldvideo")
@@ -84,12 +84,17 @@ window.addEventListener('keydown', function(event) {
 });
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
-// THIS NEEDS REFACTORING or honestly just changing entirely, right now it shows progress but seeking does not work
 jQuery(function ($) {
     $("#worldvideo").on("timeupdate", function(){
         var wvideo = $(this)[0];
         var val = (100/wvideo.duration) * wvideo.currentTime;
         $("#seek-bar").val(val);
+        var updatedMinutes = wvideo.currentTime/60;
+        var updatedMinsString = updatedMinutes.toFixed(0);
+        var updatedSeconds = wvideo.currentTime%60;
+        var updatedSecsString = updatedSeconds.toFixed(2);
+        var updatedTime = updatedMinsString + ":" + updatedSecsString;
+        $("#currentTime").attr("value", updatedTime);
     });
     $("#seek-bar").on("mousedown", function(){
         var wvideo = $("#worldvideo")[0];
@@ -99,7 +104,7 @@ jQuery(function ($) {
         e0video.pause();
         e1video.pause();
     });
-    $("seek-bar").on("mouseup", function(){
+    $("#seek-bar").on("mouseup", function(){
         var wvideo = $("#worldvideo")[0];
         var e0video = $("#eye0video")[0];
         var e1video = $("#eye1video")[0];
