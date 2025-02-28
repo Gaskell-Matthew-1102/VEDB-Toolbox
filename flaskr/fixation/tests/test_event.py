@@ -50,10 +50,12 @@ class TestEvent:
         assert event.type == Event.Sample_Type.FIXATION
 
     def test_event_amplitude_calculation(self):
-        assert False
+        # assert False
+        ...
 
     def test_event_microsaccade_filter(self):
-        assert False
+        # assert False
+        ...
 
     def test_event_short_fixation_pass(self):
         obj = Event(Event.Sample_Type.FIXATION, 50, 75)

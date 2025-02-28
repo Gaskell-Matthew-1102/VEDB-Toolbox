@@ -63,3 +63,6 @@ class EventList:
             if self.list[i] != value.list[i]:
                 return False
         return True
+    
+    def __iter__(self):
+        return iter(self.list)  # Makes EventList iterable

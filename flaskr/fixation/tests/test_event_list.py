@@ -27,8 +27,14 @@ class TestEventList:
         assert merged_list[0].end_time_ms == 1.0
 
     def test_eventlist_consolidate(self, setup):
-        expected_list = EventList(np.array([Event(Event.Sample_Type.FIXATION, 0, 1), Event(Event.Sample_Type.GAP, 1, 2.0), Event(Event.Sample_Type.FIXATION, 2.0, 2.5)]))
+        ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 1)
+        ex_event2 = Event(Event.Sample_Type.GAP, 1, 2.0)
+        ex_event3 = Event(Event.Sample_Type.FIXATION, 2.0, 2.5)
+        
+        expected_list = EventList(np.array([ex_event1, ex_event2, ex_event3]))
         setup.consolidate_list()
         assert expected_list == setup
 
+    # def test_eventList_iter(setup):
+    #     for event in setup.obj:
 

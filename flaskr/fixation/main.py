@@ -2,7 +2,7 @@
 
 import fixation_packages.event
 from fixation_packages.ingestion import extract_unzip, read_pldata, parse_pldata, generate_gaze_data
-from fixation_packages.gaze_processing import savgol
+from fixation_packages.gaze_processing import savgol, calculateGazeVelocity
 from fixation_packages.IMU_processing import calculate_optic_flow_vec, quat_to_euler
 from fixation_packages.lucas_kanade import do_it
 import fixation_packages.spatial_average
@@ -36,19 +36,27 @@ def main():
     # print(parse_pldata(df[1].iloc[1])['timestamp'])
     dt = parse_pldata(df[1].iloc[1])['timestamp'] - parse_pldata(df[1].iloc[0])['timestamp']
     dpos = parse_pldata(df[1].iloc[1])['position_0'] - parse_pldata(df[1].iloc[0])['position_0']
-    print(dpos/dt)
-    print((dpos/dt)/2)
     print()
     print(parse_pldata(df[1].iloc[0])['linear_velocity_0'])
     print(parse_pldata(df[1].iloc[1])['linear_velocity_0'])
-
     # Step 1
-    savgol_left_x = savgol(gaze_data_dict["left_norm_pos_x"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
-    savgol_left_y = savgol(gaze_data_dict["left_norm_pos_y"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
-    savgol_right_x = savgol(gaze_data_dict["right_norm_pos_x"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
-    savgol_right_y = savgol(gaze_data_dict["right_norm_pos_y"], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
+    # We need one gaze velocity vector, so I'm just gonna average out the left and right eye vectors (based on the length of the min list)
+    min_len = min(len(gaze_data_dict["left_norm_pos_x"]), len(gaze_data_dict["left_norm_pos_y"]), len(gaze_data_dict["right_norm_pos_x"]), len(gaze_data_dict["right_norm_pos_y"]))
 
-    # print(time_series[1] - time_series[0])
+    raw_gaze_left = np.array([gaze_data_dict["left_norm_pos_x"][0:min_len], gaze_data_dict["left_norm_pos_y"][0:min_len]])
+    raw_gaze_right = np.array([gaze_data_dict["right_norm_pos_x"][0:min_len], gaze_data_dict["right_norm_pos_y"][0:min_len]])
+
+    raw_gaze_vec = np.array([np.mean([raw_gaze_left[0], raw_gaze_right[0]], 0), np.mean([raw_gaze_left[1], raw_gaze_right[1]], 0)])
+
+
+    savgol_x = savgol(raw_gaze_vec[0], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
+    savgol_y = savgol(raw_gaze_vec[1], window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE)
+
+    savgol_gaze_vec = np.array([savgol_x, savgol_y])
+
+    # Step 2
+    v_hat = np.array([calculateGazeVelocity(savgol_gaze_vec[0]), calculateGazeVelocity(savgol_gaze_vec[1])])
+
     # print(pd.to_datetime(parse_pldata(df[1].iloc[1])['source_timestamp'], unit='s'))
 
     # "2023_06_01_18_47_34" timestamp starts at 332.054984618, source timestamp starts at 1685659655.7981853
