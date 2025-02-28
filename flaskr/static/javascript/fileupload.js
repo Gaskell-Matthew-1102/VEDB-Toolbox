@@ -85,14 +85,23 @@ window.addEventListener('keydown', function(event) {
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
 jQuery(function ($) {
+    $(window).on('load', function() {
+        var wvideo = $("#worldvideo")[0];
+        var videoMinutes = Math.floor(wvideo.duration/60);
+        var videoMinutesString = videoMinutes.toFixed(0);
+        var videoSeconds = wvideo.duration%60;
+        var videoSecsString = videoSeconds.toFixed(0);
+        var videoTime = videoMinutesString + ":" + videoSecsString;
+        $("#totalTime").attr("value", videoTime);
+    });
     $("#worldvideo").on("timeupdate", function(){
         var wvideo = $(this)[0];
         var val = (100/wvideo.duration) * wvideo.currentTime;
         $("#seek-bar").val(val);
-        var updatedMinutes = wvideo.currentTime/60;
+        var updatedMinutes = Math.floor(wvideo.currentTime/60);
         var updatedMinsString = updatedMinutes.toFixed(0);
         var updatedSeconds = wvideo.currentTime%60;
-        var updatedSecsString = updatedSeconds.toFixed(2);
+        var updatedSecsString = updatedSeconds.toFixed(0);
         var updatedTime = updatedMinsString + ":" + updatedSecsString;
         $("#currentTime").attr("value", updatedTime);
     });
