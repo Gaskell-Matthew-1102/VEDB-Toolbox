@@ -44,6 +44,8 @@ def create_app(test_config=None):
         # Register routes (this can also be modularized into blueprints if needed)
         app.add_url_rule('/', 'home', auth.home)
         app.add_url_rule('/landing', 'landing', auth.landing, methods=["GET", "POST"])
+        app.add_url_rule('/team', 'team', auth.team)
+        app.add_url_rule('/faculty', 'faculty', auth.faculty)        
         app.add_url_rule('/logout', 'logout', auth.logout)
         app.add_url_rule('/dashboard', 'dashboard', auth.dashboard, methods=["GET", "POST"])
 
