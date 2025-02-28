@@ -1,0 +1,113 @@
+{% extends 'home/base.jinja' %}
+
+{% block header %}
+  <h1>{% block title %}Team 16{% endblock %}</h1>
+{% endblock %}
+
+{% block bodyheading %}
+    <h1 class="text-white font-weight-black pt-3 mt-n5">Team 16</h1>
+    <p class="lead text-white mt-3">Working hard all year, we are the members of Team 16!<br/>Get to know us here and at our table on Innovation Day!</p>
+{% endblock %}
+
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row mt-lg-5 mt-3">
+            <div class="col-md-6">
+                <div class="card card-profile card-plain">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="position-relative">
+                                <div class="blur-shadow-image">
+                                    <img class="w-100 border-radius-lg shadow-lg" src="{{ url_for('static', filename='home_bp/img/people/team/levi.png') }}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 ps-0 my-auto">
+                            <div class="card-body text-start">
+                                <div class="p-md-0 pt-3">
+                                    <h5 class="font-weight-bolder mb-0">Brian Wu</h5>
+                                    <p class="text-uppercase text-sm font-weight-bold mb-2">Full Stack Developer</p>
+                                </div>
+                                <p class="mb-4">Third-year student at UNR majoring in CSE, with a minor in Mathematics and Information Systems.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-profile card-plain">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="position-relative">
+                                <div class="blur-shadow-image">
+                                    <img class="w-100 border-radius-lg shadow-lg" src="{{ url_for('static', filename='home_bp/img/people/team/levi.png') }}" alt="profile image" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 ps-0 my-auto">
+                            <div class="card-body text-start">
+                                <div class="p-md-0 pt-3">
+                                    <h5 class="font-weight-bolder mb-0">Leon Magbanua</h5>
+                                    <p class="text-uppercase text-sm font-weight-bold mb-2">???</p>
+                                </div>
+                                <p class="mb-4">Third-year student at UNR majoring in CSE, with a minor in Mathematics.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-lg-5 mt-3">
+            <div class="col-md-6">
+                <div class="card card-profile card-plain">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="position-relative">
+                                <div class="blur-shadow-image">
+                                    <img class="w-100 border-radius-lg shadow-lg" src="{{ url_for('static', filename='home_bp/img/people/team/levi.png') }}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 ps-0 my-auto">
+                            <div class="card-body text-start">
+                                <div class="p-md-0 pt-3">
+                                    <h5 class="font-weight-bolder mb-0">Tyler Dishman</h5>
+                                    <p class="text-uppercase text-sm font-weight-bold mb-2">Data Science Guy</p>
+                                </div>
+                                <p class="mb-4">Third-year student at UNR majoring in CSE.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-profile card-plain">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="position-relative">
+                                <div class="blur-shadow-image">
+                                    <img class="w-100 border-radius-lg shadow-lg" src="{{ url_for('static', filename='home_bp/img/people/team/levi.png') }}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 ps-0 my-auto">
+                            <div class="card-body text-start">
+                                <div class="p-md-0 pt-3">
+                                    <h5 class="font-weight-bolder mb-0">Matthew Gaskell</h5>
+                                    <p class="text-uppercase text-sm font-weight-bold mb-2">Visualizer Goat</p>
+                                </div>
+                                <p class="mb-4">Third-year student at UNR majoring in CSE, with a minor in Mathematics and Cybersecurity.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
