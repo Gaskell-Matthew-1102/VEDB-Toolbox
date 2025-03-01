@@ -89,9 +89,18 @@ def faculty():
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
-        userlist = searchBar(request.form.get('user_search', ""))
         headings = ("Username", "Email", "Administrator")
-        return render_template('user-tools/dashboard.html', userlist=userlist, headings=headings)
+        userlist = searchBar(request.form.get('user_search', ""), "username")
+        if request.method == 'POST':    # Detects if search bar is used at all
+            if request.form["typesearch"] == "email":   #Search through email bar
+                emaillist = searchBar(request.form.get('email_search', ""), "email")
+                return render_template('user-tools/strappedDash.html', userlist=emaillist, headings=headings)
+            elif request.form["typesearch"] == "username":  #search through username bar
+                userlist = searchBar(request.form.get('user_search', ""), "username")
+                return render_template('user-tools/strappedDash.html', userlist=userlist, headings=headings)
+            else:   #reset search
+                userlist = searchBar("", "reset")
+                return render_template('user-tools/strappedDash.html', userlist=userlist, headings=headings)
+        return render_template('user-tools/strappedDash.html', userlist=userlist, headings=headings)
     else:
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
-
