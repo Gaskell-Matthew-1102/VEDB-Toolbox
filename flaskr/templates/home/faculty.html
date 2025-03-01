@@ -1,0 +1,168 @@
+{% extends 'home/base.jinja' %}
+
+{% block header %}
+  <h1>{% block title %}Faculty{% endblock %}</h1>
+{% endblock %}
+
+{% block bodyheading %}
+    <h1 class="text-white font-weight-black pt-3 mt-n5">Faculty</h1>
+    <p class="lead text-white mt-3">Without these members of faculty, this project wouldn't exist!<br/>We'd like to express our gratitude for their guidance.</p>
+{% endblock %}
+
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+                <h2>Project Advisors</h2>
+            </div>
+        </div>
+        <div class="row mt-5 justify-content-center">
+            <div class="col-lg-4 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/advisors/paul_macneilage.jpg') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Paul MacNeilage</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - Psychology</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Associate Professor & Director,<br/>Cognitive & Brain Science Ph.D. Program</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/advisors/mark_lescroart.png') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Mark Lescroart</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - Psychology</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Assistant Professor</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/advisors/alireza_tavakkoli.png') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Alireza Tavakkoli</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - <br/>Computer Science & Engineering</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Associate Professor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+                <h2>Software Engineering/Senior Projects Instructors</h2>
+            </div>
+        </div>
+        <div class="row mt-5 justify-content-center">
+            <div class="col-lg-3 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/instructors/dave.jpg') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Dave Feil-Seifer</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - <br/>Computer Science & Engineering</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Professor</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/instructors/sara.jpg') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Sara Davis</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - <br/>Computer Science & Engineering</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Assistant Professor</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/instructors/vinh.jpg') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Vinh Le</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - <br/>Computer Science & Engineering</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Teaching Assistant</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6 mb-lg-0 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-header mt-2 mx-2 p-0 bg-transparent position-relative z-index-2">
+                        <a class="d-block blur-shadow-image">
+                            <img
+                                src="{{ url_for('static', filename='home_bp/img/people/instructors/levi.png') }}"
+                                alt="img-blur-shadow"
+                                class="img-fluid shadow border-radius-lg"
+                            />
+                        </a>
+                    </div>
+                    <div class="card-body text-center bg-white border-radius-lg p-3 pt-0">
+                        <h5 class="mt-3 mb-1 d-md-block d-none">Levi Scully</h5>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">University of Nevada, Reno - <br/>Computer Science & Engineering</p>
+                        <p class="text-uppercase text-sm font-weight-bold mb-2">Teaching Assistant</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

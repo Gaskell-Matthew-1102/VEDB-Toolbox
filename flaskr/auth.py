@@ -60,7 +60,7 @@ def landing():
         else:
             flash("Invalid username/password!", "danger")
 
-    return render_template("auth/landing.html", login_form=login_form, signup_form=signup_form)
+    return render_template("home/home.html", login_form=login_form, signup_form=signup_form)
     
 # Logout route
 def logout():
@@ -78,6 +78,12 @@ def logout():
     clear_lists()
     logout_user()
     return redirect(url_for("home"))
+
+def team():
+    return render_template("home/team.html")
+
+def faculty():
+    return render_template("home/faculty.html")
 
 # Dashboard Route
 def dashboard():
