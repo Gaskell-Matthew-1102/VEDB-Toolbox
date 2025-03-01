@@ -89,10 +89,14 @@ jQuery(function ($) {
         var wvideo = $("#worldvideo")[0];
         var videoMinutes = Math.floor(wvideo.duration/60);
         var videoMinutesString = videoMinutes.toFixed(0);
+        videoMinutesString = videoMinutesString.padStart(2, '0');
         var videoSeconds = wvideo.duration%60;
         var videoSecsString = videoSeconds.toFixed(0);
+        videoSecsString = videoSecsString.padStart(2, '0');
         var videoTime = videoMinutesString + ":" + videoSecsString;
         $("#totalTime").attr("value", videoTime);
+        var defaultTime = '00:00';
+        $("#currentTime").attr("value", defaultTime);
     });
     $("#worldvideo").on("timeupdate", function(){
         var wvideo = $(this)[0];
@@ -100,8 +104,10 @@ jQuery(function ($) {
         $("#seek-bar").val(val);
         var updatedMinutes = Math.floor(wvideo.currentTime/60);
         var updatedMinsString = updatedMinutes.toFixed(0);
+        updatedMinsString = updatedMinsString.padStart(2, '0');
         var updatedSeconds = wvideo.currentTime%60;
         var updatedSecsString = updatedSeconds.toFixed(0);
+        updatedSecsString = updatedSecsString.padStart(2, '0');
         var updatedTime = updatedMinsString + ":" + updatedSecsString;
         $("#currentTime").attr("value", updatedTime);
     });

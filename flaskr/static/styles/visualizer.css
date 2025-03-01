@@ -214,5 +214,24 @@ body{
 }
 
 .seek-bar{
-    width: 80%;
+    width: 75%;
+    color: #222287;
+}
+
+.seek-bar:focus{
+    color: rgb(192, 236, 252);
+}
+
+.seek-container{
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+
+.video-times{
+    background-color: transparent;
+    border: none;
+    font-family: "Courier New", Courier, monospace;
+    width: 55px;
+    text-align: center;
 }

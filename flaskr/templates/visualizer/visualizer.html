@@ -100,10 +100,14 @@
             </div>
         </div>
         <div class="controls_container">
-            <input type="text" value="" id="currentTime">
-            <label for="seek-bar" class="label_text">Video Controls</label>
-            <input type="range" class="seek-bar" id="seek-bar" value="0">
-            <input type="text" value="" id="totalTime">
+            <div class="seek-container">
+                <label for="currentTime" class="hidden"></label>
+                <input type="text" class="video-times" value="" id="currentTime">
+                <label for="seek-bar" class="hidden"></label>
+                <input type="range" class="seek-bar" id="seek-bar" value="0">
+                <label for="totalTime" class="hidden"></label>
+                <input type="text" class="video-times" value="" id="totalTime">
+            </div>
             <div class="button_container">
                 <button class="icon-button" onclick="skip_10_backward()">
                     <i class="fa fa-step-backward fa-clickable fa-2x" style="color:#000000;"></i>
