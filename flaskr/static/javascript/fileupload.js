@@ -87,22 +87,31 @@ window.addEventListener('keydown', function(event) {
 // https://plotly.com/javascript/line-charts/
 function plotFixations(fixationTimes){
     let timesLength = fixationTimes.length;
-    let fixationTimeValues = [];
-    let nonFixationTimeValues = [];
     let previousTimeValue = 0;
     let fixationData = [];
+    let hidden = true;
 
     for(let i = 0; i < timesLength; i++){
-        // fixationTimeValues.push( first time value, second time value);
-        // nonFixationTimeValues.push(previousTimeValue, first time value);
-        // previousTimeValue = second time value ;
+        let fixationTimeValues = [];
+        let nonFixationTimeValues = [];
+        fixationTimeValues.push(fixationTimes[i][0], fixationTimes[i][1]);
+        nonFixationTimeValues.push(previousTimeValue, fixationTimes[i][0]);
+        previousTimeValue = fixationTimes[i][1];
+
+        if(i !== 0){
+            hidden = false;
+        }
 
         var nonFixationTrace = {
             x: nonFixationTimeValues,
             y: [0, 0],
             type: 'scatter',
             name: 'Non-Fixation',
-            color: 'rgb(3, 82, 252)'
+            legendgroup: 'Non-Fixation',
+            showlegend: hidden,
+            marker: {
+                color: 'rgb(3, 82, 252)'
+            }
         };
 
         var fixationTrace = {
@@ -110,7 +119,11 @@ function plotFixations(fixationTimes){
             y: [1, 1],
             type: 'scatter',
             name: 'Fixation',
-            color: 'rgb(252, 7, 3)'
+            legendgroup: 'Fixation',
+            showlegend: hidden,
+            marker: {
+                color: 'rgb(252, 7, 3)'
+            }
         };
 
         fixationData.push(nonFixationTrace, fixationTrace);
@@ -128,7 +141,7 @@ function plotFixations(fixationTimes){
         height: 257
     }
 
-    // Plotly.newPlot('DIV NAME', fixationData, layout);
+    Plotly.newPlot("gaze", fixationData, layout);
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
@@ -150,7 +163,8 @@ jQuery(function ($) {
         var defaultTime = '00:00';
         $("#currentTime").attr("value", defaultTime);
 
-        // plotFixations( NEED FIXATION JSON (DUMP MAYBE));
+        var fixationTimes = [[0.0, 1.0], [2.0, 2.5]];
+        plotFixations(fixationTimes);
     });
 
     $("#worldvideo").on("timeupdate", function(){
