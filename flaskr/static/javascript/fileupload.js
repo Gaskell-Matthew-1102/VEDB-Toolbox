@@ -83,42 +83,103 @@ window.addEventListener('keydown', function(event) {
    }
 });
 
+// Function to plot fixations on a separate graph. May refactor later to add them onto an existing graph
+// https://plotly.com/javascript/line-charts/
+function plotFixations(fixationTimes){
+    let timesLength = fixationTimes.length;
+    let fixationTimeValues = [];
+    let nonFixationTimeValues = [];
+    let previousTimeValue = 0;
+    let fixationData = [];
+
+    for(let i = 0; i < timesLength; i++){
+        // fixationTimeValues.push( first time value, second time value);
+        // nonFixationTimeValues.push(previousTimeValue, first time value);
+        // previousTimeValue = second time value ;
+
+        var nonFixationTrace = {
+            x: nonFixationTimeValues,
+            y: [0, 0],
+            type: 'scatter',
+            name: 'Non-Fixation',
+            color: 'rgb(3, 82, 252)'
+        };
+
+        var fixationTrace = {
+            x: fixationTimeValues,
+            y: [1, 1],
+            type: 'scatter',
+            name: 'Fixation',
+            color: 'rgb(252, 7, 3)'
+        };
+
+        fixationData.push(nonFixationTrace, fixationTrace);
+    }
+    // AT SOME POINT HERE QUERY FOR VIDEO TIME AND FIXATION TO THE END IF NOT ALREADY
+    var layout = {
+        title: {text: 'Eye Fixations'},
+        xaxis: {
+            title: {text: 'Time'}
+        },
+        yaxis: {
+            title: {text: 'Fixations'}
+        },
+        width: 500,
+        height: 257
+    }
+
+    // Plotly.newPlot('DIV NAME', fixationData, layout);
+}
+
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
 jQuery(function ($) {
     $(window).on('load', function() {
         var wvideo = $("#worldvideo")[0];
+
         var videoMinutes = Math.floor(wvideo.duration/60);
         var videoMinutesString = videoMinutes.toFixed(0);
         videoMinutesString = videoMinutesString.padStart(2, '0');
+
         var videoSeconds = wvideo.duration%60;
         var videoSecsString = videoSeconds.toFixed(0);
         videoSecsString = videoSecsString.padStart(2, '0');
+
         var videoTime = videoMinutesString + ":" + videoSecsString;
         $("#totalTime").attr("value", videoTime);
+
         var defaultTime = '00:00';
         $("#currentTime").attr("value", defaultTime);
+
+        // plotFixations( NEED FIXATION JSON (DUMP MAYBE));
     });
+
     $("#worldvideo").on("timeupdate", function(){
         var wvideo = $(this)[0];
         var val = (100/wvideo.duration) * wvideo.currentTime;
         $("#seek-bar").val(val);
+
         var updatedMinutes = Math.floor(wvideo.currentTime/60);
         var updatedMinsString = updatedMinutes.toFixed(0);
         updatedMinsString = updatedMinsString.padStart(2, '0');
+
         var updatedSeconds = wvideo.currentTime%60;
         var updatedSecsString = updatedSeconds.toFixed(0);
         updatedSecsString = updatedSecsString.padStart(2, '0');
+
         var updatedTime = updatedMinsString + ":" + updatedSecsString;
         $("#currentTime").attr("value", updatedTime);
     });
+
     $("#seek-bar").on("mousedown", function(){
         var wvideo = $("#worldvideo")[0];
         var e0video = $("#eye0video")[0];
         var e1video = $("#eye1video")[0];
+
         wvideo.pause();
         e0video.pause();
         e1video.pause();
     });
+
     $("#seek-bar").on("mouseup", function(){
         var wvideo = $("#worldvideo")[0];
         var e0video = $("#eye0video")[0];
@@ -128,6 +189,7 @@ jQuery(function ($) {
         wvideo.currentTime = seekingTime;
         e0video.currentTime = seekingTime;
         e1video.currentTime = seekingTime;
+
         wvideo.play();
         e0video.play();
         e1video.play();
