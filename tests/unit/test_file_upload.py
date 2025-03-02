@@ -1,9 +1,14 @@
 # This testing code was written by Matthew. For full credit information please consult conftest.py
 
 import pytest
+import json
+
+from plotly.io import from_json
+
 import flaskr.file_upload
 from flaskr.file_upload import app, validate_link, validate_video_files, validate_data_files, set_failed_upload, \
-    set_failed_link, reset_failures, failed_data_upload, failed_video_link, failed_data_link, failed_video_upload
+    set_failed_link, reset_failures, failed_data_upload, failed_video_link, failed_data_link, failed_video_upload, \
+    generate_velocity_graphs
 from flaskr.folder_upload import validate_video_path, validate_data_path
 
 def test_validate_link():
@@ -38,8 +43,39 @@ def test_validate_data_files():
     assert validate_data_files(data_list)
 
 # This uses file paths from my own machine, edit if running this test elsewhere
-def test_validate_paths():
-    vpath = "C:\\Users\mattg\Downloads\VEDB Toolbox Test Files\\65967-2021_03_16_17_18_42"
-    dpath = "C:\\Users\mattg\Downloads\VEDB Toolbox Test Files\\2021_03_16_17_18_42"
-    assert validate_video_path(vpath)
-    assert validate_data_path(dpath)
+# def test_validate_paths():
+#     vpath = "C:\\Users\mattg\Downloads\VEDB Toolbox Test Files\\65967-2021_03_16_17_18_42"
+#     dpath = "C:\\Users\mattg\Downloads\VEDB Toolbox Test Files\\2021_03_16_17_18_42"
+#     assert validate_video_path(vpath)
+#     assert validate_data_path(dpath)
+
+# This test checks that graphs are generated based on an odometry file,
+# and that they are set up correctly (titles, height, width)
+def test_generate_velocity_graphs():
+    test_odometry_file = 'odometry.pldata'
+    graphs_list = generate_velocity_graphs([test_odometry_file])
+    linear_graph = from_json(graphs_list[0])
+    angular_graph = from_json(graphs_list[1])
+    assert len(graphs_list) == 2
+
+    linear_graph_title = linear_graph.layout.title['text']
+    linear_graph_xaxis = linear_graph.layout.xaxis.title['text']
+    linear_graph_yaxis = linear_graph.layout.yaxis.title['text']
+    assert linear_graph_title == 'Linear Velocity'
+    assert linear_graph_xaxis == 'Time'
+    assert linear_graph_yaxis == 'Linear Velocity'
+
+    angular_graph_title = angular_graph.layout.title['text']
+    angular_graph_xaxis = angular_graph.layout.xaxis.title['text']
+    angular_graph_yaxis = angular_graph.layout.yaxis.title['text']
+    assert angular_graph_title == 'Angular Velocity'
+    assert angular_graph_xaxis == 'Time'
+    assert angular_graph_yaxis == 'Angular Velocity'
+
+    linear_graph_width = linear_graph.layout.width
+    angular_graph_width = angular_graph.layout.width
+    assert linear_graph_width == angular_graph_width == 500
+
+    linear_graph_height = linear_graph.layout.height
+    angular_graph_height = angular_graph.layout.height
+    assert linear_graph_height == angular_graph_height == 257

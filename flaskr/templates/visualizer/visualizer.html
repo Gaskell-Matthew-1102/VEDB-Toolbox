@@ -51,8 +51,8 @@
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-4 border-bottom">
           <div class="col-md-3 mb-2 mb-md-0">
             <a href="{{ url_for('home') }}" class="d-inline-flex link-body-emphasis text-decoration-none">
-                <img class="d-block mx-auto mb-4" src="https://1000logos.net/wp-content/uploads/2019/11/Nevada-Wolf-Pack-Logo-2000.png" alt="" width="128" height="80">
-                <img class="d-block mx-auto mb-4" src="{{ url_for('static',filename='images/vedblogo.png') }}" alt="" width="80" height="80">
+                <img class="d-block mx-auto mb-4" src="https://1000logos.net/wp-content/uploads/2019/11/Nevada-Wolf-Pack-Logo-2000.png" alt="University of Nevada Reno Logo" width="128" height="80">
+                <img class="d-block mx-auto mb-4" src="{{ url_for('static',filename='images/vedblogo.png') }}" alt="VEDB Logo" width="80" height="80">
             </a>
           </div>
 
@@ -96,12 +96,18 @@
             <div class="graph_container">
                 <div id='linear_velocity'></div>
                 <div id='angular_velocity'></div>
-<!--                <div id='gaze'></div>-->
+                <div id='gaze'></div>
             </div>
         </div>
         <div class="controls_container">
-            <label for="seek-bar" class="label_text">Video Controls</label>
-            <input type="range" class="seek-bar" id="seek-bar" value="0">
+            <div class="seek-container">
+                <label for="currentTime" class="hidden"></label>
+                <input type="text" class="video-times" value="" id="currentTime">
+                <label for="seek-bar" class="hidden"></label>
+                <input type="range" class="seek-bar" id="seek-bar" value="0">
+                <label for="totalTime" class="hidden"></label>
+                <input type="text" class="video-times" value="" id="totalTime">
+            </div>
             <div class="button_container">
                 <button class="icon-button" onclick="skip_10_backward()">
                     <i class="fa fa-step-backward fa-clickable fa-2x" style="color:#000000;"></i>
