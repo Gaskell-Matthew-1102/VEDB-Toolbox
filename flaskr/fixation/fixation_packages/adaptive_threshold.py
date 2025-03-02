@@ -3,10 +3,22 @@
 import numpy as np
 from math import sqrt
 
-# Returns the magnitude of the resulting vector calculated by subtracting the global optic flow from the gaze velocity
-def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_flow: np.ndarray[2]):
+# Returns a tuple: (resulting vector calculated by subtracting the global optic flow from the gaze velocity, status code)
+def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_flow: np.ndarray[2]) -> tuple[np.ndarray[2], int]:
+    len1 = len(gaze_velocity_vector)
+    len2 = len(global_optic_flow)
+    status_code = -1
+
+    if(len1 == len2):
+        status_code = 0
+    elif(len1 > len2):
+        status_code = 1
+    else:
+        status_code = 2
+    
     relative_gaze_vel = gaze_velocity_vector - global_optic_flow
-    return np.linalg.norm(relative_gaze_vel)
+    return (relative_gaze_vel, status_code)
+    # return np.linalg.norm(relative_gaze_vel)
 
 # old header: calculate_samples_in_window(sample_list: list[np.ndarray], sample_rate_hz: int, window_size_ms:int):
 def calculate_samples_in_window(sample_rate_hz: int, window_size_ms:int):

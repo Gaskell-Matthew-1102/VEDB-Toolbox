@@ -32,7 +32,10 @@ class Event:
 
     # Returns True if the fixation acted upon is less than the minimum fixation length threshold. This fixation should then be removed, and neighboring gaps merged
     def short_fixation_filter(self, MIN_FIX_LEN:float=MIN_FIXATION_DUR_MS):
-        return self.end_time_ms-self.start_time_ms < MIN_FIX_LEN
+        remove = self.end_time_ms-self.start_time_ms < MIN_FIX_LEN
+        if(remove):
+            self.type = Event.Sample_Type.GAP
+        return remove
     
     def __str__(self):
         working_string = ""

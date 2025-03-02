@@ -22,6 +22,7 @@ class TestExport:
     def test_generate_json_valid(self):
         test = "[[0.0, 1.0], [2.0, 2.5]]"
         out = create_json(np.array([(0, 1), (2.0, 2.5)]).tolist())
+        write_str_to_file(out, "export.json")
         assert test == out
 
     def test_generate_json_no_input(setup):

@@ -13,7 +13,8 @@ class TestEvent:
         global_optic_flow = np.array([[2], [4]])
         output = gaze_velocity_correction(gaze_vel, global_optic_flow)
         # Resulting vector is <4, 6>, magnitude is sqrt(52)
-        assert output == math.sqrt(52)
+        assert (output == np.array([[4], [6]])).all()
+        assert np.linalg.norm(output) == math.sqrt(52)
 
     def test_RMS(self):
         vec1 = np.array([[1], [2]])
@@ -59,8 +60,10 @@ class TestEvent:
 
     def test_event_short_fixation_pass(self):
         obj = Event(Event.Sample_Type.FIXATION, 50, 75)
-        assert obj.short_fixation_filter() == False
+        assert obj.short_fixation_filter() == True
+        assert obj.type == Event.Sample_Type.GAP
     
     def test_event_short_fixation_fail(self):
-        obj = Event(Event.Sample_Type.FIXATION, 50, 100)
-        assert obj.short_fixation_filter() == True
+        obj = Event(Event.Sample_Type.FIXATION, 50, 150)
+        assert obj.short_fixation_filter() == False
+        assert obj.type == Event.Sample_Type.FIXATION
