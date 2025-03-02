@@ -13,6 +13,7 @@ from .models import db, Users
 from .file_upload import *
 from .forms import LoginForm, RegistrationForm
 from .search import searchBar
+from .accountManagement import uploadUser
 
 # Home route
 def home():
@@ -89,18 +90,56 @@ def faculty():
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
-        headings = ("Username", "Email", "Administrator")
         userlist = searchBar(request.form.get('user_search', ""), "username")
         if request.method == 'POST':    # Detects if search bar is used at all
-            if request.form["typesearch"] == "email":   #Search through email bar
+            if request.form["formType"] == "user_data":
+                print("ack")
+            elif request.form["formType"] == "email":   #Search through email bar
                 emaillist = searchBar(request.form.get('email_search', ""), "email")
-                return render_template('user-tools/strappedDash.html', userlist=emaillist, headings=headings)
-            elif request.form["typesearch"] == "username":  #search through username bar
+                return render_template('user-tools/strappedDash.html', userlist=emaillist, warning=0)
+            elif request.form["formType"] == "username":  #search through username bar
                 userlist = searchBar(request.form.get('user_search', ""), "username")
-                return render_template('user-tools/strappedDash.html', userlist=userlist, headings=headings)
+                return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
             else:   #reset search
                 userlist = searchBar("", "reset")
-                return render_template('user-tools/strappedDash.html', userlist=userlist, headings=headings)
-        return render_template('user-tools/strappedDash.html', userlist=userlist, headings=headings)
+                return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
+        return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
     else:
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+
+def searchuser():
+    if request.form["formType"] == "email":   #Search through email bar
+        emaillist = searchBar(request.form.get('email_search', ""), "email")
+        return render_template('user-tools/strappedDash.html', userlist=emaillist, warning=0)
+    elif request.form["formType"] == "username":  #search through username bar
+        userlist = searchBar(request.form.get('user_search', ""), "username")
+        return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
+    else:   #reset search
+        userlist = searchBar("", "reset")
+        return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
+
+def adduser():
+    # check if user already exists
+    if Users.query.filter_by(username=request.form.get('unEnter', "")).first():
+        flash("Username already in use!", "danger")
+        userlist = searchBar("", "reset")
+        return render_template('user-tools/strappedDash.html', userlist=userlist, warning=1)
+    else:
+        uploadedUserData = [request.form.get('unEnter', ""), request.form.get('emEnter', ""), request.form.get('pwEnter', ""), request.form.get('admEnter', ""), request.form.get('admEnter', "")]
+        print(request.form.get('admEnter', ""))
+        uploadUser(uploadedUserData)
+        userlist = searchBar("", "reset")
+        return render_template('user-tools/strappedDash.html', userlist=userlist, warning=2)
+
+def deleteuser():
+    deleting = request.form.get('user_to_delete', "")
+    foundUser = Users.query.with_entities(Users.id).filter_by(username=deleting).all()
+
+    #As of now, foundUser is a list with a list with the id
+    for a in foundUser:
+        for b in a:
+            Users.query.filter_by(id=b).delete()
+            db.session.commit()
+
+    userlist = searchBar(request.form.get('user_search', ""), "username")
+    return render_template('user-tools/strappedDash.html', userlist=userlist, warning=False)
