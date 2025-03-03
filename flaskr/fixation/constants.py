@@ -2,7 +2,7 @@
 
 # ingestion (0)
 DOWNLOAD_URL = "https://osf.io/85usz/download"
-DATE_OF_URL_DATA = "2023_06_01_18_47_34"       # "2023_06_01_18_47_34" was original
+DATE_OF_URL_DATA = "2021_03_16_17_18_42"       # "2023_06_01_18_47_34" was original
 NPY_TO_LOAD = "odometry_timestamps.npy"
 PLDATA_TO_LOAD = "odometry.pldata"
 NPZ_TO_LOAD = "gaze.npz"

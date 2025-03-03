@@ -16,9 +16,9 @@ def create_timestamp_list(in_eventList: EventList) -> np.array:
     return np.array(out)
 
 def create_json(list: np.array) -> json:
-    ret = json.dumps(list)
+    ret = json.dumps(list.tolist())
     return ret
 
-def write_str_to_file(json: json, export_filename: str) -> None:
+def write_json_to_file(json: json, export_filename: str) -> None:
     with open(export_filename, "w") as f:
         f.write(json)

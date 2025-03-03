@@ -38,7 +38,7 @@ def do_it():
     mask = np.zeros_like(old_frame) 
 
     vec_list = []
-    while(frame_count <= 1500): 
+    while(frame_count <= 150): 
         
         ret, frame = cap.read() 
         frame_gray = cv2.cvtColor(frame, 
@@ -49,7 +49,6 @@ def do_it():
                                             frame_gray, 
                                             p0, None, 
                                             **lk_params) 
-        
         if(p1 is None):
             break
     

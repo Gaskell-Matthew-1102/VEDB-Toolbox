@@ -1,34 +1,31 @@
-# .github/workflows/test_fixation.yml
+name: Run PyTest
 
-name: Run_Fixation_Tests
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main", "fixation-detection-3" ]
+    branches:
+      - "fixation-detection-3"  # Runs tests when pushing to main
+  pull_request:
+    branches:
+      - main  # Runs tests on PRs targeting main
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  test:
+    runs-on: ubuntu-latest  # Specifies the runner environment
+    
     steps:
-      # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3  # Checks out your repository
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"  # Use the Python version for your project
 
-      # Runs a single command using the runners shell
-      - name: Navigate to correct directory
-        run: cd .\flaskr\fixation\
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r flaskr/fixation/requirements.txt
 
-      - name: Install dependencies
-        run: python -m pytest .\tests\.
-  run-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run the tests
-        run: python -m pytest .\tests\.
+      - name: Run PyTest
+        run: python -m pytest ./tests/.  # Run all tests
+        working-directory: flaskr/fixation

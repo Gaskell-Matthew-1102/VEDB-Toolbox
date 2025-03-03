@@ -31,7 +31,7 @@ class EventList:
             if self.list[i].type != current_event_type:
                 transition_list.append(i)
                 current_event_type = self.list[i].type
-        print(transition_list)
+        # print(transition_list)
         left_i = 0
         new_event_list = np.array([])
         for i in range(len(transition_list)):
