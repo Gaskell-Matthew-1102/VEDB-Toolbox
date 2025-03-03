@@ -3,10 +3,6 @@
 import fixation_packages.event
 import fixation_packages.event_list
 import fixation_packages.export
-<<<<<<< HEAD
-=======
-import fixation_packages.gridTracking_LUCAS_KANADE_TEST
->>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
 import fixation_packages.ingestion
 import fixation_packages.gaze_processing
 import fixation_packages.IMU_processing
