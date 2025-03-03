@@ -39,7 +39,7 @@
   {#    Warning#}
         {% if warning == 1%}
         <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
-            <span class="alert-text"><strong>Warning</strong> User already exists!</span>
+            <span class="alert-text"><strong>Warning!</strong> User already exists!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -47,6 +47,13 @@
     {% elif warning == 2 %}
             <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
         <span class="alert-text"><strong>Success!</strong> User successfully added!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% elif warning == 3 %}
+            <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
+        <span class="alert-text"><strong>Success!</strong> User successfully removed!</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

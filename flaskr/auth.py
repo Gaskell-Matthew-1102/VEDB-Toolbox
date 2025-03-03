@@ -90,19 +90,7 @@ def faculty():
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()
     if user.administrator:
-        userlist = searchBar(request.form.get('user_search', ""), "username")
-        if request.method == 'POST':    # Detects if search bar is used at all
-            if request.form["formType"] == "user_data":
-                print("ack")
-            elif request.form["formType"] == "email":   #Search through email bar
-                emaillist = searchBar(request.form.get('email_search', ""), "email")
-                return render_template('user-tools/strappedDash.html', userlist=emaillist, warning=0)
-            elif request.form["formType"] == "username":  #search through username bar
-                userlist = searchBar(request.form.get('user_search', ""), "username")
-                return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
-            else:   #reset search
-                userlist = searchBar("", "reset")
-                return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
+        userlist = searchBar("", "reset")
         return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
     else:
         return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
@@ -142,4 +130,4 @@ def deleteuser():
             db.session.commit()
 
     userlist = searchBar(request.form.get('user_search', ""), "username")
-    return render_template('user-tools/strappedDash.html', userlist=userlist, warning=False)
+    return render_template('user-tools/strappedDash.html', userlist=userlist, warning=3)
