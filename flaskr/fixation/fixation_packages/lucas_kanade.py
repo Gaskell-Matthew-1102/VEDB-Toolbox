@@ -38,7 +38,7 @@ def do_it():
     mask = np.zeros_like(old_frame) 
 
     vec_list = []
-    while(frame_count <= 1500): 
+    while(frame_count <= 150): 
         
         ret, frame = cap.read() 
         frame_gray = cv2.cvtColor(frame, 
@@ -49,7 +49,6 @@ def do_it():
                                             frame_gray, 
                                             p0, None, 
                                             **lk_params) 
-        
         if(p1 is None):
             break
     
@@ -77,7 +76,7 @@ def do_it():
     
 
         cv2.putText(img, f"{frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)
-        # cv2.imshow('frame', img) 
+        cv2.imshow('frame', img) 
         
         k = cv2.waitKey(25) 
         if k == 27: 

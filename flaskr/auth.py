@@ -19,8 +19,8 @@ from .accountManagement import uploadUser
 def home():
     if not current_user.is_authenticated:
         return redirect(url_for('landing'))
-    form1 = True
-    form2 = True
+    form1 = get_showform(1)
+    form2 = get_showform(2)
     return render_template("file-upload/file_upload.html", show_form1=form1, show_form2=form2)
 
 # Landing route
