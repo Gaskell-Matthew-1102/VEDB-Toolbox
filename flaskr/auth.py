@@ -24,30 +24,40 @@ def home():
     return render_template("file-upload/file_upload.html", show_form1=form1, show_form2=form2)
 
 # Landing route
+from flask import render_template, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user
+from flaskr.models import db, Users
+from flaskr.forms import LoginForm, RegistrationForm
+
 def landing():
     login_form = LoginForm()
     signup_form = RegistrationForm()
 
     if signup_form.validate_on_submit():
-        # check if user already exists
-        if Users.query.filter_by(username=signup_form.username.data).first():
-            flash("Username already in use!", "danger")
-            return redirect(url_for("register"))   
+        # Check if user already exists
+        if (Users.query.filter_by(username=signup_form.username.data).first()) or (signup_form.password.data != signup_form.repeat_password.data):
+            # Check which condition triggered the flash message
+            if Users.query.filter_by(username=signup_form.username.data).first():
+                flash("Username already in use!", "danger")
+            else:
+                flash("Passwords not matching!", "danger")
 
-        # check if passwords match
-        if not signup_form.password.data == signup_form.repeat_password.data:
-            flash("Passwords not matching!", "danger")
-            return redirect(url_for("register"))
+            # Clear the password and repeat_password fields
+            signup_form.password.data = ''
+            signup_form.repeat_password.data = ''
+            # Return to the landing page with the existing form values
+            return render_template("home/home.html", login_form=login_form, signup_form=signup_form)
 
-        # creates user
+        # Create user
         user = Users(username=signup_form.username.data, email=signup_form.email.data, password=generate_password_hash(signup_form.password.data))
 
-        # write to DB
+        # Write to DB
         db.session.add(user)
         db.session.commit()
         flash("Registration successful! Welcome.", "success")
         
-        # login user after creation
+        # Log in user after creation
         login_user(user)
         return redirect(url_for("home"))
 
@@ -61,7 +71,9 @@ def landing():
         else:
             flash("Invalid username/password!", "danger")
 
+    # Render the template with the form, including values for pre-filling
     return render_template("home/home.html", login_form=login_form, signup_form=signup_form)
+
     
 # Logout route
 def logout():

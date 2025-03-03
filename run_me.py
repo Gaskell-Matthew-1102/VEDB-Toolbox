@@ -4,7 +4,7 @@ from flaskr import create_app  # Import the create_app function from app/__init_
 
 def run():
     # Create the Flask app using the factory function
-    app = create_app()
+    app = create_app(test_config=None)
 
     # Run the app
     app.run()
