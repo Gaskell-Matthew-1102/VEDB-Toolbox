@@ -3,6 +3,10 @@
 import fixation_packages.event
 import fixation_packages.event_list
 import fixation_packages.export
+<<<<<<< HEAD
+=======
+import fixation_packages.gridTracking_LUCAS_KANADE_TEST
+>>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
 import fixation_packages.ingestion
 import fixation_packages.gaze_processing
 import fixation_packages.IMU_processing
@@ -53,6 +57,10 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
     savgol_x = fixation_packages.gaze_processing.savgol(raw_gaze_vec[0], gaze_window_size_ms, polynomial_grade)
     savgol_y = fixation_packages.gaze_processing.savgol(raw_gaze_vec[1], gaze_window_size_ms, polynomial_grade)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
     savgol_gaze_vec = np.array([savgol_x, savgol_y])
 
     # Step 2
@@ -157,7 +165,11 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
 def main():
     print("starting")
+<<<<<<< HEAD
     runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='flaskr/fixation/test_data/videos/video3.mp4', export_file_path="flaskr/static/javascript/fixation.json", gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR)
+=======
+    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='flaskr/fixation/test_data/videos/video.mp4', export_file_path="flaskr/static/javascript/fixation.json", gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR)
+>>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
     print("complete")
 
 if __name__ == "__main__":
