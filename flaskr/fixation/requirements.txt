@@ -1,5 +1,11 @@
 numpy
-pandas
-msgpack
+math
+cv2
+enum
+json
 scipy
-pytest
+msgpack
+requests
+zipfile
+io
+os
