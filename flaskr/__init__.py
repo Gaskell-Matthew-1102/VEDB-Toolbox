@@ -10,16 +10,19 @@ doing so means this is 100% our (Brian, Leon, Matt, Tyler) work
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
-from .config import Config
+from .config import Config, TestingConfig
 from .models import db, Users
 
 # This will avoid circular imports by importing routes here.
-def create_app(test_config=None):
+def create_app(test_config):
     # Initialize Flask app
     app = Flask(__name__, instance_relative_config=True)
 
     # Load the configuration from Config class
-    app.config.from_object(Config)
+    if test_config == None:
+        app.config.from_object(Config)
+    if test_config == True:
+        app.config.from_object(TestingConfig)
 
     # Initialize database with app
     db.init_app(app)
