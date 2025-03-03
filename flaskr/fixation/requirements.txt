@@ -1,11 +1,5 @@
 numpy
-math
-cv2
-enum
-json
+opencv-python
 scipy
 msgpack
 requests
-zipfile
-io
-os
