@@ -21,9 +21,5 @@ class TestAdaptiveThreshold:
         # Current assumption is that we will shrink the longer array to match the size of the shorter array, then subtract
         out = fixation_packages.adaptive_threshold.gaze_velocity_correction(gaze_vec, flow_vec)
         test = np.array([[4, -4, 0], [10, 2, 1]])
-<<<<<<< HEAD
         assert np.array_equal(out[0], test)
         assert out[1] == 2
-=======
-        assert np.array_equal(out, test)
->>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a

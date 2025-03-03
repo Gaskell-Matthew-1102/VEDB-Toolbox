@@ -5,7 +5,6 @@ from math import sqrt
 
 # Returns a tuple: (resulting vector calculated by subtracting the global optic flow from the gaze velocity, status code)
 def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_flow: np.ndarray[2]) -> tuple[np.ndarray[2], int]:
-<<<<<<< HEAD
     gaze_vec_len = len(gaze_velocity_vector[0])
     opt_flow_len = len(global_optic_flow[0])
     min_len = min(gaze_vec_len, opt_flow_len)
@@ -24,18 +23,6 @@ def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_f
         temp_y = global_optic_flow[1][0:min_len]
         global_optic_flow = np.array([temp_x, temp_y])
 
-=======
-    len1 = len(gaze_velocity_vector)
-    len2 = len(global_optic_flow)
-    status_code = -1
-
-    if(len1 == len2):
-        status_code = 0
-    elif(len1 > len2):
-        status_code = 1
-    else:
-        status_code = 2
->>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
     
     relative_gaze_vel = gaze_velocity_vector - global_optic_flow
     return (relative_gaze_vel, status_code)

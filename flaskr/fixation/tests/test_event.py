@@ -13,11 +13,7 @@ class TestEvent:
         global_optic_flow = np.array([[2], [4]])
         output = gaze_velocity_correction(gaze_vel, global_optic_flow)
         # Resulting vector is <4, 6>, magnitude is sqrt(52)
-<<<<<<< HEAD
         assert np.array_equal(output[0], np.array([[4], [6]]))
-=======
-        assert (output == np.array([[4], [6]])).all()
->>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
         assert np.linalg.norm(output) == math.sqrt(52)
 
     def test_RMS(self):
