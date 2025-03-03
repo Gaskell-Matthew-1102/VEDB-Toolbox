@@ -1,8 +1,5 @@
 numpy
 pandas
 msgpack
-requests
-zipfile
-pathlib
 scipy
 pytest
