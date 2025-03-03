@@ -4,6 +4,9 @@ from enum import Enum
 import numpy as np
 import math
 
+def build_event(relative_gaze_velocity:float, threshold:float, start_time_ms:float, end_time_ms:float):
+    return Event(classify_event(relative_gaze_velocity, threshold), start_time_ms, end_time_ms)
+
 class Event:
     class Sample_Type(Enum):
         FIXATION = 1
@@ -14,8 +17,6 @@ class Event:
         self.start_time_ms = start_time_ms
         self.end_time_ms = end_time_ms
 
-    def build_event(relative_gaze_velocity:float, threshold:float, start_time_ms:float, end_time_ms:float):
-        return Event(classify_event(relative_gaze_velocity, threshold), start_time_ms, end_time_ms)
     
     def calculate_gap_amplitude(self, start_pix:np.ndarray[2], end_pix:np.ndarray[2]):
         pixel_difference_length = np.linalg.norm(end_pix-start_pix)

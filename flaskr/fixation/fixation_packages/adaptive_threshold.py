@@ -32,7 +32,7 @@ def calculate_RMS_of_window(optic_flow_vec_list:list[np.ndarray[2]], start_sampl
     summation = 0.0
     for sample in range(samples_in_window):
         o_hat_x = optic_flow_vec_list[start_sample+sample][0][0]
-        o_hat_y = optic_flow_vec_list[start_sample+sample][1][0]
+        o_hat_y = optic_flow_vec_list[start_sample+sample][0][1]
 
         summation += o_hat_x ** 2 + o_hat_y ** 2
 

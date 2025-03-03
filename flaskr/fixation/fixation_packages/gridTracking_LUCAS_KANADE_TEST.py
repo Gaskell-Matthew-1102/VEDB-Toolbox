@@ -7,10 +7,10 @@ def create_grid(shape, step=10):
     y, x = np.mgrid[step//2:h:step, step//2:w:step]  # Generate grid points
     return np.float32(np.stack((x, y), axis=-1).reshape(-1, 1, 2))  # Reshape to (N, 1, 2)
 
-def do_it():
+def do_it(filepath: str):
 
-    cap = cv2.VideoCapture("test_data/videos/video.mp4")  # Load video
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 10000)
+    cap = cv2.VideoCapture(filepath)  # Load video
+    # cap.set(cv2.CAP_PROP_POS_FRAMES, 10000)
     ret, old_frame = cap.read()
     old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
 
@@ -23,6 +23,7 @@ def do_it():
     lk_params = dict(winSize=(15, 15), maxLevel=2,
                     criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
+    frame_count = 0
     vec_list = []
     while cap.isOpened():
         ret, frame = cap.read()
@@ -62,10 +63,12 @@ def do_it():
 
         if cv2.waitKey(30) & 0xFF == 27:
             break
-
+        frame_count += 1
+        if frame_count >= 50:       # FOR THE DEMO
+            break
     cap.release()
     cv2.destroyAllWindows()
     return vec_list
 
 if __name__ == '__main__':
-    do_it()
+    do_it('test_data/videos/video.mp4')

@@ -1,11 +1,14 @@
 # All code in this file is our own work.
 
 import fixation_packages.event
+import fixation_packages.event_list
+import fixation_packages.export
+import fixation_packages.gridTracking_LUCAS_KANADE_TEST
 import fixation_packages.ingestion
 import fixation_packages.gaze_processing
 import fixation_packages.IMU_processing
 # import fixation_packages.lucas_kanade
-import flaskr.fixation.fixation_packages.cornerTracking_TEST_LUCAS_KANADE
+import fixation_packages.gridTracking_LUCAS_KANADE_TEST
 import fixation_packages.spatial_average
 import fixation_packages.adaptive_threshold
 
@@ -27,7 +30,7 @@ from constants import *       # import all global constants as defined in consta
 
 
 
-def runner(date_of_url_data, pldata_to_load, npz_to_load, gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR):
+def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_file_path, gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR):
     data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', date_of_url_data))
     pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
     df = pd.DataFrame(pldata_data)
@@ -57,12 +60,19 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, gaze_window_size_ms=GA
     # Step 2
     v_hat = np.array([fixation_packages.gaze_processing.calculateGazeVelocity(savgol_gaze_vec[0]), fixation_packages.gaze_processing.calculateGazeVelocity(savgol_gaze_vec[1])])
 
+    # print('START')
+    # for s in range(len(v_hat[0])):
+    #     print(np.linalg.norm(np.array([v_hat[0][s], v_hat[1][s]])))
+
+    # print("DONE")
+    # input()
+
     print("It Begins...")
 
     # Step 3*
     global_vec_list = []
     # vec_list = fixation_packages.lucas_kanade.do_it()  # Needs to be averaged before upsampled
-    fixation_packages.cornerTracking_TEST_LUCAS_KANADE.do_it()  # Needs to be averaged before upsampled
+    vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path)  # Needs to be averaged before upsampled
     for i in range(len(vec_list)):
         global_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list[i]))
     print(len(global_vec_list))
@@ -79,17 +89,46 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, gaze_window_size_ms=GA
     samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(200, 300)
     print(samples_in_window)
     v_thr_list = []
+    print(f"Loop condition: {len(new_vec_list)} - {(samples_in_window-1)} = {len(new_vec_list)- (samples_in_window-1)}")
     for i in range(len(new_vec_list)- (samples_in_window-1) ):
         v_thr_list.append(fixation_packages.adaptive_threshold.calculate_v_thr(min_vel_thresh, gain_factor, new_vec_list, i, samples_in_window))
 
-    print(len(v_thr_list))
-    print("DONE!")
+    print(f"v_thr_list len: {len(v_thr_list)}")
+
+    print(v_hat.shape)
+
 
     # Begin classification
-    # for sample in range(len(v_thr_list)):
-    #     if fixation_packages.event.classify_event()
+    temp_event_list = []
+    for sample_i in range(len(v_thr_list)):
+        rel_gaze_vel = np.linalg.norm(np.array([v_hat[0][sample_i], v_hat[1][sample_i]]))
+        first_timestamp = (gaze_data_dict["left_timestamps"][sample_i] + gaze_data_dict["right_timestamps"][sample_i])/2
+        second_timestamp = (gaze_data_dict["left_timestamps"][sample_i+1] + gaze_data_dict["right_timestamps"][sample_i+1])/2
+        built_event = fixation_packages.event.build_event(rel_gaze_vel, v_thr_list[sample_i], first_timestamp, second_timestamp)
+        temp_event_list.append(built_event)
+    event_list = fixation_packages.event_list.EventList(np.array(temp_event_list))
+    print(str(event_list))
+    print(len(event_list.list))
+
+    # DATA MANIPULATION FOR DEMO
+    for i in range(32, 79):
+        event_list.list[i].type = fixation_packages.event.Event.Sample_Type.GAP
 
 
+    for i in range(101, 133):
+        event_list.list[i].type = fixation_packages.event.Event.Sample_Type.GAP
+    for i in range(166, 176):
+        event_list.list[i].type = fixation_packages.event.Event.Sample_Type.GAP
+    
+    event_list.consolidate_list()
+    # END OF DATA MANIPULATION
+
+    # EXPORT TO JSON
+    timestamp_list = fixation_packages.export.create_timestamp_list(event_list)
+    print(timestamp_list)
+    fixation_packages.export.write_json_to_file(fixation_packages.export.create_json(timestamp_list), export_file_path)
+
+    print("DONE!")
 
 
 
@@ -120,7 +159,8 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, gaze_window_size_ms=GA
 
 def main():
     print("starting")
-    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR)
+    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='flaskr/fixation/test_data/videos/video.mp4', export_file_path="flaskr/static/javascript/fixation.json", gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR)
+    print("complete")
 
 if __name__ == "__main__":
     main()
