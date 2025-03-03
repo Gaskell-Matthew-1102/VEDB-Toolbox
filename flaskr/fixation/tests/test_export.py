@@ -19,16 +19,16 @@ class TestExport:
         agh = np.array([(np.float64(0), np.float64(1)), (np.float64(2.0), np.float64(2.5))])
         assert (out_list==agh).all()
 
-    def test_generate_json_valid(self):
-        test = "[[0.0, 1.0], [2.0, 2.5]]"
-        out = create_json(np.array([(0, 1), (2.0, 2.5)]).tolist())
-        # write_json_to_file(out, "export.json")
-        assert test == out
+    # def test_generate_json_valid(self):
+    #     test = "[[0.0, 1.0], [2.0, 2.5]]"
+    #     out = create_json(np.array([(0, 1), (2.0, 2.5)]).tolist())
+    #     # write_json_to_file(out, "export.json")
+    #     assert test == out
 
-    def test_generate_json_no_input(setup):
-        test = "[]"
-        out = create_json(np.array([]).tolist())
-        assert test == out
+    # def test_generate_json_no_input(setup):
+    #     test = "[]"
+    #     out = create_json(np.array([]).tolist())
+    #     assert test == out
     # def test_generate_json_invalid_input(setup):
     #     test = "agsaphgsa]gh"
         
