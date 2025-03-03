@@ -8,12 +8,8 @@ class TestAdaptiveThreshold:
         flow_vec = np.array([[2, 7, 2, 2, 1, 10], [-5, 0, 0, -2, 1, 2]])
         out = fixation_packages.adaptive_threshold.gaze_velocity_correction(gaze_vec, flow_vec)
         test = np.array([[4, -4, 0, 3, 0, -11], [10, 2, 1, 3, 6, -8]])
-<<<<<<< HEAD
         assert np.array_equal(out[0], test)
         assert out[1] == 0
-=======
-        assert np.array_equal(out, test)
->>>>>>> 131ef9622d49d62b80bbd1ec54cecae1402c1f4a
 
     # def test_gaze_velocity_correction_empty(self):
     #     pass
