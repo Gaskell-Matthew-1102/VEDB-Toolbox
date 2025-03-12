@@ -12,7 +12,7 @@ GAZE_WINDOW_SIZE_MS = 55            # milliseconds
 POLYNOMIAL_GRADE = 3
 
 # adaptive threshold (5, 6, 7)
-MIN_VEL_THRESH = 750                # pixels/sec
+MIN_VEL_THRESH = 750                # pixels/sec      OLD WAS 750
 GAIN_FACTOR = 0.8
 ADAP_WINDOW_SIZE_MS = 300           # milliseconds
 

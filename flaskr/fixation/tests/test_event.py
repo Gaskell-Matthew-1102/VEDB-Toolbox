@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 import math
 from fixation_packages.event import Event
+from fixation_packages.event import build_event
 from fixation_packages.event import classify_event
 from fixation_packages.adaptive_threshold import gaze_velocity_correction
 
@@ -47,7 +48,7 @@ class TestEvent:
         thresh = 5.0
         start_time = 0.0
         end_time = 0.5
-        event = Event.build_event(rel_gaze_vel, thresh, start_time, end_time)
+        event = build_event(rel_gaze_vel, thresh, start_time, end_time)
         assert event.type == Event.Sample_Type.FIXATION
 
     def test_event_amplitude_calculation(self):

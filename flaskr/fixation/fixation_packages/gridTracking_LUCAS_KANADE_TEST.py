@@ -48,7 +48,15 @@ def do_it(filepath: str):
         for (new, old) in zip(good_new, good_old):
             a, b = new.ravel()
             c, d = old.ravel()
-            frame_vec_list.append( np.column_stack((c-a, d-b)) )
+
+
+            temp = np.column_stack((c-a, d-b))[0]
+            # frame_vec_list.append( np.column_stack((c-a, d-b)) )
+            frame_vec_list.append( np.column_stack((c-a, d-b))[0] )
+
+            # print("column stack shape: ", np.column_stack((c-a, d-b)).shape)
+            # print("frame_vec_list shape: ", frame_vec_list)
+
             cv2.arrowedLine(frame, (int(c), int(d)), (int(a), int(b)), (0, 255, 0), 1, tipLength=0.3)
 
         vec_list.append( frame_vec_list )
@@ -68,7 +76,7 @@ def do_it(filepath: str):
         if cv2.waitKey(30) & 0xFF == 27:
             break
         frame_count += 1
-        if frame_count >= 250:       # FOR THE DEMO
+        if frame_count >= 240:       # FOR THE DEMO
             break
     cap.release()
     cv2.destroyAllWindows()
