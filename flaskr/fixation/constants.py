@@ -2,7 +2,7 @@
 
 # ingestion (0)
 DOWNLOAD_URL = "https://osf.io/85usz/download"
-DATE_OF_URL_DATA = "2021_03_16_17_18_42"       # "2023_06_01_18_47_34" was original
+DATE_OF_URL_DATA = "2023_06_01_18_47_34"       # "2023_06_01_18_47_34" was original
 NPY_TO_LOAD = "odometry_timestamps.npy"
 PLDATA_TO_LOAD = "odometry.pldata"
 NPZ_TO_LOAD = "gaze.npz"
@@ -25,7 +25,7 @@ HFOV_DEG = 70                       # THIS VALUE IS COMPLETELY AND UTTERLY MADE 
 # Vectors are represented in this project as a 2 by X np.ndarray, where X is the number of components in the vector
 #                       
 # Example: the vector: <1, 2, 3> is represented as [[1, 2, 3]]
-# 
+# The list of vectors of <1, 2> and <3, 4> should be represented as [[1, 2], [3, 4]]
 # 
 # 
 # 

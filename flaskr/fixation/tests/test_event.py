@@ -8,20 +8,20 @@ from fixation_packages.adaptive_threshold import gaze_velocity_correction
 from fixation_packages.adaptive_threshold import calculate_RMS_of_window
 
 class TestEvent:
-    # def test_gaze_velocity_correction(self):
-    #     gaze_vel = np.array([[6], [10]])
-    #     global_optic_flow = np.array([[2], [4]])
-    #     output = gaze_velocity_correction(gaze_vel, global_optic_flow)
-    #     # Resulting vector is <4, 6>, magnitude is sqrt(52)
-    #     assert np.array_equal(output[0], np.array([[4], [6]]))
-    #     assert np.linalg.norm(output) == math.sqrt(52)
+    def test_gaze_velocity_correction(self):
+        gaze_vel = np.array([[6], [10]])
+        global_optic_flow = np.array([[2], [4]])
+        output = gaze_velocity_correction(gaze_vel, global_optic_flow)
+        # Resulting vector is <4, 6>, magnitude is sqrt(52)
+        assert np.array_equal(output[0], np.array([[4], [6]]))
+        assert np.linalg.norm(output[0]) == math.sqrt(52)
 
-    # def test_RMS(self):
-    #     vec1 = np.array([[1], [2]])
-    #     vec2 = np.array([[6], [1]])
-    #     vec3 = np.array([[3], [2]])
-    #     output = calculate_RMS_of_window([vec1, vec2, vec3], 0, 3)
-    #     assert output == math.sqrt(55/3)
+    def test_RMS(self):
+        vec1 = np.array([[1], [2]])
+        vec2 = np.array([[6], [1]])
+        vec3 = np.array([[3], [2]])
+        output = calculate_RMS_of_window([vec1, vec2, vec3], 0, 3)
+        assert output == math.sqrt(55/3)
 
 
     def test_event_classification_fixation(self):
@@ -42,13 +42,13 @@ class TestEvent:
         output = classify_event(rel_gaze_vel, thresh)
         assert output == Event.Sample_Type.GAP
 
-    # def test_build_event_fixation(self):
-    #     rel_gaze_vel = 4.0
-    #     thresh = 5.0
-    #     start_time = 0.0
-    #     end_time = 0.5
-    #     event = Event.build_event(rel_gaze_vel, thresh, start_time, end_time)
-    #     assert event.type == Event.Sample_Type.FIXATION
+    def test_build_event_fixation(self):
+        rel_gaze_vel = 4.0
+        thresh = 5.0
+        start_time = 0.0
+        end_time = 0.5
+        event = Event.build_event(rel_gaze_vel, thresh, start_time, end_time)
+        assert event.type == Event.Sample_Type.FIXATION
 
     def test_event_amplitude_calculation(self):
         # assert False

@@ -16,10 +16,10 @@ def savgol(input, window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL
     return output
 
 # Returns a np.array of calculated gaze velocities in pixels/sec from the filtered gaze data
-def calculateGazeVelocity(input:np.array) -> np.array:
+def calculateGazeVelocity(input_pos:np.array, input_time:np.array) -> np.array:
     # workingList = np.array([])
     # for i in range(len(input) - 1):
     #     print(i)
     #     workingList = np.append(workingList, input[i+1] - input[i])
     # a = np.diff(input)
-    return np.diff(input)
+    return np.diff(input_pos)/np.diff(input_time)
