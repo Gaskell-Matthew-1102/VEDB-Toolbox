@@ -144,6 +144,18 @@ function plotFixations(fixationTimes){
     Plotly.newPlot("gaze", fixationData, layout);
 }
 
+function sendGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
+    fetch('/download', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({lin_graph: linear_graph, ang_graph: angular_graph})
+    })
+    .then(response => response.json())
+    .catch((error) => console.error('Error:', error));
+}
+
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
 jQuery(function ($) {
     $(window).on('load', function() {
@@ -166,6 +178,10 @@ jQuery(function ($) {
         var fixationTimes = [[0.0, 1.0], [2.0, 2.5]];
         plotFixations(fixationTimes);
     });
+
+    $("#dwnld_btn").on('click', function(){
+        sendGraphs();
+    })
 
     $("#worldvideo").on("timeupdate", function(){
         var wvideo = $(this)[0];
