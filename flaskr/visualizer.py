@@ -102,6 +102,40 @@ def logout() -> None:
             shutil.rmtree("__MACOSX")
         #some code here to run logout functionality
 
+@app.route("/download", methods=["POST"])
+def download_graphs():
+    if request.method == "POST":
+        graphs = request.get_json()
+        linear_graph = graphs["lin_graph"]
+        angular_graph = graphs["angular_graph"]
+
+        if not os.path.exists("graphs"):
+            os.mkdir("graphs")
+
+        fig_numbers = get_fig_numbers()
+        linear_graph.write_image("images/linear_graph" + str(fig_numbers[0]) + ".png")
+        angular_graph.write_image("images/angular_graph" + str(fig_numbers[1]) + ".png")
+
+def get_fig_numbers():
+    if os.path.exists("graphs"):
+        if len(os.listdir("graphs")) == 0:
+            return [1, 1]
+        else:
+            flag = 1
+            linear_number, angular_number = 1, 1
+            while flag == 1:
+                if  os.path.exists("graphs/linear_graph" + str(linear_number) + ".png"):
+                    linear_number = linear_number + 1
+                else:
+                    flag = 0
+            flag = 1
+            while flag == 1:
+                if  os.path.exists("graphs/angular_graph" + str(angular_number) + ".png"):
+                    angular_number = angular_number + 1
+                else:
+                    flag = 0
+            return [linear_number, angular_number]
+
 def main():
     setup()
     # return render_template("visualizer/visualizer.html", video_height=video_height, video_width=video_width,
