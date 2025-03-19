@@ -28,10 +28,11 @@ element code was taken from Leon's login page.-->
           </div>
     
           <div class="col-md-3 text-end">
-
+            {% if isAdmin %}
             <a href="{{ url_for('dashboard') }}">
                 <button type="button" class="btn btn-outline-primary me-2">Dashboard</button>
             </a>
+              {% endif %}
             <a href="{{ url_for('logout') }}">
                 <button type="button" class="btn btn-primary">Logout</button>
             </a>

@@ -21,7 +21,7 @@ def home():
         return redirect(url_for('landing'))
     form1 = get_showform(1)
     form2 = get_showform(2)
-    return render_template("file-upload/file_upload.html", show_form1=form1, show_form2=form2)
+    return render_template("file-upload/file_upload.html", show_form1=form1, show_form2=form2, isAdmin=current_user.administrator)
 
 # Landing route
 from flask import render_template, redirect, url_for, flash
@@ -105,7 +105,7 @@ def dashboard():
         userlist = searchBar("", "reset")
         return render_template('user-tools/strappedDash.html', userlist=userlist, warning=0)
     else:
-        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2)
+        return render_template("file-upload/file_upload.html", show_form1=show_form1, show_form2=show_form2, isAdmin=False)
 
 def searchuser():
     if request.form["formType"] == "email":   #Search through email bar
