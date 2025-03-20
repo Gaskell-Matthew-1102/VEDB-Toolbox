@@ -1,24 +1,6 @@
-FROM debian:stable-slim
+FROM python:bookworm
 WORKDIR /app
-
-# Install dependencies
-RUN apt update && \
-    apt install -y libgl1-mesa-glx python3 python3-pip curl pipx && \
-    # Ensure pipx uses the correct path for python3
-    pipx ensurepath
-
-# Install Gunicorn using pipx (creating an isolated environment)
-RUN pipx install gunicorn
-
-# Copy and install Python dependencies
 COPY ./requirements.txt requirements.txt
-RUN pipx inject gunicorn -r requirements.txt
-
-# Copy the application code
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 COPY . .
-
-# Expose port
-EXPOSE 10000
-
-# Run the app with Gunicorn using pipx
-CMD ["pipx", "run", "gunicorn", "-b", "0.0.0.0:10000", "-w", "2", "flaskr:create_app(test_config=None)"]
+CMD ["gunicorn", "-b", "0.0.0.0", "-w", "2", "flaskr:create_app(test_config=None)"]
