@@ -1,6 +1,6 @@
 FROM debian:stable-slim
 WORKDIR /app
-RUN apt update && apt install libgl1-mesa-glx
+RUN apt update && apt install -y libgl1-mesa-glx
 COPY ./requirements.txt requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 COPY . .
