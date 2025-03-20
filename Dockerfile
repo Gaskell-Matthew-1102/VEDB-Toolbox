@@ -7,9 +7,12 @@ RUN apt update && \
     # Ensure pipx uses the correct path for python3
     pipx ensurepath
 
+# Install Gunicorn using pipx (creating an isolated environment)
+RUN pipx install gunicorn
+
 # Copy and install Python dependencies
 COPY ./requirements.txt requirements.txt
-RUN pipx inject -r requirements.txt
+RUN pipx inject gunicorn -r requirements.txt
 
 # Copy the application code
 COPY . .
