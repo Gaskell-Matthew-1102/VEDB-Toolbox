@@ -77,8 +77,6 @@ def do_it(filepath: str):
         if cv2.waitKey(30) & 0xFF == 27:
             break
         frame_count += 1
-        if frame_count >= 2400:       # FOR THE DEMO
-            break
     cap.release()
     cv2.destroyAllWindows()
     return vec_list

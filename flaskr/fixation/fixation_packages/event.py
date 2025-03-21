@@ -10,7 +10,6 @@ class Event:
     class Sample_Type(Enum):
         FIXATION = 1
         GAP = 2
-        # REMOVED = 3     # for removal in post-processing
     
     def __init__(self, type:Sample_Type, start_time_s:float, end_time_s:float, start_pos:np.ndarray[2], end_pos:np.ndarray[2]):
         self.type = type

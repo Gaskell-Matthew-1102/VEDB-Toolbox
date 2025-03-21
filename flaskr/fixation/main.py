@@ -27,6 +27,8 @@ import os
 
 from constants import *       # import all global constants as defined in constants.py
 
+X_RES = 192
+Y_RES = 192
 
 
 def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_file_path, gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR):
@@ -52,7 +54,7 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     #     print(gaze_timestamp[i+1] - gaze_timestamp[i])
     # input()
 
-    raw_gaze_vec_ = fixation_packages.gaze_processing.calculate_raw_gaze_vector(gaze_data_dict, 192, 192)
+    raw_gaze_vec_ = fixation_packages.gaze_processing.calculate_raw_gaze_vector(gaze_data_dict, x_res=X_RES, y_res=Y_RES)
     
 
     savgol_x = fixation_packages.gaze_processing.savgol(raw_gaze_vec_[0], gaze_window_size_ms, polynomial_grade)
@@ -60,8 +62,6 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     savgol_gaze_vec = np.array(np.column_stack([savgol_x, savgol_y]))
     # print(savgol_gaze_vec.shape)
     # input()
-    temp_avg = np.linalg.norm(np.array([savgol_gaze_vec[:][0], savgol_gaze_vec[:][1]]))
-    print(temp_avg)
     # mint = 0.0
     # maxt = 0.0
 # THE GAZE VECTOR IS NORMALISED, MUST CONVERT TO PIXEL SPACE
@@ -133,10 +133,14 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     temp_event_list = []
     for sample_i in range(min(len(v_rel), len(v_thr_list))):
         rel_gaze_vel = np.linalg.norm(np.array([v_rel[sample_i][0], v_rel[sample_i][1]]))
-        print(f"Rel_gaze_vel #{sample_i}: {rel_gaze_vel} vs {v_thr_list[sample_i]}")
+
         first_timestamp = gaze_timestamp[sample_i]
         second_timestamp = gaze_timestamp[sample_i+1]
-        built_event = fixation_packages.event.build_event(rel_gaze_vel, v_thr_list[sample_i], first_timestamp, second_timestamp)
+
+        start_pos = savgol_gaze_vec[sample_i]
+        end_pos = savgol_gaze_vec[sample_i+1]
+
+        built_event = fixation_packages.event.build_event(rel_gaze_vel, v_thr_list[sample_i], first_timestamp, second_timestamp, start_pos*X_RES, end_pos*Y_RES)
         temp_event_list.append(built_event)
     event_list = fixation_packages.event_list.EventList(np.array(temp_event_list))
 
@@ -155,23 +159,13 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     # print(str(event_list))
     # print(len(event_list.list))
 
-    # DATA MANIPULATION FOR DEMO
-    # for i in range(32, 79):
-    #     event_list.list[i].type = fixation_packages.event.Event.Sample_Type.GAP
-
-
-    # for i in range(101, 133):
-    #     event_list.list[i].type = fixation_packages.event.Event.Sample_Type.GAP
-    # for i in range(166, 176):
-    #     event_list.list[i].type = fixation_packages.event.Event.Sample_Type.GAP
     
     event_list.consolidate_list()
-    event_list.microsaccade_filter(MIN_SACCADE_AMP_DEG, MIN_SACCADE_DUR_MS)
-    # END OF DATA MANIPULATION
+    event_list.apply_filter(fixation_packages.event.Event.microsaccade_filter, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS)
+    event_list.apply_filter(fixation_packages.event.Event.short_fixation_filter, min_fixation_dur_ms=MIN_FIXATION_DUR_MS)
 
     # EXPORT TO JSON
     timestamp_list = fixation_packages.export.create_timestamp_list(event_list)
-    print(timestamp_list)
     fixation_packages.export.write_json_to_file(fixation_packages.export.create_json(timestamp_list), export_file_path)
 
     print("DONE!")
