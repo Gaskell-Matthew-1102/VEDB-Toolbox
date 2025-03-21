@@ -8,7 +8,7 @@ def create_timestamp_list(in_eventList: EventList) -> np.array:
 
     for event in in_eventList:
         if event.type == Event.Sample_Type.FIXATION:
-            guh = (event.start_time_ms, event.end_time_ms)
+            guh = (event.start_time_s, event.end_time_s)
             print(type(guh))
             out.append(guh)
     print(out)

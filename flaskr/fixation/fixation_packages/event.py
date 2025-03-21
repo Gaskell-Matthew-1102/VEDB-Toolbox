@@ -1,41 +1,50 @@
 # All code in this file is our own work.
-from constants import MIN_SACCADE_AMP, MIN_SACCADE_DUR_MS, MIN_FIXATION_DUR_MS
 from enum import Enum
 import numpy as np
 import math
 
-def build_event(relative_gaze_velocity:float, threshold:float, start_time_ms:float, end_time_ms:float):
-    return Event(classify_event(relative_gaze_velocity, threshold), start_time_ms, end_time_ms)
+def build_event(relative_gaze_velocity:float, threshold:float, start_time_s:float, end_time_s:float, start_pos:np.ndarray[2], end_pos:np.ndarray[2]):
+    return Event(classify_event(relative_gaze_velocity, threshold), start_time_s, end_time_s, start_pos, end_pos)
 
 class Event:
     class Sample_Type(Enum):
         FIXATION = 1
         GAP = 2
+        # REMOVED = 3     # for removal in post-processing
     
-    def __init__(self, type:Sample_Type, start_time_ms:float, end_time_ms:float):
+    def __init__(self, type:Sample_Type, start_time_s:float, end_time_s:float, start_pos:np.ndarray[2], end_pos:np.ndarray[2]):
         self.type = type
-        self.start_time_ms = start_time_ms
-        self.end_time_ms = end_time_ms
+        self.start_time_s = start_time_s
+        self.end_time_s = end_time_s
+        self.start_pos = start_pos
+        self.end_pos = end_pos
 
     
-    def calculate_gap_amplitude(self, start_pix:np.ndarray[2], end_pix:np.ndarray[2]):
-        pixel_difference_length = np.linalg.norm(end_pix-start_pix)
-        angle = self.__black_box_pixels_to_angle(pixel_difference_length)
+    def calculate_gap_amplitude(self, start_pix, end_pix):
+        angle = self.__black_box_pixels_to_angle(start_pix, end_pix)
         return angle
 
-    # CHECK ACCURACY. this equation assumes the start point is the center. lenses could make this calculation inaccurate
-    def __black_box_pixels_to_angle(pixel_diff, HFOV, width_of_image_px):
-        theta = HFOV / 2
-        numerator = pixel_diff * math.tan(theta)
-        denominator = width_of_image_px / 2
-        return math.atan(numerator/denominator)
-
+    def __black_box_pixels_to_angle(self, start_pix, end_pix):
+    # CHECK ACCURACY. this equation below assumes the start point is the center. lenses could make this calculation inaccurate
+        # theta = HFOV / 2
+        # numerator = pixel_diff * math.tan(theta)
+        # denominator = width_of_image_px / 2
+        # return math.atan(numerator/denominator)
+        dy = end_pix[1] - start_pix[1]
+        dx = end_pix[0] - start_pix[0]
+        return math.degrees(math.atan2(dy,dx))
+    
+    # Returns True if the gap is a micro-saccade and should be removed. The gap, if True is returned, should be treated as a fixation
+    def microsaccade_filter(self, min_saccade_amp_deg, min_saccade_dur_ms) -> bool:
+        flag = False
+        gap_amp = self.calculate_gap_amplitude(self.start_pos, self.end_pos)
+        if( (gap_amp < min_saccade_amp_deg) and (self.end_time_s - self.start_time_s < min_saccade_dur_ms / 1000) ):
+            flag = True
+        return flag
 
     # Returns True if the fixation acted upon is less than the minimum fixation length threshold. This fixation should then be removed, and neighboring gaps merged
-    def short_fixation_filter(self, MIN_FIX_LEN:float=MIN_FIXATION_DUR_MS):
-        remove = self.end_time_ms-self.start_time_ms < MIN_FIX_LEN
-        if(remove):
-            self.type = Event.Sample_Type.GAP
+    def short_fixation_filter(self, min_fix_len_ms:float):
+        remove = self.end_time_s-self.start_time_s < (min_fix_len_ms / 1000)
         return remove
     
     def __str__(self):
@@ -45,11 +54,11 @@ class Event:
                 working_string += "FIXATION"
             case Event.Sample_Type.GAP:
                 working_string += "GAP"
-        working_string += f", start: {self.start_time_ms}, end: {self.end_time_ms}"
+        working_string += f", start: {self.start_time_s}, end: {self.end_time_s}"
         return working_string
     
     def __eq__(self, value):
-        return (self.type == value.type) and (self.start_time_ms == value.start_time_ms) and (self.end_time_ms == value.end_time_ms)
+        return (self.type == value.type) and (self.start_time_s == value.start_time_s) and (self.end_time_s == value.end_time_s)
     
 def classify_event(relative_gaze_velocity, threshold):
     if relative_gaze_velocity < threshold:

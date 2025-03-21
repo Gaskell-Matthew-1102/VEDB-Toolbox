@@ -7,9 +7,9 @@ import json
 
 @pytest.fixture
 def setup():
-    event1 = Event(Event.Sample_Type.FIXATION, 0, 1)
-    event2 = Event(Event.Sample_Type.GAP, 1, 2.0)
-    event3 = Event(Event.Sample_Type.FIXATION, 2.0, 2.5)
+    event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [0, 0], [1, 1])
+    event2 = Event(Event.Sample_Type.GAP, 1, 2.0, [0, 0], [1, 1])
+    event3 = Event(Event.Sample_Type.FIXATION, 2.0, 2.5, [0, 0], [1, 1])
     obj = EventList(np.array([event1, event2, event3]))
     yield obj
 

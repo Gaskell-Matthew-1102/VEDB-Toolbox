@@ -42,7 +42,7 @@ def calculate_samples_in_window(sample_rate_hz: int, window_size_ms:int):
 
     return int(sample_rate_hz * (window_size_ms / 1000))
 
-def calculate_RMS_of_window(optic_flow_vec_list:list[np.ndarray[2]], start_sample:int, samples_in_window:int):
+def calculate_RMS_of_window(optic_flow_vec_list:np.ndarray[np.ndarray[2]], start_sample:int, samples_in_window:int):
     summation = 0.0
     for sample in range(samples_in_window):
         o_hat_x = optic_flow_vec_list[start_sample+sample][0]
@@ -50,7 +50,7 @@ def calculate_RMS_of_window(optic_flow_vec_list:list[np.ndarray[2]], start_sampl
 
         summation += o_hat_x ** 2 + o_hat_y ** 2
 
-    rms = sqrt( (1/samples_in_window) * summation[0] )
+    rms = sqrt( (1/samples_in_window) * summation )
     return rms
 
 def calculate_v_thr(v_0, gain, rms):

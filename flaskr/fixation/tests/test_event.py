@@ -21,7 +21,7 @@ class TestEvent:
         vec1 = np.array([[1], [2]])
         vec2 = np.array([[6], [1]])
         vec3 = np.array([[3], [2]])
-        output = calculate_RMS_of_window([vec1, vec2, vec3], 0, 3)
+        output = calculate_RMS_of_window(np.array([vec1, vec2, vec3]), 0, 3)
         assert output == math.sqrt(55/3)
 
 
@@ -48,23 +48,46 @@ class TestEvent:
         thresh = 5.0
         start_time = 0.0
         end_time = 0.5
-        event = build_event(rel_gaze_vel, thresh, start_time, end_time)
+        event = build_event(rel_gaze_vel, thresh, start_time, end_time, [0,0], [1,1])
         assert event.type == Event.Sample_Type.FIXATION
 
     def test_event_amplitude_calculation(self):
-        # assert False
-        ...
+        event = Event(Event.Sample_Type.GAP, 1.0, 2.0, [0, 0], [1, 1])
+        out = event.calculate_gap_amplitude([5, 1], [10, 2])
+        test = 11.3099
+        assert out - test < 0.001
 
-    def test_event_microsaccade_filter(self):
-        # assert False
-        ...
+    def test_event_amplitude_calculation_no_x_displacement(self):
+        event = Event(Event.Sample_Type.GAP, 1.0, 2.0, [0, 0], [1, 1])
+        out = event.calculate_gap_amplitude([5, 1], [5, 2])
+        test = 90
+        assert out - test < 0.001
+
+    def test_event_microsaccade_filter_is_microsaccade(self):
+        event = Event(Event.Sample_Type.GAP, 1.000, 1.005, [0, 0], [100, 1])
+        out = event.microsaccade_filter(1, 10)
+        assert out == True
+
+    def test_event_microsaccade_filter_isnt_microsaccade_angle(self):
+        event = Event(Event.Sample_Type.GAP, 1.000, 1.005, [0, 0], [1, 1])
+        out = event.microsaccade_filter(1, 10)
+        assert out == False
+
+    def test_event_microsaccade_filter_isnt_microsaccade_time(self):
+        event = Event(Event.Sample_Type.GAP, 1.000, 2.000, [0, 0], [100, 1])
+        out = event.microsaccade_filter(1, 10)
+        assert out == False
+
+    def test_event_microsaccade_filter_isnt_microsaccade_both(self):
+        event = Event(Event.Sample_Type.GAP, 1.000, 2.0, [0, 0], [1, 1])
+        out = event.microsaccade_filter(1, 10)
+        assert out == False
 
     def test_event_short_fixation_pass(self):
-        obj = Event(Event.Sample_Type.FIXATION, 50, 75)
-        assert obj.short_fixation_filter() == True
-        assert obj.type == Event.Sample_Type.GAP
+        obj = Event(Event.Sample_Type.FIXATION, 0.05, 0.075, [0, 0], [1, 1])
+        assert obj.short_fixation_filter(70) == True
     
     def test_event_short_fixation_fail(self):
-        obj = Event(Event.Sample_Type.FIXATION, 50, 150)
-        assert obj.short_fixation_filter() == False
+        obj = Event(Event.Sample_Type.FIXATION, 0.05, 0.15, [0, 0], [1, 1])
+        assert obj.short_fixation_filter(70) == False
         assert obj.type == Event.Sample_Type.FIXATION
