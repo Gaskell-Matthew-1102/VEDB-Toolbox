@@ -44,7 +44,7 @@ class TestEventList:
         event2 = Event(Event.Sample_Type.GAP, 1, 1.009, [0, 0], [100, 1])
         event3 = Event(Event.Sample_Type.FIXATION, 1.009, 2.5, [Y, X], [Y, Y])
         obj = EventList(np.array([event1, event2, event3]))
-        obj.microsaccade_filter(1.0, 10)
+        obj.apply_filter(Event.microsaccade_filter, min_saccade_amp_deg=1.0, min_saccade_dur_ms=10)
 
         ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 2.5, [X, X], [Y, Y])
         test_list = EventList(np.array([ex_event1]))
@@ -57,7 +57,7 @@ class TestEventList:
         event2 = Event(Event.Sample_Type.GAP, 1, 1.009, [0, 0], [100, 1])
         event3 = Event(Event.Sample_Type.FIXATION, 1.009, 2.5, [Y, X], [Y, Y])
         obj = EventList(np.array([event2, event3]))
-        obj.microsaccade_filter(1.0, 10)
+        obj.apply_filter(Event.microsaccade_filter, min_saccade_amp_deg=1.0, min_saccade_dur_ms=10)
 
         ex_event1 = Event(Event.Sample_Type.FIXATION, 1.009, 2.5, [Y, X], [Y, Y])
         test_list = EventList(np.array([ex_event1]))
@@ -70,7 +70,7 @@ class TestEventList:
         event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [X, X], [X, Y])
         event2 = Event(Event.Sample_Type.GAP, 1, 1.009, [0, 0], [100, 1])
         obj = EventList(np.array([event1, event2]))
-        obj.microsaccade_filter(1.0, 10)
+        obj.apply_filter(Event.microsaccade_filter, min_saccade_amp_deg=1.0, min_saccade_dur_ms=10)
 
         ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [X, X], [X, Y])
         test_list = EventList(np.array([ex_event1]))
@@ -94,7 +94,7 @@ class TestEventList:
         ex_ev3 = Event(Event.Sample_Type.FIXATION, 1.5005, 2, [X, X], [X, Y])
         test = EventList(np.array([ex_ev1, ex_ev2, ex_ev3]))
 
-        obj.microsaccade_filter(1.0, 10)
+        obj.apply_filter(Event.microsaccade_filter, min_saccade_amp_deg=1.0, min_saccade_dur_ms=10)
 
         assert obj == test
 
