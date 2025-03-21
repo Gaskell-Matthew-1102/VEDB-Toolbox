@@ -4,3 +4,4 @@ scipy
 msgpack
 requests
 pytest
+bitarray
