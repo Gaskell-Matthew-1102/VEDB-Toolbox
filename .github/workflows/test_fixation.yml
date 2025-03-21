@@ -19,13 +19,18 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"  # Use the Python version for your project
+          python-version: "3.12"  # Use the Python version for your project
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r flaskr/fixation/requirements.txt
+          pip install -r requirements.txt
 
-      - name: Run PyTest
+      - name: Run PyTest (flaskr/fixation/tests)
         run: python -m pytest ./tests/.  # Run all tests
         working-directory: flaskr/fixation
+
+      - name: Run PyTest (./tests)
+        run: python -m pytest
+        working-directory: tests
