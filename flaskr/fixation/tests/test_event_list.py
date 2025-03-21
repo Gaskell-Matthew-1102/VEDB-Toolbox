@@ -21,7 +21,7 @@ class TestEventList:
         assert setup.return_list_summary() == (3, 2)
     
     def test_eventlist_merge(self, setup):
-        merged_list = setup.return_merge_event_list(0, 1)
+        merged_list = setup.return_merge_event_list(setup.list[0], setup.list[1])
         assert merged_list[0].type == Event.Sample_Type.FIXATION
         assert merged_list[0].start_time_s == 0
         assert merged_list[0].end_time_s == 1.0
@@ -29,7 +29,7 @@ class TestEventList:
         assert merged_list[0].end_pos == [2,2]
 
     def test_eventlist_consolidate(self, setup):
-        ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [0, 0], [1, 1])
+        ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [0, 0], [2, 2])
         ex_event2 = Event(Event.Sample_Type.GAP, 1, 2.0, [0, 0], [1, 1])
         ex_event3 = Event(Event.Sample_Type.FIXATION, 2.0, 2.5, [0, 0], [1, 1])
         
@@ -59,7 +59,7 @@ class TestEventList:
         obj = EventList(np.array([event2, event3]))
         obj.microsaccade_filter(1.0, 10)
 
-        ex_event1 = Event(Event.Sample_Type.FIXATION, 1.009, 2.5, [X, X], [Y, Y])
+        ex_event1 = Event(Event.Sample_Type.FIXATION, 1.009, 2.5, [Y, X], [Y, Y])
         test_list = EventList(np.array([ex_event1]))
 
         assert obj == test_list
@@ -72,7 +72,7 @@ class TestEventList:
         obj = EventList(np.array([event1, event2]))
         obj.microsaccade_filter(1.0, 10)
 
-        ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [X, X], [Y, Y])
+        ex_event1 = Event(Event.Sample_Type.FIXATION, 0, 1, [X, X], [X, Y])
         test_list = EventList(np.array([ex_event1]))
 
         assert obj == test_list
@@ -89,14 +89,14 @@ class TestEventList:
         event7 = Event(Event.Sample_Type.GAP, 2, 2.009, [0, 0], [100, 1])
         obj = EventList(np.array([event1, event2, event3, event4, event5, event6, event7]))
 
-        ex_ev1 = Event(Event.Sample_Type.FIXATION, 0.009, 2, [X, X], [X, Y])
-        test = EventList(np.array([ex_ev1]))
+        ex_ev1 = Event(Event.Sample_Type.FIXATION, 0.009, 1.5, [X, X], [Y, Y])
+        ex_ev2 = Event(Event.Sample_Type.GAP, 1.5, 1.5005, [0, 0], [1, 1])
+        ex_ev3 = Event(Event.Sample_Type.FIXATION, 1.5005, 2, [X, X], [X, Y])
+        test = EventList(np.array([ex_ev1, ex_ev2, ex_ev3]))
 
         obj.microsaccade_filter(1.0, 10)
-
 
         assert obj == test
 
     # def test_eventList_iter(setup):
     #     for event in setup.obj:
-

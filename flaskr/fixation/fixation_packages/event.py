@@ -58,7 +58,7 @@ class Event:
         return working_string
     
     def __eq__(self, value):
-        return (self.type == value.type) and (self.start_time_s == value.start_time_s) and (self.end_time_s == value.end_time_s)
+        return (self.type == value.type) and (self.start_time_s == value.start_time_s) and (self.end_time_s == value.end_time_s) and (self.start_pos == value.start_pos) and (self.end_pos == value.end_pos)
     
 def classify_event(relative_gaze_velocity, threshold):
     if relative_gaze_velocity < threshold:
