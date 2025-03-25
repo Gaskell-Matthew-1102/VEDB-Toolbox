@@ -51,16 +51,14 @@ class EventList:
     
     # Applies the microsaccade filter on all events, merging any removed gap events
     def apply_filter(self, filter, **kwargs):
-
-        
         arr = self.list
         # new_arr = np.array([])
         bitarr = bitarray.bitarray(arr.size)
-        
-        if("min_saccade_amp_deg" in kwargs.keys() and "min_saccade_dur_ms" in kwargs.keys() and filter == Event.microsaccade_filter):
+
+        if(filter == Event.microsaccade_filter):
             for event_i in range(arr.size):
-                bitarr[event_i] = arr[event_i].microsaccade_filter(kwargs["min_saccade_amp_deg"], kwargs["min_saccade_dur_ms"])
-        elif("min_fixation_dur_ms" in kwargs.keys() and filter == Event.short_fixation_filter):
+                bitarr[event_i] = arr[event_i].microsaccade_filter(kwargs["min_saccade_amp_deg"], kwargs["min_saccade_dur_ms"], kwargs["width_of_image_px"], kwargs["hfov"])
+        elif(filter == Event.short_fixation_filter):
             for event_i in range(arr.size):
                 bitarr[event_i] = arr[event_i].short_fixation_filter(kwargs["min_fixation_dur_ms"])
         

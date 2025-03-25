@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import fixation_packages.spatial_average
 
 import sys
 
@@ -59,7 +60,10 @@ def do_it(filepath: str):
 
             cv2.arrowedLine(frame, (int(c), int(d)), (int(a), int(b)), (0, 255, 0), 1, tipLength=0.3)
 
-        vec_list.append( frame_vec_list )
+        # Average the frame_vec_list to obtain global
+        # Doing this here allows purging of individual vectors for the sake of memory usage
+        vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(frame_vec_list))
+        # vec_list.append( frame_vec_list )
 
         cv2.putText(frame, f"Frame: {frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
         cv2.putText(frame, f"Pts: {len(p0)}", (100,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)        # point tracking

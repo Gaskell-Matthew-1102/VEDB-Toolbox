@@ -18,8 +18,12 @@ def calculate_raw_gaze_vector(gaze_data_dict, x_res, y_res):
     # Convert to pixel space
 
     # The current approach just averages the left and right eyes, and trims the length of the returned list to be the same as the length of the shorter eye
-    raw_gaze_vec = np.array([np.mean([raw_gaze_left[0], raw_gaze_right[0]], 0)*x_res, np.mean([raw_gaze_left[1], raw_gaze_right[1]], 0)*y_res])
-    return raw_gaze_vec
+    # raw_gaze_vec = np.array([np.mean([raw_gaze_left[0], raw_gaze_right[0]], 0)*x_res, np.mean([raw_gaze_left[1], raw_gaze_right[1]], 0)*y_res])
+    # return raw_gaze_vec
+
+    # This approach just returns the left eye gaze data, as it's actually normalized
+    raw_gaze_left = np.array([raw_gaze_left[0]*x_res, raw_gaze_left[1]*y_res])
+    return raw_gaze_left
 
 
 # Wrapper function for Savitzky-Golay filter with specified parameters set as default arguments

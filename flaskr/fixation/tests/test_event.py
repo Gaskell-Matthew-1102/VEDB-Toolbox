@@ -53,34 +53,34 @@ class TestEvent:
 
     def test_event_amplitude_calculation(self):
         event = Event(Event.Sample_Type.GAP, 1.0, 2.0, [0, 0], [1, 1])
-        out = event.calculate_gap_amplitude([5, 1], [10, 2])
-        test = 11.3099
+        out = event.calculate_gap_amplitude(np.array([5, 1]), np.array([10, 2]), 192, 110)
+        test = 4.338
         assert out - test < 0.001
 
     def test_event_amplitude_calculation_no_x_displacement(self):
         event = Event(Event.Sample_Type.GAP, 1.0, 2.0, [0, 0], [1, 1])
-        out = event.calculate_gap_amplitude([5, 1], [5, 2])
-        test = 90
+        out = event.calculate_gap_amplitude(np.array([5, 1]), np.array([5, 2]), 192, 110)
+        test = 0.852
         assert out - test < 0.001
 
     def test_event_microsaccade_filter_is_microsaccade(self):
-        event = Event(Event.Sample_Type.GAP, 1.000, 1.005, [0, 0], [100, 1])
-        out = event.microsaccade_filter(1, 10)
+        event = Event(Event.Sample_Type.GAP, 1.000, 1.005, [0, 0], [0, 1])
+        out = event.microsaccade_filter(1, 10, 192, 110)
         assert out == True
 
     def test_event_microsaccade_filter_isnt_microsaccade_angle(self):
         event = Event(Event.Sample_Type.GAP, 1.000, 1.005, [0, 0], [1, 1])
-        out = event.microsaccade_filter(1, 10)
+        out = event.microsaccade_filter(1, 10, 110, 92)
         assert out == False
 
     def test_event_microsaccade_filter_isnt_microsaccade_time(self):
         event = Event(Event.Sample_Type.GAP, 1.000, 2.000, [0, 0], [100, 1])
-        out = event.microsaccade_filter(1, 10)
+        out = event.microsaccade_filter(1, 10, 110, 92)
         assert out == False
 
     def test_event_microsaccade_filter_isnt_microsaccade_both(self):
         event = Event(Event.Sample_Type.GAP, 1.000, 2.0, [0, 0], [1, 1])
-        out = event.microsaccade_filter(1, 10)
+        out = event.microsaccade_filter(1, 10, 110, 92)
         assert out == False
 
     def test_event_short_fixation_pass(self):

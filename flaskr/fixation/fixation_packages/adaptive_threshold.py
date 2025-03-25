@@ -28,8 +28,8 @@ def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_f
         # temp_y = global_optic_flow[1][0:min_len]
         # global_optic_flow = np.array([temp_x, temp_y])
 
-    print(gaze_velocity_vector[0:min_len,:])
-    print(global_optic_flow[0:min_len,:])
+    # print(gaze_velocity_vector[0:min_len,:])
+    # print(global_optic_flow[0:min_len,:])
     relative_gaze_vel = gaze_velocity_vector[0:min_len,:] - global_optic_flow[0:min_len,:]
     return (relative_gaze_vel, status_code)
     # return np.linalg.norm(relative_gaze_vel)

@@ -31,7 +31,7 @@ X_RES = 192
 Y_RES = 192
 
 
-def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_file_path, gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR):
+def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz):
     data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', date_of_url_data))
     # pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
     # df = pd.DataFrame(pldata_data)
@@ -99,18 +99,33 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     # Step 3*
     global_OF_vec_list = []
     # vec_list = fixation_packages.lucas_kanade.do_it()  # Needs to be averaged before upsampled
-    vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path)  # Needs to be averaged before upsampled
+    # global_OF_vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path)  # Needs to be averaged before upsampled
 
-    for i in range(len(vec_list)):
-        global_OF_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list[i]))
+
+
+    ############## SAVE THE OUTPUT OF LUCAS-KANADE TO SAVE TIME #################
+    import pickle
+    # with open('flaskr/fixation/saved_lucas_kanade_data_entire_dataset', 'wb') as fp:
+    #     pickle.dump(vec_list, fp)
+
+    # input("AAA")
+
+    with open ('flaskr/fixation/saved_lucas_kanade_data_111s', 'rb') as fp:
+        global_OF_vec_list = pickle.load(fp)
+
+
+    # for i in range(len(vec_list)):
+    #     global_OF_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list[i]))
     global_OF_vec_list = np.array(global_OF_vec_list)     # convert to numpy array
+    [print(global_OF_vec_list[x]) for x in range(10)]
+    # input('guh')
 
     # for i in range(len(global_OF_vec_list)):
     #     print(f"Global OF magnitudes ({i+1}): {np.linalg.norm(np.array([global_OF_vec_list[i][0], global_OF_vec_list[i][1]]))}")
     # input()
 
     # Step 4*
-    new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(30, 200, global_OF_vec_list, len(global_OF_vec_list))
+    new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(initial_world_hz, desired_world_hz, global_OF_vec_list)
     print("New vec list length:", len(new_vec_list))
 
     # Step 5
@@ -140,7 +155,7 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
         start_pos = savgol_gaze_vec[sample_i]
         end_pos = savgol_gaze_vec[sample_i+1]
 
-        built_event = fixation_packages.event.build_event(rel_gaze_vel, v_thr_list[sample_i], first_timestamp, second_timestamp, start_pos*X_RES, end_pos*Y_RES)
+        built_event = fixation_packages.event.build_event(rel_gaze_vel, v_thr_list[sample_i], first_timestamp, second_timestamp, start_pos, end_pos)
         temp_event_list.append(built_event)
     event_list = fixation_packages.event_list.EventList(np.array(temp_event_list))
 
@@ -158,11 +173,13 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     # input()
     # print(str(event_list))
     # print(len(event_list.list))
-
-    
+    print("Summary 1:",event_list.return_list_summary())
     event_list.consolidate_list()
-    event_list.apply_filter(fixation_packages.event.Event.microsaccade_filter, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS)
+    print("Summary 2:",event_list.return_list_summary())
+    event_list.apply_filter(fixation_packages.event.Event.microsaccade_filter, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS, width_of_image_px=192, hfov=HFOV_DEG)
+    print("Summary 3:",event_list.return_list_summary())
     event_list.apply_filter(fixation_packages.event.Event.short_fixation_filter, min_fixation_dur_ms=MIN_FIXATION_DUR_MS)
+    print("Summary 4:",event_list.return_list_summary())
 
     # EXPORT TO JSON
     timestamp_list = fixation_packages.export.create_timestamp_list(event_list)
@@ -199,7 +216,7 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
 def main():
     print("starting")
-    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./flaskr/fixation/test_data/videos/video.mp4', export_file_path="./flaskr/fixation/export.json", gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR)
+    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./flaskr/fixation/test_data/videos/video.mp4', export_file_path="./flaskr/fixation/export.json", gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200)
     print("complete")
 
 if __name__ == "__main__":
