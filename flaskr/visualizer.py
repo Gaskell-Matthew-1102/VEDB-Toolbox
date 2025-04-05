@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from flaskr import file_upload
 from flaskr.file_upload import *
 
+import plotly.io as pio
+
 import cv2
 app = Flask(__name__)
 
@@ -102,19 +104,22 @@ def logout() -> None:
             shutil.rmtree("__MACOSX")
         #some code here to run logout functionality
 
-@app.route("/download", methods=["POST"])
+# @app.route("/download", methods=["POST"])
 def download_graphs():
     if request.method == "POST":
         graphs = request.get_json()
-        linear_graph = graphs["lin_graph"]
-        angular_graph = graphs["angular_graph"]
+        linear = graphs["lin_graph"]
+        angular = graphs["ang_graph"]
+
+        linear_graph = go.Figure(linear)
+        angular_graph = go.Figure(angular)
 
         if not os.path.exists("graphs"):
             os.mkdir("graphs")
 
         fig_numbers = get_fig_numbers()
-        linear_graph.write_image("images/linear_graph" + str(fig_numbers[0]) + ".png")
-        angular_graph.write_image("images/angular_graph" + str(fig_numbers[1]) + ".png")
+        pio.write_image(linear_graph, "images/linear_graph" + str(fig_numbers[0]) + ".png")
+        pio.write_image(angular_graph, "images/angular_graph" + str(fig_numbers[1]) + ".png")
 
 def get_fig_numbers():
     if os.path.exists("graphs"):

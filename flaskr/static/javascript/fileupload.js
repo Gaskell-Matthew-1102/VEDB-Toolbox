@@ -144,16 +144,15 @@ function plotFixations(fixationTimes){
     Plotly.newPlot("gaze", fixationData, layout);
 }
 
-function sendGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
-    fetch('/download', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({lin_graph: linear_graph, ang_graph: angular_graph})
-    })
-    .then(response => response.json())
-    .catch((error) => console.error('Error:', error));
+function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
+    const moment = new Date();
+    const isoTime = moment.toISOString();
+
+    linear_file_name = 'linear_graph_' + isoTime;
+    angular_file_name = 'angular_graph_' + isoTime;
+
+    Plotly.downloadImage(linear_graph, {format:'png', width: 500, height: 257, filename: linear_file_name})
+    Plotly.downloadImage(angular_graph, {format:'png', width: 500, height: 257, filename: angular_file_name})
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
@@ -180,7 +179,7 @@ jQuery(function ($) {
     });
 
     $("#dwnld_btn").on('click', function(){
-        sendGraphs();
+        downloadGraphs();
     })
 
     $("#worldvideo").on("timeupdate", function(){
