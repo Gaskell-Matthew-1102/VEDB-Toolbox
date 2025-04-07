@@ -688,7 +688,9 @@ def load_visualizer():
                 file_to_graph = "gaze.npz"
             # graphs.append(generate_gaze_graph([file_to_graph]))
             # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
-            return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
+            # return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
+            return render_template("visualizer/visualizer-new.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
+        
         else:
             raise Exception(f"Invalid Action") #how did it get here
 
