@@ -1,7 +1,7 @@
 numpy
-pandas
+opencv-python
+scipy
 msgpack
 requests
-zipfile
-pathlib
-scipy
+pytest
+bitarray

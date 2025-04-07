@@ -8,11 +8,8 @@ def create_timestamp_list(in_eventList: EventList) -> np.array:
 
     for event in in_eventList:
         if event.type == Event.Sample_Type.FIXATION:
-            guh = (event.start_time_ms, event.end_time_ms)
-            print(type(guh))
+            guh = (event.start_time_s, event.end_time_s)
             out.append(guh)
-    print(out)
-    print(len(out))
     return np.array(out)
 
 def create_json(list: np.array) -> json:
