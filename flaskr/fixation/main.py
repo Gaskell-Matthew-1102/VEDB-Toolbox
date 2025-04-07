@@ -10,7 +10,7 @@ import fixation_packages.IMU_processing
 import fixation_packages.gridTracking_LUCAS_KANADE_TEST
 import fixation_packages.spatial_average
 import fixation_packages.adaptive_threshold
-
+import fixation_packages.IMU_processing
 
 import numpy as np
 import pandas as pd
@@ -33,14 +33,22 @@ Y_RES = 192
 
 def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz):
     data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', date_of_url_data))
-    # pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
-    # df = pd.DataFrame(pldata_data)
-    # parsed_data = fixation_packages.ingestion.parse_pldata(df[1].iloc[0])
+    pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
+    df = pd.DataFrame(pldata_data)
+    parsed_data = fixation_packages.ingestion.parse_pldata(df[1].iloc[0])
     gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(f'{data_path}\\processedGaze\\{npz_to_load}')
 
-    # print(parsed_data.keys())
+    print(parsed_data.keys())
     # print(parse_pldata(df[1].iloc[1])['timestamp'])
     # print()
+    imu_processor = fixation_packages.IMU_processing.IMU_Processor(df)
+    print("a")
+
+    for i in range(5):
+        imu_processor.process_IMU_data(i)
+        print(imu_processor.current_orientation)
+    print("b")
+    input("PAUSING")
     # print(fixation_packages.ingestion.parse_pldata(df[1].iloc[0])['linear_velocity_0'])
     # print(fixation_packages.ingestion.parse_pldata(df[1].iloc[1])['linear_velocity_0'])
     # Step 1
