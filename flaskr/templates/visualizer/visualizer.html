@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/box.css') }}">
 
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!--        <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>-->
 
 <!--&lt;!&ndash;        The following imports are Vuejs, Chartjs, a Chartjs wrapper, and the Vue Client&ndash;&gt;-->
 <!--        <script src="https://unpkg.com/vue"></script>-->
@@ -157,6 +158,12 @@
         // Plotly.plot("angular_velocity", angular_graph, {});
         // Plotly.plot("gaze", gaze_graph, {});
 
+        // initial values
+        initTimelist = [velocityTimestamps[0], velocityTimestamps[1]];
+        initLinVel0 = [linear0[0], linear0[1]];
+        initLinVel1 = [linear1[0], linear1[1]];
+        initLinVel2 = [linear2[0], linear2[1]];
+
         const trace1 = {
             x: velocityTimestamps,
             y: linear0,
@@ -180,7 +187,7 @@
 
         const linearLayout = {
             title: 'Linear Velocity',
-            xaxis: {title: 'Time'},
+            xaxis: {title: 'Time', range: [-2, 2]},
             yaxis: {title: 'Linear Velocity'},
             height: 257,
             width: 500
@@ -211,7 +218,7 @@
 
         const angularLayout = {
             title: 'Angular Velocity',
-            xaxis: {title: 'Time'},
+            xaxis: {title: 'Time', range: [-2, 2]},
             yaxis: {title: 'Angular Velocity'},
             height: 257,
             width: 500

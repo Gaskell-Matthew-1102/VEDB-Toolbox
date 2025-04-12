@@ -4,6 +4,11 @@
 // var eye0_video = document.getElementById("eye0video");
 // var eye1_video = document.getElementById("eye1video");
 
+var lastGraphedValue = 1;
+
+var left = 0;
+var right = 3;
+
 function play(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")
@@ -183,6 +188,8 @@ jQuery(function ($) {
     })
 
     $("#worldvideo").on("timeupdate", function(){
+        console.log("in here");
+
         var wvideo = $(this)[0];
         var val = (100/wvideo.duration) * wvideo.currentTime;
         $("#seek-bar").val(val);
@@ -197,6 +204,17 @@ jQuery(function ($) {
 
         var updatedTime = updatedMinsString + ":" + updatedSecsString;
         $("#currentTime").attr("value", updatedTime);
+
+        const linearGraphDiv = document.getElementById("linear_velocity");
+        const angularGraphDiv = document.getElementById("angular_velocity");
+
+        left = wvideo.currentTime - 2;
+        right = wvideo.currentTime + 2;
+        var update = {
+            'xaxis.range': [left, right]
+        }
+        Plotly.update(linearGraphDiv, null, update);
+        Plotly.update(angularGraphDiv, null, update);
     });
 
     $("#seek-bar").on("mousedown", function(){
