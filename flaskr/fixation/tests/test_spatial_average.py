@@ -1,5 +1,5 @@
 import pytest
-import fixation_packages.spatial_average
+import fixation.fixation_packages.spatial_average as spatial_average
 import numpy as np
 
 class TestSpatialAverage:
@@ -19,7 +19,7 @@ class TestSpatialAverage:
         vec5 = np.array([100, -2])
         frame = [vec1, vec2, vec3, vec4, vec5]
 
-        out = fixation_packages.spatial_average.calculateGlobalOpticFlowVec(frame)
+        out = spatial_average.calculateGlobalOpticFlowVec(frame)
 
         # Below generated via manual calculation
         test = np.array([22.2, 0.8])
@@ -27,7 +27,7 @@ class TestSpatialAverage:
 
     def test_calculate_global_OF_vec_empty(self):
         frame = []
-        out = fixation_packages.spatial_average.calculateGlobalOpticFlowVec(frame)
+        out = spatial_average.calculateGlobalOpticFlowVec(frame)
         
         test = np.array([0, 0])
         assert np.array_equal(out, test)
@@ -35,7 +35,7 @@ class TestSpatialAverage:
     def test_linear_upsample_valid(self):
         in_pt1 = np.array([0, 0])
         in_pt2 = np.array([3, 6])
-        out = fixation_packages.spatial_average.linear_upsample(50, 200, in_pt1, in_pt2)
+        out = spatial_average.linear_upsample(50, 200, in_pt1, in_pt2)
 
         out_pt1 = np.array([0, 0])
         out_pt2 = np.array([1, 2])
@@ -48,7 +48,7 @@ class TestSpatialAverage:
     def test_linear_upsample_same_hz(self):
         in_pt1 = np.array([0, 0])
         in_pt2 = np.array([3, 6])
-        out = fixation_packages.spatial_average.linear_upsample(50, 50, in_pt1, in_pt2)
+        out = spatial_average.linear_upsample(50, 50, in_pt1, in_pt2)
 
         out_pt1 = np.array([0, 0])
         out_pt2 = np.array([3, 6])
@@ -62,7 +62,7 @@ class TestSpatialAverage:
         in_pt2 = np.array([3, 6])
 
         with pytest.raises(ValueError) as e_info:
-            fixation_packages.spatial_average.linear_upsample(200, 50, in_pt1, in_pt2)
+            spatial_average.linear_upsample(200, 50, in_pt1, in_pt2)
         assert str(e_info.value) == "Downsampling unsupported"
 
 
@@ -73,7 +73,7 @@ class TestSpatialAverage:
 
         vec_list = [sample1, sample2, sample3]
         
-        out = fixation_packages.spatial_average.linear_upsample_dataset(50, 200, vec_list)
+        out = spatial_average.linear_upsample_dataset(50, 200, vec_list)
         
         i1 = np.array([0, 0])
         i2 = np.array([1, 2])
@@ -95,7 +95,7 @@ class TestSpatialAverage:
 
         vec_list = [sample1, sample2, sample3, sample4]
         
-        out = fixation_packages.spatial_average.linear_upsample_dataset(50, 200, vec_list)
+        out = spatial_average.linear_upsample_dataset(50, 200, vec_list)
         
         i1 = np.array([0, 0])
         i2 = np.array([1, 2])
@@ -113,6 +113,6 @@ class TestSpatialAverage:
     
     def test_linear_upsample_dataset_empty(self):
         with pytest.raises(ValueError) as excinfo:
-            fixation_packages.spatial_average.linear_upsample_dataset(50, 200, [])
+            spatial_average.linear_upsample_dataset(50, 200, [])
         assert str(excinfo.value) == "Empty vec_list"
     

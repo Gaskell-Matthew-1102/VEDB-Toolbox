@@ -1,4 +1,5 @@
-from fixation_packages.event import Event
+# from fixation_packages.event import Event
+from .event import Event
 import bitarray
 import numpy as np
 

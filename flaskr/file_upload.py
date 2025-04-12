@@ -1,6 +1,8 @@
 # All of the code in this file is our own, apart from some pldata functions, which have been credited below
 
 import shutil
+from multiprocessing import Process, Manager
+from fixation import main as fixation_main
 
 from flask import *
 import atexit
@@ -688,6 +690,9 @@ def load_visualizer():
                 file_to_graph = "gaze.npz"
             # graphs.append(generate_gaze_graph([file_to_graph]))
             # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
+            fix_det_args = ("2023_06_01_18_47_34", "odometry.pldata", "gaze.npz", './flaskr/fixation/test_data/videos/video.mp4', "./flaskr/fixation/export.json", 55, 3, 700, 0.8, 30, 200)
+            fix_det = Process(target=fixation_main, args=fix_det_args)
+    
             return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
         else:
             raise Exception(f"Invalid Action") #how did it get here

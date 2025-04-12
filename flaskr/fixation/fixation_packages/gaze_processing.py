@@ -5,7 +5,7 @@
 # Steps 1, 2
 import numpy as np
 from scipy.signal import savgol_filter
-from constants import GAZE_WINDOW_SIZE_MS, POLYNOMIAL_GRADE
+from fixation.constants import GAZE_WINDOW_SIZE_MS, POLYNOMIAL_GRADE
 
 # WINDOW_SIZE_MS = 55
 # POLYNOMIAL_GRADE = 3

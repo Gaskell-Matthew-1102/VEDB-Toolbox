@@ -1,5 +1,5 @@
-from fixation_packages.event_list import EventList
-from fixation_packages.event import Event
+from fixation.fixation_packages.event_list import EventList
+from fixation.fixation_packages.event import Event
 import numpy as np
 import pytest
 

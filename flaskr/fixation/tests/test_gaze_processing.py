@@ -1,5 +1,5 @@
 import pytest
-from fixation_packages.gaze_processing import *
+from fixation.fixation_packages.gaze_processing import *
 
 class TestGazeProcessing:
     def test_calculate_gaze_velocity_valid(self):

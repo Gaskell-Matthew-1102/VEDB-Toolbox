@@ -22,6 +22,8 @@ MIN_SACCADE_DUR_MS = 10             # milliseconds
 MIN_FIXATION_DUR_MS = 70            # milliseconds
 HFOV_DEG = 110                      # degrees, FOV of lens
 
+X_RES = 400         # originally 192x192
+Y_RES = 400
 # Vectors are represented in this project as a 2 by X np.ndarray, where X is the number of components in the vector
 #                       
 # Example: the vector: <1, 2, 3> is represented as [[1, 2, 3]]

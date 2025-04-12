@@ -1,16 +1,27 @@
 # All code in this file is our own work.
 
-import fixation_packages.event
-import fixation_packages.event_list
-import fixation_packages.export
-import fixation_packages.ingestion
-import fixation_packages.gaze_processing
-import fixation_packages.IMU_processing
-# import fixation_packages.lucas_kanade
-import fixation_packages.gridTracking_LUCAS_KANADE_TEST
-import fixation_packages.spatial_average
-import fixation_packages.adaptive_threshold
-import fixation_packages.IMU_processing
+# from .fixation_packages import *
+try:
+    import fixation.fixation_packages as fixation_packages
+except ModuleNotFoundError as e:
+    print("Run in console from flaskr/ as:\npython -m fixation.main")
+    input("exitting")
+    raise e
+
+# from fixation.fixation_packages import *
+
+# import fixation_packages.event
+# from fixation.fixation_packages import event
+# import fixation_packages.event_list
+# import fixation_packages.export
+# import fixation_packages.ingestion
+# import fixation_packages.gaze_processing
+# import fixation_packages.IMU_processing
+# # import fixation_packages.lucas_kanade
+# import fixation_packages.gridTracking_LUCAS_KANADE_TEST
+# import fixation_packages.spatial_average
+# import fixation_packages.adaptive_threshold
+# import fixation_packages.IMU_processing
 
 import numpy as np
 import pandas as pd
@@ -25,13 +36,15 @@ import os
 # from PIL import Image
 # import matplotlib.pyplot as plt
 
-from constants import *       # import all global constants as defined in constants.py
+from fixation.constants import *       # import all global constants as defined in constants.py
+    
 
-X_RES = 192
-Y_RES = 192
-
-
-def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz):
+def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v):
+    import inspect
+    frame = inspect.currentframe()
+    args, _, _, values = inspect.getargvalues(frame)
+    ARGUMENT_LIST = [(i, values[i]) for i in args]
+    
     data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', date_of_url_data))
     pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
     df = pd.DataFrame(pldata_data)
@@ -40,15 +53,7 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
     print(parsed_data.keys())
     # print(parse_pldata(df[1].iloc[1])['timestamp'])
-    # print()
-    imu_processor = fixation_packages.IMU_processing.IMU_Processor(df)
-    print("a")
-
-    for i in range(5):
-        imu_processor.process_IMU_data(i)
-        print(imu_processor.current_orientation)
-    print("b")
-    input("PAUSING")
+    
     # print(fixation_packages.ingestion.parse_pldata(df[1].iloc[0])['linear_velocity_0'])
     # print(fixation_packages.ingestion.parse_pldata(df[1].iloc[1])['linear_velocity_0'])
     # Step 1
@@ -104,29 +109,42 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
     print("It Begins...")
 
+    IMU_FLAG = True
+    if(not IMU_FLAG):
     # Step 3*
-    global_OF_vec_list = []
-    # vec_list = fixation_packages.lucas_kanade.do_it()  # Needs to be averaged before upsampled
-    # global_OF_vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path)  # Needs to be averaged before upsampled
+        # global_OF_vec_list = []
+        # vec_list = fixation_packages.lucas_kanade.do_it()  # Needs to be averaged before upsampled
+        global_OF_vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path)  # Needs to be averaged before upsampled
 
-
+    else:
+        imu_processor = fixation_packages.IMU_processing.IMU_Processor(df, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v)
+        global_OF_vec_list = []
+        for i in range(100000):
+            if i % 10000 == 0:
+                print(i)
+            vec_list = imu_processor.compute_grid_rotational_flow(step=100)
+            global_OF_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list))
+            imu_processor.update()
+        print("exiting IMU processing")
 
     ############## SAVE THE OUTPUT OF LUCAS-KANADE TO SAVE TIME #################
-    import pickle
+    # import pickle
     # with open('flaskr/fixation/saved_lucas_kanade_data_entire_dataset', 'wb') as fp:
     #     pickle.dump(vec_list, fp)
 
     # input("AAA")
 
-    with open ('flaskr/fixation/saved_lucas_kanade_data_111s', 'rb') as fp:
-        global_OF_vec_list = pickle.load(fp)
+    # with open ('./fixation/saved_lucas_kanade_data_111s', 'rb') as fp:
+    #     global_OF_vec_list = pickle.load(fp)
+
+    #############################################################################
+
 
 
     # for i in range(len(vec_list)):
     #     global_OF_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list[i]))
     global_OF_vec_list = np.array(global_OF_vec_list)     # convert to numpy array
     [print(global_OF_vec_list[x]) for x in range(10)]
-    # input('guh')
 
     # for i in range(len(global_OF_vec_list)):
     #     print(f"Global OF magnitudes ({i+1}): {np.linalg.norm(np.array([global_OF_vec_list[i][0], global_OF_vec_list[i][1]]))}")
@@ -191,7 +209,8 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
     # EXPORT TO JSON
     timestamp_list = fixation_packages.export.create_timestamp_list(event_list)
-    fixation_packages.export.write_json_to_file(fixation_packages.export.create_json(timestamp_list), export_file_path)
+    fixation_packages.export.write_json_to_file(fixation_packages.export.create_json(timestamp_list), export_fixation_file_path)
+    fixation_packages.export.write_constants_to_file(ARGUMENT_LIST, export_parameters_file_path)
 
     print("DONE!")
 
@@ -224,8 +243,9 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
 def main():
     print("starting")
-    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./flaskr/fixation/test_data/videos/video.mp4', export_file_path="./flaskr/fixation/export.json", gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200)
+    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90)
     print("complete")
 
 if __name__ == "__main__":
+    print("Run in console from flaskr/ as:\npython -m fixation.main")
     main()
