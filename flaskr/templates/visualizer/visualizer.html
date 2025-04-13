@@ -59,7 +59,7 @@
 
           <div class="col-md-3 text-end">
               <div class="btn-group">
-                <button id="dwnld_btn" type="button" class="btn btn-primary me-2">Download</button>
+                <button id="dwnld_btn" type="button" class="btn btn-primary me-2" onclick="downloadGraphs()">Download</button>
                   <a href="{{ url_for('dashboard') }}">
                     <button type="button" class="btn btn-primary me-2">Dashboard</button>
                   </a>
@@ -225,5 +225,45 @@
         }
 
         Plotly.plot('angular_velocity', angularData, angularLayout);
+
+        const trace7 = {
+            x: leftGazeTime,
+            y: leftNormX,
+            mode: 'lines',
+            name: 'Left Norm Pos X'
+        }
+
+        const trace8 = {
+            x: leftGazeTime,
+            y: leftNormY,
+            mode: 'lines',
+            name: 'Left Norm Pos Y'
+        }
+
+        const trace9 = {
+            x: rightGazeTime,
+            y: rightNormX,
+            mode: 'lines',
+            name: 'Right Norm Pos X'
+        }
+
+        const trace10 = {
+            x: rightGazeTime,
+            y: rightNormY,
+            mode: 'lines',
+            name: 'Right Norm Pos Y'
+        }
+
+        const gazeData = [trace7, trace8, trace9, trace10];
+
+        const gazeLayout = {
+            title: 'Normalized Gaze Positions',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'Normalized Position'},
+            height: 257,
+            width: 500
+        }
+
+        Plotly.plot('gaze', gazeData, gazeLayout);
     </script>
 </html>

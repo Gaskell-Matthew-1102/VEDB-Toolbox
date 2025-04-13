@@ -146,9 +146,11 @@ function plotFixations(fixationTimes){
         height: 257
     }
 
-    Plotly.newPlot("gaze", fixationData, layout);
+    // why was this plotted on gaze lol
+    // Plotly.newPlot("gaze", fixationData, layout);
 }
 
+//fix this plotly decided to just break lol
 function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
     const moment = new Date();
     const isoTime = moment.toISOString();
@@ -156,8 +158,8 @@ function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
     linear_file_name = 'linear_graph_' + isoTime;
     angular_file_name = 'angular_graph_' + isoTime;
 
-    Plotly.downloadImage(linear_graph, {format:'png', width: 500, height: 257, filename: linear_file_name})
-    Plotly.downloadImage(angular_graph, {format:'png', width: 500, height: 257, filename: angular_file_name})
+    Plotly.downloadImage(linear_graph, {format:'png', width: 500, height: 257, filename: linear_file_name});
+    Plotly.downloadImage(angular_graph, {format:'png', width: 500, height: 257, filename: angular_file_name});
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
@@ -207,6 +209,7 @@ jQuery(function ($) {
 
         const linearGraphDiv = document.getElementById("linear_velocity");
         const angularGraphDiv = document.getElementById("angular_velocity");
+        const gazeGraphDiv = document.getElementById('gaze');
 
         left = wvideo.currentTime - 2;
         right = wvideo.currentTime + 2;
@@ -215,6 +218,7 @@ jQuery(function ($) {
         }
         Plotly.update(linearGraphDiv, null, update);
         Plotly.update(angularGraphDiv, null, update);
+        Plotly.update(gazeGraphDiv, null, update);
     });
 
     $("#seek-bar").on("mousedown", function(){
