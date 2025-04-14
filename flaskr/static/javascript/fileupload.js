@@ -157,9 +157,28 @@ function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
 
     linear_file_name = 'linear_graph_' + isoTime;
     angular_file_name = 'angular_graph_' + isoTime;
+    gaze_file_name = 'gaze_graph_' + isoTime;
 
-    Plotly.downloadImage(linear_graph, {format:'png', width: 500, height: 257, filename: linear_file_name});
-    Plotly.downloadImage(angular_graph, {format:'png', width: 500, height: 257, filename: angular_file_name});
+    const linearGraphDiv = document.getElementById("linear_velocity");
+    const angularGraphDiv = document.getElementById("angular_velocity");
+    const gazeGraphDiv = document.getElementById('gaze');
+
+    Plotly.downloadImage(linearGraphDiv, {format:'png', width: 500, height: 257, filename: linear_file_name});
+    Plotly.downloadImage(angularGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name});
+    Plotly.downloadImage(gazeGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name})
+
+    // fetch('/download_graphs', {
+    //     method: 'POST',
+    //     headers: {
+    //         'linearGraph': linearGraphDiv,
+    //         'angularGraph': angularGraphDiv,
+    //         'gazeGraph': gazeGraphDiv,
+    //         'linearFileName': linear_file_name,
+    //         'angularFileName': angular_file_name,
+    //         'gazeFileName': gaze_file_name
+    //     },
+
+    // })
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar

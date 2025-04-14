@@ -712,6 +712,22 @@ def load_visualizer():
         else:
             raise Exception(f"Invalid Action") #how did it get here
 
+def download_graphs():
+    linear_graph = request.args.get('linearGraph')
+    angular_graph = request.args.get('angularGraph')
+    gaze_graph = request.args.get('gazeGraph')
+
+    linear_file_name = request.args.get('linearFileName')
+    angular_file_name = request.args.get('angularFileName')
+    gaze_file_name = request.args.get('gazeFileName')
+
+    if not os.path.exists("graphs"):
+        os.mkdir("graphs")
+
+    linear_graph.write_image("images" + linear_file_name + ".png")
+    angular_graph.write_image("images" + angular_file_name + ".png")
+    gaze_graph.write_image("images" + gaze_file_name + ".png")
+
 #Function ran when the viewer's exit viewer button is clicked
 def new_files():
     global video_file_list
