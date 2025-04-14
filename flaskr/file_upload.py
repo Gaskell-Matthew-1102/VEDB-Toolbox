@@ -2,7 +2,6 @@
 
 import shutil
 from multiprocessing import Process, Manager
-from fixation import main as fixation_main
 
 from flask import *
 import atexit
@@ -18,7 +17,8 @@ import requests
 import matplotlib.pyplot as plt
 import math
 import urllib
-# from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
+from multiprocessing import Process
+from flaskr.fixation.main import runner as fixation_main
 
 import plotly.graph_objects as go
 from plotly import utils
@@ -690,12 +690,26 @@ def load_visualizer():
                 file_to_graph = "gaze.npz"
             # graphs.append(generate_gaze_graph([file_to_graph]))
             # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
-            fix_det_args = ("2023_06_01_18_47_34", "odometry.pldata", "gaze.npz", './flaskr/fixation/test_data/videos/video.mp4', "./flaskr/fixation/export.json", 55, 3, 700, 0.8, 30, 200)
-            fix_det = Process(target=fixation_main, args=fix_det_args)
     
+            # Let's start the fixation algorithm here
+            fix_det_args = (
+                "2023_06_01_18_47_34", "odometry.pldata", "gaze.npz",
+                'flaskr/fixation/test_data/videos/video.mp4',
+                "flaskr/fixation/export/export_fixation.json",
+                "flaskr/fixation/export/export_parameters.txt",
+                300, 3, 750, 0.8, 30, 200, 2048, 1536, 90, 90, True
+            )
+            start_fixation_algorithm(fix_det_args)
+
             return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
         else:
             raise Exception(f"Invalid Action") #how did it get here
+
+def start_fixation_algorithm(args):
+    fix_det = Process(target=fixation_main, args=args)
+    fix_det.start()
+    print("Fixation detection algorithm begun")
+    fix_det.join()
 
 #Function ran when the viewer's exit viewer button is clicked
 def new_files():

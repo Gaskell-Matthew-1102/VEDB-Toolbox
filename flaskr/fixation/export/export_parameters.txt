@@ -1,12 +1,12 @@
 date_of_url_data: 2023_06_01_18_47_34
 pldata_to_load: odometry.pldata
 npz_to_load: gaze.npz
-world_scene_video_path: ./fixation/test_data/videos/video.mp4
-export_fixation_file_path: ./fixation/export/export_fixation.json
-export_parameters_file_path: ./fixation/export/export_parameters.txt
-gaze_window_size_ms: 55
+world_scene_video_path: flaskr/fixation/test_data/videos/video.mp4
+export_fixation_file_path: flaskr/fixation/export/export_fixation.json
+export_parameters_file_path: flaskr/fixation/export/export_parameters.txt
+gaze_window_size_ms: 300
 polynomial_grade: 3
-min_vel_thresh: 700
+min_vel_thresh: 750
 gain_factor: 0.8
 initial_world_hz: 30
 desired_world_hz: 200
@@ -14,3 +14,4 @@ world_camera_width: 2048
 world_camera_height: 1536
 camera_fov_h: 90
 camera_fov_v: 90
+imu_flag: True

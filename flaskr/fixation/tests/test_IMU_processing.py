@@ -118,16 +118,16 @@ class TestIMUProcessing:
         assert setup.get_current_sample_idx() == 2
 
     def test_calculate_rotational_optic_flow(self, setup):
-        out = setup.calculate_rotational_optic_flow(100, 100)
+        out = setup.compute_grid_rotational_flow(100, 100)
         print(out)
         assert out == None
 
         setup.update()
-        out = setup.calculate_rotational_optic_flow(100, 100)
+        out = setup.compute_grid_rotational_flow(100, 100)
         assert out == 0
 
-    def test_compute_average_rotational_flow(self, setup):
-        a = setup.compute_average_rotational_flow(100)
+    def test_calculate_rotational_optic_flow(self, setup):
+        a = setup.calculate_rotational_optic_flow(100)
         print(a)
         assert a == 0
         

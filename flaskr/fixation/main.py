@@ -4,9 +4,12 @@
 try:
     import fixation.fixation_packages as fixation_packages
 except ModuleNotFoundError as e:
-    print("Run in console from flaskr/ as:\npython -m fixation.main")
-    input("exitting")
-    raise e
+    try:
+        import flaskr.fixation.fixation_packages as fixation_packages
+    except ModuleNotFoundError as e:    
+        print("Run in console from flaskr/ as:\npython -m fixation.main")
+        input("exitting")
+        raise e
 
 # from fixation.fixation_packages import *
 
@@ -36,96 +39,70 @@ import os
 # from PIL import Image
 # import matplotlib.pyplot as plt
 
-from fixation.constants import *       # import all global constants as defined in constants.py
+from flaskr.fixation.constants import *       # import all global constants as defined in constants.py
     
 
-def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v):
+def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v, imu_flag):
     import inspect
     frame = inspect.currentframe()
     args, _, _, values = inspect.getargvalues(frame)
     ARGUMENT_LIST = [(i, values[i]) for i in args]
     
+    # input("I UNDERSTAND I NEED TO READD THIS LINE")
+    # IMPORTANT! RESTORE THE BELOW LINE IN PRODUCTION!!
     data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', date_of_url_data))
+    # data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', 'random_imu_datas'))
     pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
     df = pd.DataFrame(pldata_data)
     parsed_data = fixation_packages.ingestion.parse_pldata(df[1].iloc[0])
-    gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(f'{data_path}\\processedGaze\\{npz_to_load}')
 
-    print(parsed_data.keys())
-    # print(parse_pldata(df[1].iloc[1])['timestamp'])
+    # input("I UNDERSTAND I NEED TO READD THIS OTHER COOLER LINE")
+    # IMPORTANT! RESTORE THE BELOW LINE IN PRODUCTION!!
+    gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(f'{data_path}\\processedGaze\\{npz_to_load}')
+    # gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(f'{data_path}\\{npz_to_load}')
+
     
-    # print(fixation_packages.ingestion.parse_pldata(df[1].iloc[0])['linear_velocity_0'])
-    # print(fixation_packages.ingestion.parse_pldata(df[1].iloc[1])['linear_velocity_0'])
     # Step 1
     # We need one gaze velocity vector, so I'm just gonna average out the left and right eye vectors (based on the length of the min list)
     min_len = min(len(gaze_data_dict["left_norm_pos_x"]), len(gaze_data_dict["left_norm_pos_y"]), len(gaze_data_dict["right_norm_pos_x"]), len(gaze_data_dict["right_norm_pos_y"]))
 
     # Generate gaze timestamp list to calculate velocity
-    # print(gaze_data_dict.keys())
-    gaze_timestamp = fixation_packages.gaze_processing.get_timestamp_list(gaze_data_dict, min_len)
-    # for i in range(10000):
-    #     print(gaze_timestamp[i+1] - gaze_timestamp[i])
-    # input()
+    gaze_timestamp = fixation_packages.gaze_processing.get_timestamp_list(gaze_data_dict, min_len, "left")
+
 
     raw_gaze_vec_ = fixation_packages.gaze_processing.calculate_raw_gaze_vector(gaze_data_dict, x_res=X_RES, y_res=Y_RES)
-    
 
     savgol_x = fixation_packages.gaze_processing.savgol(raw_gaze_vec_[0], gaze_window_size_ms, polynomial_grade)
     savgol_y = fixation_packages.gaze_processing.savgol(raw_gaze_vec_[1], gaze_window_size_ms, polynomial_grade)
     savgol_gaze_vec = np.array(np.column_stack([savgol_x, savgol_y]))
-    # print(savgol_gaze_vec.shape)
-    # input()
-    # mint = 0.0
-    # maxt = 0.0
 # THE GAZE VECTOR IS NORMALISED, MUST CONVERT TO PIXEL SPACE
-    # for i in range(len(savgol_gaze_vec)):
-    #     mint = min(np.linalg.norm(np.array([savgol_gaze_vec[i][0], savgol_gaze_vec[i][1]])), mint)
-    #     maxt = max(np.linalg.norm(np.array([savgol_gaze_vec[i][0], savgol_gaze_vec[i][1]])), maxt)
-    # print("min: ", mint)
-    # print("max: ", maxt)
-    # input()
-    # count = 0
-    # other = 0
-    # for i in range(0, len(savgol_gaze_vec), 1):
-    #     s = np.linalg.norm(np.array([savgol_gaze_vec[i][0], savgol_gaze_vec[i][1]]))
-    #     if s <= temp_avg:
-    #         # print(f"Savgol gaze vector magnitudes ({i}): {s}")
-    #         count += 1
-    #     else:
-    #         other += 1
-    # print('done: ', count, other)
-    # input()
 
     # Step 2
-    # print(f"savgolgaze_vec_shape: {savgol_gaze_vec.shape}")
-    # print(savgol_gaze_vec[:])
-    # print(savgol_gaze_vec[:][0])
-    # print(savgol_gaze_vec[:][1])
-    # input()
-
     v_hat = fixation_packages.gaze_processing.calculateGazeVelocity(savgol_gaze_vec, gaze_timestamp)
-    # print(v_hat.shape)
-    # input()
 
-    print("It Begins...")
+    print("Optic flow calculation start using ", end='')
+    if(imu_flag):
+        print("IMU")
+    else:
+        print("Lucas-Kanade")
 
-    IMU_FLAG = True
-    if(not IMU_FLAG):
+    if(not imu_flag):
     # Step 3*
-        # global_OF_vec_list = []
-        # vec_list = fixation_packages.lucas_kanade.do_it()  # Needs to be averaged before upsampled
         global_OF_vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path)  # Needs to be averaged before upsampled
+        # TODO: Check timestamp alignment
+        # TODO: global_OF_vec_list is a list of vectors produced per frame, do we need to find velocity?
 
     else:
         imu_processor = fixation_packages.IMU_processing.IMU_Processor(df, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v)
         global_OF_vec_list = []
-        for i in range(100000):
+        for i in range(10_000):
             if i % 10000 == 0:
                 print(i)
             vec_list = imu_processor.compute_grid_rotational_flow(step=100)
             global_OF_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list))
+            # print(imu_processor.get_time_at(i+1) - imu_processor.get_time_at(i))
             imu_processor.update()
-        print("exiting IMU processing")
+    print("Optic flow calculation end")
 
     ############## SAVE THE OUTPUT OF LUCAS-KANADE TO SAVE TIME #################
     # import pickle
@@ -141,34 +118,47 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
 
 
-    # for i in range(len(vec_list)):
-    #     global_OF_vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(vec_list[i]))
     global_OF_vec_list = np.array(global_OF_vec_list)     # convert to numpy array
-    [print(global_OF_vec_list[x]) for x in range(10)]
+    global_OF_vec_list *= 25
 
-    # for i in range(len(global_OF_vec_list)):
-    #     print(f"Global OF magnitudes ({i+1}): {np.linalg.norm(np.array([global_OF_vec_list[i][0], global_OF_vec_list[i][1]]))}")
-    # input()
 
     # Step 4*
-    new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(initial_world_hz, desired_world_hz, global_OF_vec_list)
-    print("New vec list length:", len(new_vec_list))
+    if(imu_flag):
+        IMU_RATE = 200
+        global_OF_vec_list *= IMU_RATE
+        new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(IMU_RATE, desired_world_hz, global_OF_vec_list)
+    else:
+        CAMERA_RATE = 25
+        global_OF_vec_list *= CAMERA_RATE
+        new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(CAMERA_RATE, desired_world_hz, global_OF_vec_list)
 
     # Step 5
-    print(f"v hat shape: {v_hat.shape}")
-    print(f"Global vec list shape: {global_OF_vec_list.shape}")
+
+    DEBUG_OPTIC_FLOW = False
+    if DEBUG_OPTIC_FLOW:
+        with open(f"{export_fixation_file_path}.txt", "w") as f:
+            for i, subarray in enumerate(global_OF_vec_list):
+                f.write(f"Array {i}:\n")
+                np.savetxt(f, subarray, fmt='%.6f')  # format for 2 decimal places
+                f.write("\n")
+        return
+
     v_rel, status_code = fixation_packages.adaptive_threshold.gaze_velocity_correction(v_hat, global_OF_vec_list)
+
+    DEBUG_OPTIC_FLOW = False
+    if DEBUG_OPTIC_FLOW:
+        with open(f"{export_fixation_file_path}.txt", "w") as f:
+            for i, subarray in enumerate(v_rel):
+                f.write(f"Array {i}:\n")
+                np.savetxt(f, subarray, fmt='%.6f')
+                f.write("\n")
+        return
 
     # Step 6
     samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(200, 300)
     v_thr_list = []
     for i in range(len(new_vec_list)- (samples_in_window-1) ):
         v_thr_list.append(fixation_packages.adaptive_threshold.calculate_v_thr(min_vel_thresh, gain_factor, new_vec_list, i, samples_in_window))
-
-    # print(f"v_thr_list len: {len(v_thr_list)}")
-    # print(v_thr_list)
-
-
 
     # Begin classification
     temp_event_list = []
@@ -196,9 +186,6 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
     # 
     #
 
-    # input()
-    # print(str(event_list))
-    # print(len(event_list.list))
     print("Summary 1:",event_list.return_list_summary())
     event_list.consolidate_list()
     print("Summary 2:",event_list.return_list_summary())
@@ -214,36 +201,11 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
     print("DONE!")
 
-
-
-    # OUTPUT OF print(parsed_data):
-    # {'topic': 'odometry', 
-    # 'timestamp': 332.054984618, 
-    # 'source_timestamp': 1685659655.7981853, 
-    # 'tracker_confidence': 2, 
-    # 'position_0': 0.0, 
-    # 'position_1': 0.0, 
-    # 'position_2': 0.0, 
-    # 'orientation_0': 0.9354915618896484, 
-    # 'orientation_1': -0.31645840406417847, 
-    # 'orientation_2': -0.03516574949026108, 
-    # 'orientation_3': -0.15320907533168793, 
-    # 'linear_velocity_0': 0.0, 
-    # 'linear_velocity_1': 0.0, 
-    # 'linear_velocity_2': 0.0, 
-    # 'angular_velocity_0': 0.5675381422042847, 
-    # 'angular_velocity_1': -0.6258752942085266, 
-    # 'angular_velocity_2': 0.18717604875564575, 
-    # 'linear_acceleration_0': 0.0, 
-    # 'linear_acceleration_1': 0.0, 
-    # 'linear_acceleration_2': 0.0, 
-    # 'angular_acceleration_0': 6.18303108215332, 
-    # 'angular_acceleration_1': 6.18303108215332, 
-    # 'angular_acceleration_2': -4.951601982116699}
-
 def main():
     print("starting")
-    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90)
+    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
+    # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry1.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_1.json", export_parameters_file_path="./fixation/export/export_imu1_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
+    # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry2.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_2.json", export_parameters_file_path="./fixation/export/export_imu2_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     print("complete")
 
 if __name__ == "__main__":
