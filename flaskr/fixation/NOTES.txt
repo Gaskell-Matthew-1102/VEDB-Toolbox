@@ -9,8 +9,27 @@ using validation times is better
 62.5Hz is gyro sampling sample_rate_hz
 200hz is odometry sample rate
 
-Brian guesses that Python is doing 20 * 10^2 (put into scientific notation without telling us), which is hte mismatch between the graphing axes and the 
+Brian guesses that Python is doing 20 * 10^2 (put into scientific notation without telling us), which is the mismatch between the graphing axes and the 
 
 attempt list comprehension
 or change x-axis display values for the x axis
 
+
+
+Saccade amplitude (measured in degrees) - The amplitude is calculated as the angle between start and end point of the event:
+16 sessions with no odometry data
+
+Clip class (start time input, end time output): GitHub repository: 
+mlescroart@unr.edu
+
+take the max(linalg norm)
+scipi.distance (pdist) - calculate distance (city block, Malinova??, correlation distances) (provide to pdist)
+
+two lenses were used (either 110 or 90 degrees), aspect ratio is cosntant (max dimension is either 110 or 90)
+
+early sessions used hte wider lense (110??), Mark thinks the difference between lenses is negligible
+
+find the origin (what 0 - 1 in normpos does)
+
+Pupil Labs algo compares world optic flow iwth eye movement, 
+Another method is, using gaze overlaid video, fixtaions are epocjs where retino-centric (small area around retina (small area around fixation)) optic flow is close to 0

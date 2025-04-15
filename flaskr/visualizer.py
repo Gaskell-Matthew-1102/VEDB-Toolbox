@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from flaskr import file_upload
 from flaskr.file_upload import *
 
+import plotly.io as pio
+
 import cv2
 app = Flask(__name__)
 
@@ -101,6 +103,43 @@ def logout() -> None:
             shutil.rmtree(name_folder)
             shutil.rmtree("__MACOSX")
         #some code here to run logout functionality
+
+# @app.route("/download", methods=["POST"])
+def download_graphs():
+    if request.method == "POST":
+        graphs = request.get_json()
+        linear = graphs["lin_graph"]
+        angular = graphs["ang_graph"]
+
+        linear_graph = go.Figure(linear)
+        angular_graph = go.Figure(angular)
+
+        if not os.path.exists("graphs"):
+            os.mkdir("graphs")
+
+        fig_numbers = get_fig_numbers()
+        pio.write_image(linear_graph, "images/linear_graph" + str(fig_numbers[0]) + ".png")
+        pio.write_image(angular_graph, "images/angular_graph" + str(fig_numbers[1]) + ".png")
+
+def get_fig_numbers():
+    if os.path.exists("graphs"):
+        if len(os.listdir("graphs")) == 0:
+            return [1, 1]
+        else:
+            flag = 1
+            linear_number, angular_number = 1, 1
+            while flag == 1:
+                if  os.path.exists("graphs/linear_graph" + str(linear_number) + ".png"):
+                    linear_number = linear_number + 1
+                else:
+                    flag = 0
+            flag = 1
+            while flag == 1:
+                if  os.path.exists("graphs/angular_graph" + str(angular_number) + ".png"):
+                    angular_number = angular_number + 1
+                else:
+                    flag = 0
+            return [linear_number, angular_number]
 
 def main():
     setup()

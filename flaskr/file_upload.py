@@ -1,6 +1,7 @@
 # All of the code in this file is our own, apart from some pldata functions, which have been credited below
 
 import shutil
+from multiprocessing import Process, Manager
 
 from flask import *
 import atexit
@@ -16,7 +17,8 @@ import requests
 import matplotlib.pyplot as plt
 import math
 import urllib
-# from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
+from multiprocessing import Process
+from flaskr.fixation.main import runner as fixation_main
 
 import plotly.graph_objects as go
 from plotly import utils
@@ -610,27 +612,18 @@ def generate_velocity_graphs(filename_list: list[str]):
 
                 timestamp_list.append(data_frame['timestamp'] - first_timestamp)
 
-        #Plotly Plots: Dynamic interactable plots
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_0_list, name='Linear Velocity 0'))
-        fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_1_list, name='Linear Velocity 1'))
-        fig.add_trace(go.Scatter(x=timestamp_list, y=linear_vel_2_list, name='Linear Velocity 2'))
-        fig.update_layout(title='Linear Velocity', xaxis_title='Time', yaxis_title='Linear Velocity',
-                          legend_title='Lines')
-        fig.update_layout(width=500, height=257)
+        json_timestamp = dumps(timestamp_list)
 
-        lin_vel_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
+        json_lin0 = dumps(linear_vel_0_list)
+        json_lin1 = dumps(linear_vel_1_list)
+        json_lin2 = dumps(linear_vel_2_list)
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_0_list, name='Angular Velocity 0'))
-        fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_1_list, name='Angular Velocity 1'))
-        fig.add_trace(go.Scatter(x=timestamp_list, y=angular_velocity_2_list, name='Angular Velocity 2'))
-        fig.update_layout(title='Angular Velocity', xaxis_title='Time', yaxis_title='Angular Velocity',
-                          legend_title='Lines')
-        fig.update_layout(width=500, height=257)
+        json_ang0 = dumps(angular_velocity_0_list)
+        json_ang1 = dumps(angular_velocity_1_list)
+        json_ang2 = dumps(angular_velocity_2_list)
+        # i am leaving behind absolutely horrific legacy code
 
-        ang_vel_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
-        json_list = [lin_vel_json, ang_vel_json]
+        json_list = [json_timestamp, json_lin0, json_lin1, json_lin2, json_ang0, json_ang1, json_ang2]
         return json_list
 
 def generate_gaze_graph(filename_list):
@@ -647,29 +640,54 @@ def generate_gaze_graph(filename_list):
         right_norm_pos_y = []
 
         left_first_timestamp = left_gaze['timestamp'][0]
-        for value in left_gaze['timestamp']:
-            left_timestamps.append(value - left_first_timestamp)
+        # for value in left_gaze['timestamp']:
+        #     left_timestamps.append(value - left_first_timestamp)
+        counter = 0
         for value in left_gaze['norm_pos']:
-            left_norm_pos_x.append(value[0])
-            left_norm_pos_y.append(value[1])
+            if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
+                left_norm_pos_x.append(value[0])
+                left_norm_pos_y.append(value[1])
+                left_timestamps.append(left_gaze['timestamp'][counter] - left_first_timestamp)
+                counter = counter + 1
 
         right_first_timestamp = right_gaze['timestamp'][0]
-        for value in  right_gaze['timestamp']:
-            right_timestamps.append(value - right_first_timestamp)
+        # for value in  right_gaze['timestamp']:
+        #     right_timestamps.append(value - right_first_timestamp)
+        counter = 0
         for value in  right_gaze['norm_pos']:
-            right_norm_pos_x.append(value[0])
-            right_norm_pos_y.append(value[1])
+            if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
+                right_norm_pos_x.append(value[0])
+                right_norm_pos_y.append(value[1])
+                right_timestamps.append(right_gaze['timestamp'][counter] - right_first_timestamp)
+                counter = counter + 1
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=left_timestamps, y=left_norm_pos_x, name='Left Norm Pos X'))
-        fig.add_trace(go.Scatter(x=left_timestamps, y=left_norm_pos_y, name='Left Norm Pos Y'))
-        fig.add_trace(go.Scatter(x=right_timestamps, y=right_norm_pos_x, name='Right Norm Pos X'))
-        fig.add_trace(go.Scatter(x=right_timestamps, y=right_norm_pos_y, name='Right Norm Pos Y'))
-        fig.update_layout(title='Normalized Gaze Position', xaxis_title='Time', yaxis_title='Norm Position',
-                          legend_title='Lines')
-        fig.update_layout(width=500, height=257)
+        # NON DOWN SAMPLED TIMESTAMPS (around 82000 left or 78000 right), removed <0 and >1, i think those are out of bounds
+        # json_left_timestamp = dumps(left_timestamps)
+        # json_left_norm_pos_x = dumps(left_norm_pos_x)
+        # json_left_norm_pos_y = dumps(left_norm_pos_y)
+        #
+        # json_right_timestamp = dumps(right_timestamps)
+        # json_right_norm_pos_x = dumps(right_norm_pos_x)
+        # json_right_norm_pos_y = dumps(right_norm_pos_y)
 
-        gaze_json = dumps(fig, cls=utils.PlotlyJSONEncoder)
+        # DOWN SAMPLED TIMESTAMPS, these have 1/10 of the original value so around 8200 left or 7800 right
+        sampled_left_x = left_norm_pos_x[::10]
+        sampled_left_y = left_norm_pos_y[::10]
+        sampled_right_x = right_norm_pos_x[::10]
+        sampled_right_y = right_norm_pos_y[::10]
+
+        sampled_left_time = left_timestamps[::10]
+        sampled_right_time = right_timestamps[::10]
+
+        json_left_timestamp = dumps(sampled_left_time)
+        json_left_norm_pos_x = dumps(sampled_left_x)
+        json_left_norm_pos_y = dumps(sampled_left_y)
+
+        json_right_timestamp = dumps(sampled_right_time)
+        json_right_norm_pos_x = dumps(sampled_right_x)
+        json_right_norm_pos_y = dumps(sampled_right_y)
+
+        gaze_json = [json_left_timestamp, json_left_norm_pos_x, json_left_norm_pos_y, json_right_timestamp, json_right_norm_pos_x, json_right_norm_pos_y]
         return gaze_json
 
 # Loads the visualizer once files have been correctly uploaded
@@ -680,17 +698,88 @@ def load_visualizer():
                 file_to_graph = "flaskr/" + get_folder_name(2) + "/odometry.pldata"
             else:
                 file_to_graph = "odometry.pldata"
+
+            # Start fixation algorithm here!
+            """
+            Data file list: ['accel.pldata', 'accel_timestamps.npy', 'eye0.pldata', 'eye0_timestamps.npy', 'eye1.pldata', 'eye1_timestamps.npy', 'gyro.pldata', 'gyro_timestamps.npy', 'marker_times.yaml', 'odometry.pldata', 'odometry_timestamps.npy', 'world.extrinsics', 'world.intrinsics', 'world.pldata', 'world_timestamps.npy']
+            Graph files: []
+            Video files: ['flaskr/static/worldvideo.mp4', 'flaskr/static/eye0.mp4', 'flaskr/static/eye1.mp4', 'flaskr/static/datatable.csv']
+            """
+
+            data_files = get_data_file_list()
+            video_files = get_video_list()
+
+            odometry_file = ""
+            video_file = ""
+            imu_flag = False
+            
+            for file in data_files:
+                match file:
+                    case "odometry.pldata":
+                        odometry_file = file
+                        imu_flag = True
+                    case "eye0.pldata":
+                        eye0_file = file
+                    case "eye1.pldata":
+                        eye1_file = file
+
+            for file in video_files:
+                if "worldvideo" in file:
+                    world_video_file = file
+                    break
+
+            if odometry_file == "":
+                odometry_file = "NO IMU DATA"
+
+            EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
+            EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
+
+            # Let's start the fixation algorithm here
+            fix_det_args = (
+                odometry_file, "flaskr\\fixation\\test_data\\2023_06_01_18_47_34\\processedGaze\\gaze.npz",
+                world_video_file, EXPORT_JSON_PATH,
+                EXPORT_PARAMETERS_PATH,
+                300, 3, 750, 0.8, 30, 200, 2048, 1536, 90, 90, imu_flag
+            )
+
+            proc = start_fixation_algorithm(fix_det_args)
+
             # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
-            graphs = generate_velocity_graphs([file_to_graph])
+            vel_data = generate_velocity_graphs([file_to_graph])
             if get_is_folder(2):
                 file_to_graph = "flaskr/" + get_folder_name(2) + "/gaze.npz"
             else:
                 file_to_graph = "gaze.npz"
-            # graphs.append(generate_gaze_graph([file_to_graph]))
-            # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
-            return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
+            gaze_data = generate_gaze_graph([file_to_graph])
+
+            return render_template("visualizer/visualizer.html", velocity_timestamps = vel_data[0], linear_0 = vel_data[1],
+                                   linear_1 = vel_data[2], linear_2 = vel_data[3], angular_0 = vel_data[4], angular_1 = vel_data[5], angular_2 = vel_data[6],
+                                   left_gaze_timestamps = gaze_data[0], left_norm_pos_x = gaze_data[1], left_norm_pos_y = gaze_data[2],
+                                   right_gaze_timestamps = gaze_data[3], right_norm_pos_x = gaze_data[4], right_norm_pos_y = gaze_data[5])
         else:
             raise Exception(f"Invalid Action") #how did it get here
+
+def start_fixation_algorithm(args):
+    fix_det = Process(target=fixation_main, args=args)
+    fix_det.start()
+    print("Fixation detection algorithm begun")
+    return fix_det
+
+def download_graphs():
+    linear_graph = request.args.get('linearGraph')
+    angular_graph = request.args.get('angularGraph')
+    gaze_graph = request.args.get('gazeGraph')
+
+    linear_file_name = request.args.get('linearFileName')
+    angular_file_name = request.args.get('angularFileName')
+    gaze_file_name = request.args.get('gazeFileName')
+
+    if not os.path.exists("graphs"):
+        os.mkdir("graphs")
+
+    linear_graph.write_image("images" + linear_file_name + ".png")
+    angular_graph.write_image("images" + angular_file_name + ".png")
+    gaze_graph.write_image("images" + gaze_file_name + ".png")
 
 #Function ran when the viewer's exit viewer button is clicked
 def new_files():

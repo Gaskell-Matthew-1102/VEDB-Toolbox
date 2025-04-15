@@ -1,0 +1,16 @@
+pldata_to_load: odometry.pldata
+gaze_npz: flaskr\fixation\test_data\2023_06_01_18_47_34\processedGaze\gaze.npz
+world_scene_video_path: flaskr/static/worldvideo.mp4
+export_fixation_file_path: flaskr/fixation/export/export_fixation.json
+export_parameters_file_path: flaskr/fixation/export/export_parameters.txt
+gaze_window_size_ms: 300
+polynomial_grade: 3
+min_vel_thresh: 750
+gain_factor: 0.8
+initial_world_hz: 30
+desired_world_hz: 200
+world_camera_width: 2048
+world_camera_height: 1536
+camera_fov_h: 90
+camera_fov_v: 90
+imu_flag: True
