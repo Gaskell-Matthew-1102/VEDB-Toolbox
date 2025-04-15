@@ -690,16 +690,49 @@ def load_visualizer():
                 file_to_graph = "gaze.npz"
             # graphs.append(generate_gaze_graph([file_to_graph]))
             # ADD THIS BACK AS A VARIABLE WHEN YOU REFACTOR please :) [, gaze_JSON=graphs[2]]
-    
+
+            """
+            Data file list: ['accel.pldata', 'accel_timestamps.npy', 'eye0.pldata', 'eye0_timestamps.npy', 'eye1.pldata', 'eye1_timestamps.npy', 'gyro.pldata', 'gyro_timestamps.npy', 'marker_times.yaml', 'odometry.pldata', 'odometry_timestamps.npy', 'world.extrinsics', 'world.intrinsics', 'world.pldata', 'world_timestamps.npy']
+            Graph files: []
+            Video files: ['flaskr/static/worldvideo.mp4', 'flaskr/static/eye0.mp4', 'flaskr/static/eye1.mp4', 'flaskr/static/datatable.csv']
+            """
+
+            data_files = get_data_file_list()
+            video_files = get_video_list()
+
+            odometry_file = ""
+            video_file = ""
+            imu_flag = False
+            
+            for file in data_files:
+                match file:
+                    case "odometry.pldata":
+                        odometry_file = file
+                        imu_flag = True
+                    case "eye0.pldata":
+                        eye0_file = file
+                    case "eye1.pldata":
+                        eye1_file = file
+
+            for file in video_files:
+                if "worldvideo" in file:
+                    world_video_file = file
+                    break
+
+            if odometry_file == "":
+                odometry_file = "NO IMU DATA"
+
+            EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
+            EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
+
             # Let's start the fixation algorithm here
             fix_det_args = (
-                "2023_06_01_18_47_34", "odometry.pldata", "gaze.npz",
-                'flaskr/fixation/test_data/videos/video.mp4',
-                "flaskr/fixation/export/export_fixation.json",
-                "flaskr/fixation/export/export_parameters.txt",
-                300, 3, 750, 0.8, 30, 200, 2048, 1536, 90, 90, True
+                odometry_file, "flaskr\\fixation\\test_data\\2023_06_01_18_47_34\\processedGaze\\gaze.npz",
+                world_video_file, EXPORT_JSON_PATH,
+                EXPORT_PARAMETERS_PATH,
+                300, 3, 750, 0.8, 30, 200, 2048, 1536, 90, 90, imu_flag
             )
-            start_fixation_algorithm(fix_det_args)
+            proc = start_fixation_algorithm(fix_det_args)
 
             return render_template("visualizer/visualizer.html", linear_vel_JSON=graphs[0], angular_vel_JSON=graphs[1])
         else:
@@ -709,7 +742,7 @@ def start_fixation_algorithm(args):
     fix_det = Process(target=fixation_main, args=args)
     fix_det.start()
     print("Fixation detection algorithm begun")
-    fix_det.join()
+    return fix_det
 
 #Function ran when the viewer's exit viewer button is clicked
 def new_files():

@@ -1,7 +1,6 @@
-date_of_url_data: 2023_06_01_18_47_34
 pldata_to_load: odometry.pldata
-npz_to_load: gaze.npz
-world_scene_video_path: flaskr/fixation/test_data/videos/video.mp4
+gaze_npz: flaskr\fixation\test_data\2023_06_01_18_47_34\processedGaze\gaze.npz
+world_scene_video_path: flaskr/static/worldvideo.mp4
 export_fixation_file_path: flaskr/fixation/export/export_fixation.json
 export_parameters_file_path: flaskr/fixation/export/export_parameters.txt
 gaze_window_size_ms: 300

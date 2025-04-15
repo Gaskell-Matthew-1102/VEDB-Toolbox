@@ -42,25 +42,13 @@ import os
 from flaskr.fixation.constants import *       # import all global constants as defined in constants.py
     
 
-def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v, imu_flag):
+def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v, imu_flag):
     import inspect
     frame = inspect.currentframe()
     args, _, _, values = inspect.getargvalues(frame)
     ARGUMENT_LIST = [(i, values[i]) for i in args]
     
-    # input("I UNDERSTAND I NEED TO READD THIS LINE")
-    # IMPORTANT! RESTORE THE BELOW LINE IN PRODUCTION!!
-    data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', date_of_url_data))
-    # data_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'test_data', 'random_imu_datas'))
-    pldata_data = fixation_packages.ingestion.read_pldata(f'{data_path}/{pldata_to_load}')
-    df = pd.DataFrame(pldata_data)
-    parsed_data = fixation_packages.ingestion.parse_pldata(df[1].iloc[0])
-
-    # input("I UNDERSTAND I NEED TO READD THIS OTHER COOLER LINE")
-    # IMPORTANT! RESTORE THE BELOW LINE IN PRODUCTION!!
-    gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(f'{data_path}\\processedGaze\\{npz_to_load}')
-    # gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(f'{data_path}\\{npz_to_load}')
-
+    gaze_data_dict = fixation_packages.ingestion.generate_gaze_data(gaze_npz)
     
     # Step 1
     # We need one gaze velocity vector, so I'm just gonna average out the left and right eye vectors (based on the length of the min list)
@@ -93,6 +81,8 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
         # TODO: global_OF_vec_list is a list of vectors produced per frame, do we need to find velocity?
 
     else:
+        pldata_data = fixation_packages.ingestion.read_pldata(pldata_to_load)
+        df = pd.DataFrame(pldata_data)
         imu_processor = fixation_packages.IMU_processing.IMU_Processor(df, world_camera_width, world_camera_height, camera_fov_h, camera_fov_v)
         global_OF_vec_list = []
         for i in range(10_000):
@@ -203,7 +193,7 @@ def runner(date_of_url_data, pldata_to_load, npz_to_load, world_scene_video_path
 
 def main():
     print("starting")
-    runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
+    runner(pldata_to_load=PLDATA_TO_LOAD, npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry1.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_1.json", export_parameters_file_path="./fixation/export/export_imu1_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry2.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_2.json", export_parameters_file_path="./fixation/export/export_imu2_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     print("complete")
