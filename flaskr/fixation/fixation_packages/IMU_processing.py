@@ -2,117 +2,119 @@
 
 # Steps 3, 4
 import numpy as np
+import quaternion
+import math
 from scipy import integrate
-from fixation_packages.ingestion import parse_pldata
+# from fixation_packages.ingestion import parse_pldata
+from .ingestion import parse_pldata
 from scipy.spatial.transform import Rotation as R
 
 class IMU_Processor:
-    def __init__(self, IMU_stream_data):
-        # self.IMU_stream_data = IMU_stream_data[1].iloc[:]
+    def __init__(self, IMU_stream_data, image_width, image_height, camera_fov_h, camera_fov_v):
         self.IMU_stream_data = np.array([parse_pldata(x) for x in IMU_stream_data[1].iloc[:]])  # significant time cost here
+        self.current_sample_idx = 0  # Initially set it to an invalid index (e.g., -1)
+        
+        # World scene camera variables
+        self.camera_fov_h = camera_fov_h
+        self.camera_fov_v = camera_fov_v
+        self.image_width = image_width
+        self.image_height = image_height
 
-        self.current_orientation = None
+        self.current_orientation = self.get_quaternion(self.current_sample_idx)
+        self.previous_orientation = None
+
         self.previous_time = None
-        self.angular_velocity = None  
-        self.linear_velocity = None
+        # self.linear_velocity = None     # no longer needed as the full optic flow equation needs Z (depth) to estimate optic flow
+        self.angular_velocity = None
+        self.update()
+        print("IMU processor initialized")
 
-        print("IMU processor init")
+    def update(self):
+        self.current_sample_idx += 1
+        if self.current_sample_idx >= self.IMU_stream_data.size:
+            raise IndexError("Sample index exceeds data length.")
+                
+        self.previous_orientation = self.current_orientation
+        self.update_orientation(self.current_sample_idx)
 
-    def process_IMU_data(self, sample_idx):
-        quaternion = self.get_quaternion(sample_idx)  # Method to extract the current quaternion
-        angular_velocity = self.get_angular_velocity(sample_idx)  # Method to extract angular velocity
+        self.previous_time = self.get_time_at(self.current_sample_idx-1)
+
+
+        self.angular_velocity = self.get_angular_velocity()
         
-        # Step 2: If this is the first frame, initialize orientation and set time
-        if self.current_orientation is None and sample_idx == 0:
-            self.current_orientation = quaternion  # Initialize with the first quaternion
-            self.previous_time = self.get_current_time(sample_idx)
-            return
-        
-        # Step 3: Update orientation based on angular velocity
-        current_time = self.get_current_time(sample_idx)  # Get the current time
-        delta_time = current_time - self.previous_time
-        
-        # Use the angular velocity and time to update the orientation
-        # self.update_orientation(angular_velocity, delta_time)
-        self.update_orientation(sample_idx)
-        
-        # Step 4: Store the current time for the next frame
-        self.previous_time = current_time
+    def get_current_sample_idx(self):
+        return self.current_sample_idx
 
     def get_quaternion(self, sample_idx):
         q_w, q_x, q_y, q_z = self.IMU_stream_data[sample_idx]['orientation_0'], self.IMU_stream_data[sample_idx]['orientation_1'], self.IMU_stream_data[sample_idx]['orientation_2'], self.IMU_stream_data[sample_idx]['orientation_3']
-        return np.array([q_w, q_x, q_y, q_z])
+        return np.quaternion(q_w, q_x, q_y, q_z)
     
-    def get_angular_velocity(self, sample_idx):
-        alpha_x, alpha_y, alpha_z = self.IMU_stream_data[sample_idx]['angular_velocity_0'], self.IMU_stream_data[sample_idx]['angular_velocity_1'], self.IMU_stream_data[sample_idx]['angular_velocity_2']
-        return np.array([alpha_x, alpha_y, alpha_z])
+    def get_angular_velocity(self):
+        prev_quat = self.previous_orientation
+        current_quat = self.current_orientation
+
+        delta_quat = current_quat * prev_quat.inverse()
+        log_q_delta = np.log(delta_quat)
+        delta_time = self.get_current_time() - self.previous_time
+        out = (2 * log_q_delta.imag) / delta_time
+        return out
     
-    def get_current_time(self, sample_idx):
+    def get_time_at(self, sample_idx):
         return self.IMU_stream_data[sample_idx]['timestamp']
     
-    def update_orientation(self, sample_idx):
-        # angular_velocity_quaternion = self.angular_velocity_to_quaternion(angular_velocity, dt)
-        # self.current_orientation = self.current_orientation * angular_velocity_quaternion
-        self.current_orientation = self.get_quaternion(sample_idx)
-
-    def angular_velocity_to_quaternion(self, angular_velocity, dt):
-        angle = np.linalg.norm(angular_velocity) * dt
-        axis = angular_velocity / np.linalg.norm(angular_velocity)
-        q_increment = R.from_rotvec(angle * axis).as_quat()
-        return q_increment
+    def get_current_time(self):
+        return self.IMU_stream_data[self.current_sample_idx]['timestamp']
     
+    def update_orientation(self, sample_idx):
+        self.current_orientation = self.get_quaternion(sample_idx)
+    
+    # def calculate_optic_flow_vec(self, IMU_frame, next_frame):
+    #     VEL_X = 'linear_velocity_0'
+    #     VEL_Y = 'linear_velocity_1'
+    #     VEL_Z = 'linear_velocity_2'
 
-    # The original code for this function was given to us by Brian Szekely, a PhD student and former student of Dr. MacNeilage's Self-Motion Lab
-    def quat_to_euler(self, quaternions):
-        """
-        Convert quaternions to Euler angles.
-        
-        Roll (φ) = atan2(2(w x + y z), 1 - 2(x^2 + y^2))
-        Pitch (θ) = asin(2(w y - z x))
-        Yaw (ψ) = atan2(2(w z + x y), 1 - 2(y^2 + z^2))
-        """
-        # q_w, q_x, q_y, q_z = quaternions[0], quaternions[1], quaternions[2], quaternions[3]
-        q_w, q_x, q_y, q_z = quaternions[:, 0], quaternions[:, 1], quaternions[:, 2], quaternions[:, 3]
-        #Roll
-        roll = np.degrees(np.arctan2(2 * (q_w * q_x + q_y * q_z), 1 - 2 * (q_x**2 + q_y**2)))
-        #Pitch
-        pitch = np.degrees(np.arcsin(2 * (q_w * q_y - q_z * q_x)))
-        #Yaw
-        yaw = np.degrees(np.arctan2(2 * (q_w * q_z + q_x * q_y), 1 - 2 * (q_y**2 + q_z**2)))
+    #     delta_v_x = next_frame[VEL_X] - IMU_frame[VEL_X]
+    #     delta_v_y = next_frame[VEL_Y] - IMU_frame[VEL_Y]
+    #     delta_v_z = next_frame[VEL_Z] - IMU_frame[VEL_Z]
+    #     delta_t = next_frame['timestamp'] - IMU_frame['timestamp']
 
-        return np.column_stack((roll, pitch, yaw))
+    #     guh0 = (IMU_frame[VEL_X] + next_frame[VEL_X]) / 2 * delta_t
+    #     guh1 = (IMU_frame[VEL_Y] + next_frame[VEL_Y]) / 2 * delta_t
+    #     guh2 = (IMU_frame[VEL_Z] + next_frame[VEL_Z]) / 2 * delta_t
 
-    # This function is our original work.
-    # calculates the optic flow vector given two IMU dataframes
-    def calculate_optic_flow_vec(self, IMU_frame, next_frame):
-        VEL_X = 'linear_velocity_0'
-        VEL_Y = 'linear_velocity_1'
-        VEL_Z = 'linear_velocity_2'
+    #     return np.array([delta_v_x, delta_v_y, delta_v_z]), np.array([guh0, guh1, guh2])
 
+    def calculate_rotational_optic_flow(self, raw_x, raw_y):
+        omega_x, omega_y, omega_z = self.angular_velocity
 
-        #         Z (up, down)
-        #         ^
-        #         |
-        #         |
-        #         | 
-        #         +-----------> Y   (left, right)
-        #        /
-        #       /
-        #      /
-        #     X (forward, backward)
+        x_centered = self.image_width/2
+        y_centered = self.image_height/2
 
-        delta_v_x = next_frame[VEL_X] - IMU_frame[VEL_X]
-        delta_v_y = next_frame[VEL_Y] - IMU_frame[VEL_Y]
-        delta_v_z = next_frame[VEL_Z] - IMU_frame[VEL_Z]
+        f_horizontal = self.image_width / (2 * math.tan(self.camera_fov_h/2))
+        f_vertical = self.image_height / (2 * math.tan(self.camera_fov_v/2))
 
-        delta_t = next_frame['timestamp'] - IMU_frame['timestamp']
+        x = (raw_x - x_centered)/f_horizontal
+        y = (raw_y - y_centered)/f_vertical
 
-        guh0 = (IMU_frame[VEL_X] + next_frame[VEL_X])/2 * delta_t       # trapezoidal integration
-        guh1 = (IMU_frame[VEL_Y] + next_frame[VEL_Y])/2 * delta_t
-        guh2 = (IMU_frame[VEL_Z] + next_frame[VEL_Z])/2 * delta_t
+        x_dot = x*y*omega_x - (1 + x*x)*omega_y + y*omega_z
+        y_dot = (1 + y*y)*omega_x - x*y*omega_y - x*omega_z
 
+        return np.array([x_dot, y_dot])
 
-        res_vec = (delta_v_x, delta_v_y, delta_v_z)
-        guh_vec = (guh0, guh1, guh2)
+    def create_grid(self, shape, step):
+        """Create a grid of points over the image."""
+        h, w = shape
+        y, x = np.mgrid[step//2:h:step, step//2:w:step]  # Generate grid points
+        return np.float32(np.stack((x, y), axis=-1).reshape(-1, 1, 2))  # Reshape to (N, 1, 2)
+    
+    def compute_grid_rotational_flow(self, step):
+        """Compute rotational optic flow over a grid."""
+        grid_points = self.create_grid((self.image_height, self.image_width), step)
 
-        print(guh_vec)
+        flow_vectors = []
+        for point in grid_points[:, 0, :]:  # point shape is (N, 2)
+            raw_x, raw_y = point
+            flow = self.calculate_rotational_optic_flow(raw_x, raw_y)
+            flow_vectors.append(flow)
+
+        return np.array(flow_vectors)

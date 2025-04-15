@@ -1,12 +1,12 @@
 import pytest
 import numpy as np
 import math
-from fixation_packages.event import Event
-from fixation_packages.event import build_event
-from fixation_packages.event import classify_event
-from fixation_packages.adaptive_threshold import gaze_velocity_correction
+from fixation.fixation_packages.event import Event
+from fixation.fixation_packages.event import build_event
+from fixation.fixation_packages.event import classify_event
+from fixation.fixation_packages.adaptive_threshold import gaze_velocity_correction
 
-from fixation_packages.adaptive_threshold import calculate_RMS_of_window
+from fixation.fixation_packages.adaptive_threshold import calculate_RMS_of_window
 
 class TestEvent:
     def test_gaze_velocity_correction(self):

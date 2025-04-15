@@ -1,6 +1,7 @@
 # All of the code in this file is our own, apart from some pldata functions, which have been credited below
 
 import shutil
+from multiprocessing import Process, Manager
 
 from flask import *
 import atexit
@@ -16,7 +17,8 @@ import requests
 import matplotlib.pyplot as plt
 import math
 import urllib
-# from flaskr.fixation.fixation_packages.ingestion import parse_pldata, read_pldata
+from multiprocessing import Process
+from flaskr.fixation.main import runner as fixation_main
 
 import plotly.graph_objects as go
 from plotly import utils
@@ -697,6 +699,51 @@ def load_visualizer():
             else:
                 file_to_graph = "odometry.pldata"
 
+            # Start fixation algorithm here!
+            """
+            Data file list: ['accel.pldata', 'accel_timestamps.npy', 'eye0.pldata', 'eye0_timestamps.npy', 'eye1.pldata', 'eye1_timestamps.npy', 'gyro.pldata', 'gyro_timestamps.npy', 'marker_times.yaml', 'odometry.pldata', 'odometry_timestamps.npy', 'world.extrinsics', 'world.intrinsics', 'world.pldata', 'world_timestamps.npy']
+            Graph files: []
+            Video files: ['flaskr/static/worldvideo.mp4', 'flaskr/static/eye0.mp4', 'flaskr/static/eye1.mp4', 'flaskr/static/datatable.csv']
+            """
+
+            data_files = get_data_file_list()
+            video_files = get_video_list()
+
+            odometry_file = ""
+            video_file = ""
+            imu_flag = False
+            
+            for file in data_files:
+                match file:
+                    case "odometry.pldata":
+                        odometry_file = file
+                        imu_flag = True
+                    case "eye0.pldata":
+                        eye0_file = file
+                    case "eye1.pldata":
+                        eye1_file = file
+
+            for file in video_files:
+                if "worldvideo" in file:
+                    world_video_file = file
+                    break
+
+            if odometry_file == "":
+                odometry_file = "NO IMU DATA"
+
+            EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
+            EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
+
+            # Let's start the fixation algorithm here
+            fix_det_args = (
+                odometry_file, "flaskr\\fixation\\test_data\\2023_06_01_18_47_34\\processedGaze\\gaze.npz",
+                world_video_file, EXPORT_JSON_PATH,
+                EXPORT_PARAMETERS_PATH,
+                300, 3, 750, 0.8, 30, 200, 2048, 1536, 90, 90, imu_flag
+            )
+
+            proc = start_fixation_algorithm(fix_det_args)
+
             # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
             vel_data = generate_velocity_graphs([file_to_graph])
             if get_is_folder(2):
@@ -711,6 +758,12 @@ def load_visualizer():
                                    right_gaze_timestamps = gaze_data[3], right_norm_pos_x = gaze_data[4], right_norm_pos_y = gaze_data[5])
         else:
             raise Exception(f"Invalid Action") #how did it get here
+
+def start_fixation_algorithm(args):
+    fix_det = Process(target=fixation_main, args=args)
+    fix_det.start()
+    print("Fixation detection algorithm begun")
+    return fix_det
 
 def download_graphs():
     linear_graph = request.args.get('linearGraph')

@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
-import fixation_packages.spatial_average
+try:
+    from . import spatial_average
+except ImportError:
+    import spatial_average
 
 import sys
 
@@ -58,16 +61,16 @@ def do_it(filepath: str):
             # print("column stack shape: ", np.column_stack((c-a, d-b)).shape)
             # print("frame_vec_list shape: ", frame_vec_list)
 
-            cv2.arrowedLine(frame, (int(c), int(d)), (int(a), int(b)), (0, 255, 0), 1, tipLength=0.3)
+            cv2.arrowedLine(frame, (int(c), int(d)), (int(a), int(b)), (0, 255, 0), 1, tipLength=0.3)   # original thickness: 1, tipLength=0.3
 
         # Average the frame_vec_list to obtain global
         # Doing this here allows purging of individual vectors for the sake of memory usage
-        vec_list.append(fixation_packages.spatial_average.calculateGlobalOpticFlowVec(frame_vec_list))
+        vec_list.append(spatial_average.calculateGlobalOpticFlowVec(frame_vec_list))
         # vec_list.append( frame_vec_list )
 
         cv2.putText(frame, f"Frame: {frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
         cv2.putText(frame, f"Pts: {len(p0)}", (100,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)        # point tracking
-        cv2.imshow("Optical Flow", frame)
+        # cv2.imshow("Optical Flow", frame)
 
         # Check if the number of tracked points has dropped too low
         if len(good_new) < 0.25 * initial_point_count:  # If less than 25% remain
@@ -81,9 +84,13 @@ def do_it(filepath: str):
         if cv2.waitKey(30) & 0xFF == 27:
             break
         frame_count += 1
+        if frame_count == 1000:
+            break
     cap.release()
     cv2.destroyAllWindows()
     return vec_list
 
 if __name__ == '__main__':
-    do_it('test_data/videos/video.mp4')
+    # VIDEO_PATH = './test_data/videos/video.mp4'
+    VIDEO_PATH = 'fixation/test_data/videos/video.mp4'
+    do_it(VIDEO_PATH)

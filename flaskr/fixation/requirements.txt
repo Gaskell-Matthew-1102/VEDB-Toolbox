@@ -4,4 +4,6 @@ scipy
 msgpack
 requests
 pytest
+pytest-mock
 bitarray
+numpy-quaternion

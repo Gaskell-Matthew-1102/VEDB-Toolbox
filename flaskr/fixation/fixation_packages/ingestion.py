@@ -75,7 +75,6 @@ def load_as_dict(path):
 def generate_gaze_data(filename):
     # Pass in "gaze.npz"
     gaze_dict = load_as_dict(filename)
-    print(f"Params: {gaze_dict}")
     left_gaze = gaze_dict['left']
     right_gaze = gaze_dict['right']
 

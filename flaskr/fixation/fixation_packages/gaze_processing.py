@@ -5,7 +5,6 @@
 # Steps 1, 2
 import numpy as np
 from scipy.signal import savgol_filter
-from constants import GAZE_WINDOW_SIZE_MS, POLYNOMIAL_GRADE
 
 # WINDOW_SIZE_MS = 55
 # POLYNOMIAL_GRADE = 3
@@ -27,7 +26,7 @@ def calculate_raw_gaze_vector(gaze_data_dict, x_res, y_res):
 
 
 # Wrapper function for Savitzky-Golay filter with specified parameters set as default arguments
-def savgol(input, window_length=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE) -> np.array:
+def savgol(input, window_length, polynomial_grade) -> np.array:
     output = savgol_filter(input, window_length, polynomial_grade)
     return output
 
@@ -42,5 +41,10 @@ def calculateGazeVelocity(input_pos:np.array, input_time:np.array) -> np.array:
     return np.divide(np.diff(input_pos, axis=0), np.diff(input_time)[:, np.newaxis])
 
 # Returns an np.array of timestamps
-def get_timestamp_list(gaze_data_dict, min_len):
-    return np.mean([gaze_data_dict["left_timestamps"][0:min_len], gaze_data_dict["right_timestamps"][0:min_len]], axis=0)
+def get_timestamp_list(gaze_data_dict, min_len, eye):
+    if(eye == "left"):
+        return np.array(gaze_data_dict["left_timestamps"][0:min_len])
+    elif(eye == "right"):
+        return np.array(gaze_data_dict["right_timestamps"][0:min_len])
+    elif(eye == "both"):
+        return np.mean([gaze_data_dict["left_timestamps"][0:min_len], gaze_data_dict["right_timestamps"][0:min_len]], axis=0)
