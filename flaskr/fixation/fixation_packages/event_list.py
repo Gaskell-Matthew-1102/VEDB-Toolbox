@@ -58,7 +58,7 @@ class EventList:
 
         if(filter == Event.microsaccade_filter):
             for event_i in range(arr.size):
-                bitarr[event_i] = arr[event_i].microsaccade_filter(kwargs["min_saccade_amp_deg"], kwargs["min_saccade_dur_ms"], kwargs["width_of_image_px"], kwargs["hfov"])
+                bitarr[event_i] = arr[event_i].microsaccade_filter(kwargs["min_saccade_amp_deg"], kwargs["min_saccade_dur_ms"], kwargs["width_of_image_px"], kwargs["eye_hfov"])
         elif(filter == Event.short_fixation_filter):
             for event_i in range(arr.size):
                 bitarr[event_i] = arr[event_i].short_fixation_filter(kwargs["min_fixation_dur_ms"])

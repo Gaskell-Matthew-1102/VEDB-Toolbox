@@ -134,11 +134,14 @@ if __name__ == "__main__":
 
 
     for sample_i in range(data.size-1):
-        start_time = data[sample_i][0]
-        end_time = data[sample_i][1]
+        SHOW_FIXATIONS = True
         
-        # start_time = data[sample_i][1]
-        # end_time = data[sample_i+1][0]
+        if SHOW_FIXATIONS:
+            start_time = data[sample_i][0]
+            end_time = data[sample_i][1]
+        else:
+            start_time = data[sample_i][1]
+            end_time = data[sample_i+1][0]
 
         if end_time - start_time < 0.15:
             continue

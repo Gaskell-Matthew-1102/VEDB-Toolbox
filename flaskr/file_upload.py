@@ -739,7 +739,7 @@ def load_visualizer():
                 odometry_file, "flaskr\\fixation\\test_data\\2023_06_01_18_47_34\\processedGaze\\gaze.npz",
                 world_video_file, EXPORT_JSON_PATH,
                 EXPORT_PARAMETERS_PATH,
-                300, 3, 750, 0.8, 30, 200, 2048, 1536, 90, 90, imu_flag
+                300, 3, 750, 0.8, 30, 200, 400, 400, 2048, 1536, 90, 90, imu_flag
             )
 
             proc = start_fixation_algorithm(fix_det_args)
