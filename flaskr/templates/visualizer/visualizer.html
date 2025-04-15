@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/box.css') }}">
 
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!--        <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>-->
 
 <!--&lt;!&ndash;        The following imports are Vuejs, Chartjs, a Chartjs wrapper, and the Vue Client&ndash;&gt;-->
 <!--        <script src="https://unpkg.com/vue"></script>-->
@@ -58,6 +59,7 @@
 
           <div class="col-md-3 text-end">
               <div class="btn-group">
+                <button id="dwnld_btn" type="button" class="btn btn-primary me-2" onclick="downloadGraphs()">Download</button>
                   <a href="{{ url_for('dashboard') }}">
                     <button type="button" class="btn btn-primary me-2">Dashboard</button>
                   </a>
@@ -129,13 +131,139 @@
     </body>
 
     <script type="text/javascript">
-        var linear_graph = {{linear_vel_JSON | safe}};
-        var angular_graph = {{angular_vel_JSON | safe}};
+        // var linear_graph = {{linear_vel_JSON | safe}};
+        // var angular_graph = {{angular_vel_JSON | safe}};
         // var gaze_graph = {{gaze_JSON | safe}}
 
-        Plotly.plot("linear_velocity", linear_graph, {});
-        Plotly.plot("angular_velocity", angular_graph, {});
+        // Assigning variables passed in through render_template on the backend
+        var velocityTimestamps = {{velocity_timestamps | safe}};
+
+        var linear0 = {{linear_0 | safe}};
+        var linear1 = {{linear_1 | safe}};
+        var linear2 = {{linear_2 | safe}};
+
+        var angular0 = {{angular_0 | safe}};
+        var angular1 = {{angular_1 | safe}};
+        var angular2 = {{angular_2 | safe}};
+
+        var leftGazeTime = {{left_gaze_timestamps | safe}};
+        var leftNormX = {{left_norm_pos_x | safe}};
+        var leftNormY = {{left_norm_pos_y | safe}};
+
+        var rightGazeTime = {{right_gaze_timestamps | safe}};
+        var rightNormX = {{right_norm_pos_x | safe}};
+        var rightNormY = {{right_norm_pos_y | safe}};
+
+        // Plotly.plot("linear_velocity", linear_graph, {});
+        // Plotly.plot("angular_velocity", angular_graph, {});
         // Plotly.plot("gaze", gaze_graph, {});
 
+        // initial values
+        initTimelist = [velocityTimestamps[0], velocityTimestamps[1]];
+        initLinVel0 = [linear0[0], linear0[1]];
+        initLinVel1 = [linear1[0], linear1[1]];
+        initLinVel2 = [linear2[0], linear2[1]];
+
+        const trace1 = {
+            x: velocityTimestamps,
+            y: linear0,
+            mode: 'lines',
+            name: 'Linear Velocity 0'
+        }
+        const trace2 = {
+            x: velocityTimestamps,
+            y: linear1,
+            mode: 'lines',
+            name: 'Linear Velocity 1'
+        }
+        const trace3 = {
+            x: velocityTimestamps,
+            y: linear2,
+            mode: 'lines',
+            name: 'Linear Velocity 2'
+        }
+
+        const linearData = [trace1, trace2, trace3];
+
+        const linearLayout = {
+            title: 'Linear Velocity',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'Linear Velocity'},
+            height: 257,
+            width: 500
+        }
+
+        Plotly.plot('linear_velocity', linearData, linearLayout);
+
+        const trace4 = {
+            x: velocityTimestamps,
+            y: angular0,
+            mode: 'lines',
+            name: 'Angular Velocity 0'
+        }
+        const trace5 = {
+            x: velocityTimestamps,
+            y: angular1,
+            mode: 'lines',
+            name: 'Angular Velocity 1'
+        }
+        const trace6 = {
+            x: velocityTimestamps,
+            y: angular2,
+            mode: 'lines',
+            name: 'Angular Velocity 2'
+        }
+
+        const angularData = [trace4, trace5, trace6];
+
+        const angularLayout = {
+            title: 'Angular Velocity',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'Angular Velocity'},
+            height: 257,
+            width: 500
+        }
+
+        Plotly.plot('angular_velocity', angularData, angularLayout);
+
+        const trace7 = {
+            x: leftGazeTime,
+            y: leftNormX,
+            mode: 'lines',
+            name: 'Left Norm Pos X'
+        }
+
+        const trace8 = {
+            x: leftGazeTime,
+            y: leftNormY,
+            mode: 'lines',
+            name: 'Left Norm Pos Y'
+        }
+
+        const trace9 = {
+            x: rightGazeTime,
+            y: rightNormX,
+            mode: 'lines',
+            name: 'Right Norm Pos X'
+        }
+
+        const trace10 = {
+            x: rightGazeTime,
+            y: rightNormY,
+            mode: 'lines',
+            name: 'Right Norm Pos Y'
+        }
+
+        const gazeData = [trace7, trace8, trace9, trace10];
+
+        const gazeLayout = {
+            title: 'Normalized Gaze Positions',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'Normalized Position'},
+            height: 257,
+            width: 500
+        }
+
+        Plotly.plot('gaze', gazeData, gazeLayout);
     </script>
 </html>

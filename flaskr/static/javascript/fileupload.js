@@ -4,6 +4,11 @@
 // var eye0_video = document.getElementById("eye0video");
 // var eye1_video = document.getElementById("eye1video");
 
+var lastGraphedValue = 1;
+
+var left = 0;
+var right = 3;
+
 function play(){
     var world_video = document.getElementById("worldvideo")
     var eye0_video = document.getElementById("eye0video")
@@ -141,7 +146,39 @@ function plotFixations(fixationTimes){
         height: 257
     }
 
-    Plotly.newPlot("gaze", fixationData, layout);
+    // why was this plotted on gaze lol
+    // Plotly.newPlot("gaze", fixationData, layout);
+}
+
+//fix this plotly decided to just break lol
+function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
+    const moment = new Date();
+    const isoTime = moment.toISOString();
+
+    linear_file_name = 'linear_graph_' + isoTime;
+    angular_file_name = 'angular_graph_' + isoTime;
+    gaze_file_name = 'gaze_graph_' + isoTime;
+
+    const linearGraphDiv = document.getElementById("linear_velocity");
+    const angularGraphDiv = document.getElementById("angular_velocity");
+    const gazeGraphDiv = document.getElementById('gaze');
+
+    Plotly.downloadImage(linearGraphDiv, {format:'png', width: 500, height: 257, filename: linear_file_name});
+    Plotly.downloadImage(angularGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name});
+    Plotly.downloadImage(gazeGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name})
+
+    // fetch('/download_graphs', {
+    //     method: 'POST',
+    //     headers: {
+    //         'linearGraph': linearGraphDiv,
+    //         'angularGraph': angularGraphDiv,
+    //         'gazeGraph': gazeGraphDiv,
+    //         'linearFileName': linear_file_name,
+    //         'angularFileName': angular_file_name,
+    //         'gazeFileName': gaze_file_name
+    //     },
+
+    // })
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
@@ -167,7 +204,13 @@ jQuery(function ($) {
         plotFixations(fixationTimes);
     });
 
+    $("#dwnld_btn").on('click', function(){
+        downloadGraphs();
+    })
+
     $("#worldvideo").on("timeupdate", function(){
+        console.log("in here");
+
         var wvideo = $(this)[0];
         var val = (100/wvideo.duration) * wvideo.currentTime;
         $("#seek-bar").val(val);
@@ -182,6 +225,19 @@ jQuery(function ($) {
 
         var updatedTime = updatedMinsString + ":" + updatedSecsString;
         $("#currentTime").attr("value", updatedTime);
+
+        const linearGraphDiv = document.getElementById("linear_velocity");
+        const angularGraphDiv = document.getElementById("angular_velocity");
+        const gazeGraphDiv = document.getElementById('gaze');
+
+        left = wvideo.currentTime - 2;
+        right = wvideo.currentTime + 2;
+        var update = {
+            'xaxis.range': [left, right]
+        }
+        Plotly.update(linearGraphDiv, null, update);
+        Plotly.update(angularGraphDiv, null, update);
+        Plotly.update(gazeGraphDiv, null, update);
     });
 
     $("#seek-bar").on("mousedown", function(){

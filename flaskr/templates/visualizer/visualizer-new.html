@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='home_bp/img/vedb.png') }}">
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='home_bp/img/favicon.png') }}">
+        <title>Visualizer - VEDB Toolbox</title>
+
+        <!--     Fonts and icons     -->
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
+        <!-- Nucleo Icons -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home_bp/css/nucleo-icons.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home_bp/css/nucleo-svg.css') }}" />
+
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <!-- CSS Files -->
+        <link id="pagestyle" href="{{ url_for('static', filename='home_bp/css/material-kit.css') }}" rel="stylesheet" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='../static/styles/visualizer.css') }}">
+    </head>
+    <body class="index-page bg-gray-200">
+        <!-- Navbar -->
+        <div class="container position-sticky z-index-sticky top-0">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="navbar navbar-expand-lg  blur border-radius-xl top-0 z-index-fixed shadow position-absolute my-3 p-2 start-0 end-0 mx-4">
+                        <div class="container-fluid px-0">
+                            <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm" href="{{ url_for('landing') }}" rel="tooltip" title="Designed and Coded by Creative Tim" data-placement="bottom">
+                            VEDB Toolbox
+                            </a>
+                            <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon mt-2">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                            </span>
+                            </button>
+                            <div class="collapse navbar-collapse pt-3 pb-2 py-lg-0 w-100" id="navigation">
+                                <ul class="navbar-nav navbar-nav-hover ms-auto">
+                                    <li class="nav-item dropdown dropdown-hover mx-2">
+                                        <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold" id="dropdownMenuDocs" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="material-symbols-rounded opacity-6 me-2 text-md">person</i>
+                                        People
+                                        <img src="{{ url_for('static', filename='home_bp/img/down-arrow-dark.svg') }}" alt="down-arrow" class="arrow ms-auto ms-md-2">
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive mt-0 mt-lg-3 p-3 border-radius-lg" aria-labelledby="dropdownMenuDocs">
+                                            <div class="d-none d-lg-block">
+                                                <ul class="list-group">
+                                                    <li class="nav-item list-group-item border-0 p-0">
+                                                        <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('team') }}">
+                                                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Team</h6>
+                                                            <span class="text-sm">The team behind the Toolbox!</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item list-group-item border-0 p-0">
+                                                        <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('faculty') }}">
+                                                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Faculty</h6>
+                                                            <span class="text-sm">Our advisors and instructors!</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="row d-lg-none">
+                                                <div class="col-md-12 g-0">
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('team') }}">
+                                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Team</h6>
+                                                        <span class="text-sm">The team behind the Toolbox!</span>
+                                                    </a>
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('faculty') }}">
+                                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Faculty</h6>
+                                                        <span class="text-sm">Our advisors and instructors!</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </ul>
+                                    </li>
+
+                                    <li class="nav-item dropdown dropdown-hover mx-2">
+                                        <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold" id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="material-symbols-rounded opacity-6 me-2 text-md">article</i>
+                                        Project Resources
+                                        <img src="{{ url_for('static', filename='home_bp/img/down-arrow-dark.svg') }}" alt="down-arrow" class="arrow ms-auto ms-md-2">
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive p-3 border-radius-lg mt-0 mt-lg-3" aria-labelledby="dropdownMenuBlocks">
+                                            <div class="d-none d-lg-block">
+                                                <li class="nav-item list-group-item border-0 p-0">
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="https://link.springer.com/book/10.1007/978-3-030-20085-5" target="_blank">
+                                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Project Domain Book</h6>
+                                                        <span class="text-sm">Eye Movement Research by Klein and Ettinger</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item dropdown dropdown-hover dropdown-subitem">
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">VEDB Respositories</h6>
+                                                                <span class="text-sm">The VEDB's contents are stored across 2 websites</span>
+                                                            </div>
+                                                            <img src="{{ url_for('static', filename='home_bp/img/down-arrow.svg') }}" alt="down-arrow" class="arrow">
+                                                        </div>
+                                                    </a>
+                                                    <div class="dropdown-menu mt-0 py-3 px-2 mt-3">
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://osf.io/2gdkb/" target="_blank">
+                                                        OSF
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://nyu.databrary.org/volume/1612" target="_blank">
+                                                        Databrary
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                                <li class="nav-item dropdown dropdown-hover dropdown-subitem">
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Development</h6>
+                                                                <span class="text-sm">Relevant GitHub repositories</span>
+                                                            </div>
+                                                            <img src="{{ url_for('static', filename='home_bp/img/down-arrow.svg') }}" alt="down-arrow" class="arrow">
+                                                        </div>
+                                                    </a>
+                                                    <div class="dropdown-menu mt-0 py-3 px-2 mt-3">
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/vedb" target="_blank">
+                                                            VEDB
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/bszek213/odopy" target="_blank">
+                                                            Brian Szekely's 'odopy'
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/app-generator/flask-datta-able" target="_blank">
+                                                            Flask Blueprints Guide
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/creativetimofficial/material-kit" target="_blank">
+                                                            Website UI Kit
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                                <li class="nav-item dropdown dropdown-hover dropdown-subitem">
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Literature</h6>
+                                                                <span class="text-sm">Technical reports, journal articles, etc.</span>
+                                                            </div>
+                                                            <img src="{{ url_for('static', filename='home_bp/img/down-arrow.svg') }}" alt="down-arrow" class="arrow">
+                                                        </div>
+                                                    </a>
+                                                    <div class="dropdown-menu mt-0 py-3 px-2 mt-3">
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://jov.arvojournals.org/article.aspx?articleid=2802101" target="_blank">
+                                                            The Visual Experience Database
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://ieeexplore.ieee.org/document/7456615" target="_blank">
+                                                            Eye tracking-based HCI applications
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://ieeexplore.ieee.org/document/6656866" target="_blank">
+                                                            Eye tracking & head movement detection
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://link.springer.com/article/10.3758/s13428-024-02360-0" target="_blank">
+                                                            Improving head-mounted eye tracking
+                                                        </a>
+                                                        <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://docs.pupil-labs.com/neon/data-collection/data-streams" target="_blank">
+                                                            Pupil Labs: Data Streams
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            </div>
+                                            <div class="row d-lg-none">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex mb-2 mt-3">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <a href="https://link.springer.com/book/10.1007/978-3-030-20085-5" target="_blank">
+                                                                    <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Project Domain Book</h6>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex mb-2 mt-3">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">VEDB Respositories</h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://osf.io/2gdkb/" target="_blank">
+                                                    OSF
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://nyu.databrary.org/volume/1612" target="_blank">
+                                                    Databrary
+                                                    </a>
+
+                                                    <div class="d-flex mb-2 mt-3">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Development</h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/vedb" target="_blank">
+                                                        VEDB
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/bszek213/odopy" target="_blank">
+                                                        Brian Szekely's 'odopy'
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/app-generator/flask-datta-able" target="_blank">
+                                                        Flask Blueprints Guide
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://github.com/creativetimofficial/material-kit" target="_blank">
+                                                        Website UI Kit
+                                                    </a>
+
+                                                    <div class="d-flex mb-2 mt-3">
+                                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                                            <div>
+                                                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Literature</h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://jov.arvojournals.org/article.aspx?articleid=2802101" target="_blank">
+                                                        The Visual Experience Database
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://ieeexplore.ieee.org/document/7456615" target="_blank">
+                                                        Eye tracking-based HCI applications
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://ieeexplore.ieee.org/document/6656866" target="_blank">
+                                                        Eye tracking & head movement detection
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://link.springer.com/article/10.3758/s13428-024-02360-0" target="_blank">
+                                                        Improving head-mounted eye tracking
+                                                    </a>
+                                                    <a class="dropdown-item ps-3 border-radius-md mb-1" href="https://docs.pupil-labs.com/neon/data-collection/data-streams" target="_blank">
+                                                        Pupil Labs: Data Streams
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </ul>
+                                    </li>
+
+                                    <li class="nav-item my-auto ms-3 ms-lg-0">
+                                        <a href="{{ url_for('dashboard') }}" class="btn bg-gradient-light mb-0 mt-2 mt-md-0">Administrator Dashboard</a>
+                                    </li>
+                                    <li class="nav-item my-auto ms-3 ms-lg-0">
+                                        <button id="dwnld_btn" type="button" class="btn btn-primary me-2">Download</button>
+                                    </li>
+                                    <li class="nav-item my-auto ms-3 ms-lg-0">
+                                        <form action="/exit_visualizer" method="POST" class="d-inline">
+                                            <button type="submit" class="btn bg-gradient-light mb-0 mt-2 mt-md-0">Leave</button>
+                                        </form>
+                                    </li>
+                                    <li class="nav-item my-auto ms-3 ms-lg-0">
+                                        <a href="{{ url_for('logout') }}" class="btn bg-gradient-dark mb-0 mt-2 mt-md-0">Log out</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- End Navbar -->
+
+        <header class="header-2">
+            <div class="page-header min-vh-25 relative" style="background-color: #bbc8d9">
+            </div>
+        </header>
+
+        <!-- real body -->
+        <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
+            <section>
+                    <div class="parent_container">
+            <div class="video_container">
+                <div class="world_video_container">
+                    <video id="worldvideo" width="768" height="576" class="world_video">
+                        <source src="{{ url_for('static', filename='../static/worldvideo.mp4') }}" type="video/mp4">
+                        Browser support failed.
+                    </video>
+                </div>
+                <div class="eye_videos_container">
+                    <video id="eye0video" width="300" height="300" class="eye0_video">
+                        <source src="{{ url_for('static', filename='../static/eye0.mp4') }}" type="video/mp4">
+                        Browser support failed.
+                    </video>
+                    <video id="eye1video" width="300" height="300" class="eye1_video">
+                        <source src="{{ url_for('static', filename='../static/eye1.mp4') }}" type="video/mp4">
+                        Browser support failed.
+                    </video>
+                </div>
+            </div>
+            <div class="graph_container">
+                <div id='linear_velocity'></div>
+                <div id='angular_velocity'></div>
+                <div id='gaze'></div>
+            </div>
+        </div>
+                </section>
+            <section>
+        <div class="controls_container">
+            <div class="seek-container">
+                <label for="currentTime" class="hidden"></label>
+                <input type="text" class="video-times" value="" id="currentTime">
+                <label for="seek-bar" class="hidden"></label>
+                <input type="range" class="seek-bar" id="seek-bar" value="0">
+                <label for="totalTime" class="hidden"></label>
+                <input type="text" class="video-times" value="" id="totalTime">
+            </div>
+            <div class="button_container">
+                <button class="icon-button" onclick="skip_10_backward()">
+                    <i class="fa fa-step-backward fa-clickable fa-2x" style="color:#000000;"></i>
+                </button>
+                <button class="icon-button" onclick="play()">
+                    <i class="fa fa-play fa-clickable fa-2x" style="color:#000000;"></i>
+                </button>
+                <button class="icon-button" onclick="pause()">
+                    <i class="fa fa-pause fa-clickable fa-2x" style="color:#000000;"></i>
+                </button>
+                <button class="icon-button" onclick="stop_video()">
+                    <i class="fa fa-stop fa-clickable fa-2x" style="color:#000000;"></i>
+                </button>
+                <button class="icon-button" onclick="skip_10_forward()">
+                    <i class="fa fa-step-forward fa-clickable fa-2x" style="color:#000000;"></i>
+                </button>
+            </div>
+        </div>
+                </section>
+        </div>
+        <!-- end real body -->
+
+        <!-- footer -->
+        <footer class="footer pt-1 mt-1">
+        </footer>
+        <!-- end footer -->
+
+        <!--   Bootstrap from CDN   -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+        <!-- Scroll bar -->
+        <script src="https://cdn.jsdelivr.net/npm/perfect-scrollbar@1.5.6/dist/perfect-scrollbar.min.js"></script>
+
+        <!--  Plugin for Parallax, full documentation here: https://github.com/dixonandmoe/rellax -->
+        <script src="https://cdn.jsdelivr.net/gh/dixonandmoe/rellax@master/rellax.min.js"></script>
+
+        <!--  Plugin for TiltJS, full documentation here: https://gijsroge.github.io/tilt.js/ -->
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
+
+        <!-- Control Center for Material UI Kit: parallax effects, scripts for the example pages etc -->
+        <script src="{{ url_for('static', filename='home_bp/js/material-kit.min.js') }}" type="text/javascript"></script>
+
+        <!-- plotly.js -->
+        <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" type="text/javascript"></script>
+
+        <!-- local Javascript files -->
+        <script src="{{ url_for('static',filename='javascript/fileupload.js') }}" type="text/javascript"></script>
+        <script type="text/javascript">
+            var linear_graph = {{linear_vel_JSON | safe}};
+            var angular_graph = {{angular_vel_JSON | safe}};
+            // var gaze_graph = {{gaze_JSON | safe}}
+
+            Plotly.plot("linear_velocity", linear_graph, {});
+            Plotly.plot("angular_velocity", angular_graph, {});
+            // Plotly.plot("gaze", gaze_graph, {});
+        </script>
+    </body>
+</html>
