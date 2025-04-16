@@ -212,7 +212,7 @@ def extract_unzip(response) -> bool:
 def validate_video_files(file_list) -> bool:
     file_count = len(file_list)
 
-    if file_count != 4:
+    if file_count != 4 and file_count != 3:
         return False
 
     mp4_count = 0
@@ -227,7 +227,7 @@ def validate_video_files(file_list) -> bool:
             #naming convention is just the date/timestamp, hard to name validate
             csv_count = csv_count + 1
 
-    if mp4_count == 3 and csv_count == 1:
+    if mp4_count == 3:
         return True
     else:
         return False
@@ -235,13 +235,17 @@ def validate_video_files(file_list) -> bool:
 # This function validates that the files uploaded for data are correct, can do this from naming convention
 def validate_data_files(file_list) -> bool:
     file_count = len(file_list)
-    if file_count > 20 or file_count < 10:
+    if file_count > 20:
         return False
 
     acceptable_files = ["eye0_timestamps.npy", "eye0.pldata", "eye1_timestamps.npy", "eye1.pldata",
                       "accel_timestamps.npy", "accel.pldata", "gyro_timestamps.npy", "gyro.pldata",
                       "odometry_timestamps.npy", "odometry.pldata", "world.intrinsics", "world.extrinsics",
                         "world_timestamps.npy", "marker_times.yaml", "world.pldata", "processedGaze", ".DS_Store", "gaze.npz"]
+
+    if "odometry.pldata" not in file_list or "gaze.npz" not in file_list:
+        print("here")
+        return False
 
     for filename in file_list:
         if filename not in acceptable_files:
@@ -292,6 +296,7 @@ def upload_video():
         #Runs if files are correctly uploaded and validated, naming convention for viewer (needs to be in static folder)
         # This code works when the application is run from run_me.py (outside of flaskr folder)
         # If that starting point is moved to init, need to modify this to take out "flaskr/" from the renames and appends
+        csv_flag = 0
         for filename in video_file_list:
             if "worldPrivate" in filename:
                 os.rename(filename, "flaskr/static/worldvideo.mp4")
@@ -301,12 +306,14 @@ def upload_video():
                 os.rename(filename, "flaskr/static/eye1.mp4")
             elif "csv" in filename:
                 os.rename(filename, "flaskr/static/datatable.csv")
+                csv_flag = csv_flag + 1
 
         video_file_list.clear()
         video_file_list.append("flaskr/static/worldvideo.mp4")
         video_file_list.append("flaskr/static/eye0.mp4")
         video_file_list.append("flaskr/static/eye1.mp4")
-        video_file_list.append("flaskr/static/datatable.csv")
+        if csv_flag == 1:
+            video_file_list.append("flaskr/static/datatable.csv")
 
         print(video_file_list)
 
