@@ -50,6 +50,7 @@ def create_app(test_config):
         app.add_url_rule('/team', 'team', auth.team)
         app.add_url_rule('/faculty', 'faculty', auth.faculty)        
         app.add_url_rule('/logout', 'logout', auth.logout)
+        app.add_url_rule('/tutorial', 'tutorial', auth.tutorial)
 
         app.add_url_rule('/dashboard', 'dashboard', auth.dashboard, methods=["GET", "POST"])
         app.add_url_rule('/searchuser', 'searchuser', auth.searchuser, methods=["GET", "POST"])

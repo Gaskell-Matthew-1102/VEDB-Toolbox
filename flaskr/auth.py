@@ -98,6 +98,9 @@ def team():
 def faculty():
     return render_template("home/faculty.html")
 
+def tutorial():
+    return render_template("home/tutorial.html")
+
 # Dashboard Route
 def dashboard():
     user = Users.query.filter_by(username=current_user.username).first()

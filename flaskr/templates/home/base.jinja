@@ -39,6 +39,33 @@
                                 <ul class="navbar-nav navbar-nav-hover ms-auto">
                                     <li class="nav-item dropdown dropdown-hover mx-2">
                                         <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold" id="dropdownMenuDocs" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="material-symbols-rounded opacity-6 me-2 text-md">mouse</i>
+                                        Tutorial
+                                        <img src="{{ url_for('static', filename='home_bp/img/down-arrow-dark.svg') }}" alt="down-arrow" class="arrow ms-auto ms-md-2">
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive mt-0 mt-lg-3 p-3 border-radius-lg" aria-labelledby="dropdownMenuDocs">
+                                            <div class="d-none d-lg-block">
+                                                <ul class="list-group">
+                                                    <li class="nav-item list-group-item border-0 p-0">
+                                                        <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('tutorial') }}">
+                                                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Tutorial</h6>
+                                                            <span class="text-sm">How to use the VEDB Toolbox!</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="row d-lg-none">
+                                                <div class="col-md-12 g-0">
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('tutorial') }}">
+                                                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Tutorial</h6>
+                                                            <span class="text-sm">How to use the VEDB Toolbox!</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown dropdown-hover mx-2">
+                                        <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold" id="dropdownMenuDocs" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="material-symbols-rounded opacity-6 me-2 text-md">person</i>
                                         People
                                         <img src="{{ url_for('static', filename='home_bp/img/down-arrow-dark.svg') }}" alt="down-arrow" class="arrow ms-auto ms-md-2">
@@ -58,6 +85,12 @@
                                                             <span class="text-sm">Our advisors and instructors!</span>
                                                         </a>
                                                     </li>
+                                                    <li class="nav-item list-group-item border-0 p-0">
+                                                        <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('tutorial') }}">
+                                                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Tutorial</h6>
+                                                            <span class="text-sm">Our advisors and instructors!</span>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div class="row d-lg-none">
@@ -69,6 +102,10 @@
                                                     <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('faculty') }}">
                                                         <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Faculty</h6>
                                                         <span class="text-sm">Our advisors and instructors!</span>
+                                                    </a>
+                                                    <a class="dropdown-item py-2 ps-3 border-radius-md" href="{{ url_for('tutorial') }}">
+                                                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center p-0">Tutorial</h6>
+                                                            <span class="text-sm">How to use the VEDB Toolbox!</span>
                                                     </a>
                                                 </div>
                                             </div>
