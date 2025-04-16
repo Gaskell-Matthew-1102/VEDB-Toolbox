@@ -55,6 +55,7 @@ def create_app(test_config):
         app.add_url_rule('/searchuser', 'searchuser', auth.searchuser, methods=["GET", "POST"])
         app.add_url_rule('/deleteuser', 'deleteuser', auth.deleteuser, methods=["GET", "POST"])
         app.add_url_rule('/adduser', 'adduser', auth.adduser, methods=["GET", "POST"])
+        app.add_url_rule('/csvupload', 'csvupload', auth.csvupload, methods=["GET", "POST"])
 
         app.add_url_rule('/upload_help', 'upload_help', file_upload.upload_help)
         app.add_url_rule('/upload_video', 'upload_video', file_upload.upload_video, methods=["POST"])

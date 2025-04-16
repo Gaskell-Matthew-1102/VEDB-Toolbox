@@ -1,7 +1,5 @@
 #search.py
-from flask_login import login_user, logout_user, current_user
 from .models import db, Users
-from .file_upload import *
 
 def searchBar(search_filter, search_type):
     list = []
