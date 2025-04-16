@@ -61,17 +61,19 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
     # Generate gaze timestamp list to calculate velocity
     gaze_timestamp = fixation_packages.gaze_processing.get_timestamp_list(gaze_data_dict, min_len, "left")
-
-
     raw_gaze_vec_ = fixation_packages.gaze_processing.calculate_raw_gaze_vector(gaze_data_dict, eye_camera_width_px, eye_camera_height_px)
 
-    savgol_x = fixation_packages.gaze_processing.savgol(raw_gaze_vec_[0], gaze_window_size_ms, polynomial_grade)
-    savgol_y = fixation_packages.gaze_processing.savgol(raw_gaze_vec_[1], gaze_window_size_ms, polynomial_grade)
+    upsampled_timestamps, upsampled_raw_gaze = fixation_packages.spatial_average.linear_interpolate(gaze_timestamp, raw_gaze_vec_.transpose(), 120, 200)
+    upsampled_raw_gaze = upsampled_raw_gaze.transpose()
+
+    savgol_x = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[0], gaze_window_size_ms, polynomial_grade)
+    savgol_y = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[1], gaze_window_size_ms, polynomial_grade)
     savgol_gaze_vec = np.array(np.column_stack([savgol_x, savgol_y]))
+    print(savgol_gaze_vec.shape)
 # THE GAZE VECTOR IS NORMALISED, MUST CONVERT TO PIXEL SPACE
 
     # Step 2
-    v_hat = fixation_packages.gaze_processing.calculateGazeVelocity(savgol_gaze_vec, gaze_timestamp)
+    v_hat = fixation_packages.gaze_processing.calculateGazeVelocity(savgol_gaze_vec, upsampled_timestamps)
 
     print("Optic flow calculation start using ", end='')
     if(imu_flag):
@@ -110,7 +112,6 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     #     global_OF_vec_list = pickle.load(fp)
 
     #############################################################################
-
 
 
     global_OF_vec_list = np.array(global_OF_vec_list)     # convert to numpy array
@@ -184,10 +185,16 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     print("Summary 1:",event_list.return_list_summary())
     event_list.consolidate_list()
     print("Summary 2:",event_list.return_list_summary())
-    event_list.apply_filter(fixation_packages.event.Event.microsaccade_filter, min_saccade_amp_deg=min_saccade_amp_deg, min_saccade_dur_ms=min_saccade_dur_ms, width_of_image_px=eye_camera_width_px, eye_hov=eye_hfov)
+    event_list.apply_filter(fixation_packages.event.Event.microsaccade_filter, min_saccade_amp_deg=min_saccade_amp_deg, min_saccade_dur_ms=min_saccade_dur_ms, width_of_image_px=eye_camera_width_px, eye_hfov=eye_hfov)
     print("Summary 3:",event_list.return_list_summary())
     event_list.apply_filter(fixation_packages.event.Event.short_fixation_filter, min_fixation_dur_ms=min_fixation_dur_ms)
     print("Summary 4:",event_list.return_list_summary())
+
+    # sanity rate checks (gaze then imu then world)
+    GAZE_RATE = 1 / (upsampled_timestamps[1] - upsampled_timestamps[0])
+    WORLD_RATE = 1 / (new_vec_list.size / global_OF_vec_list.size)
+    print(GAZE_RATE, IMU_RATE, WORLD_RATE)
+
 
     # EXPORT TO JSON
     timestamp_list = fixation_packages.export.create_timestamp_list(event_list)
