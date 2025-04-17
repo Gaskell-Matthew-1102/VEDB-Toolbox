@@ -192,14 +192,8 @@ function pollForFixationStatus() {
             success: function(data) {
                 // If task is complete, update the status on the frontend
                 if (data.completed) {
-                    $('#status').text('Task Complete!');
-                    console.log("Found fixation JSON file!")
-                    // Optionally, stop polling once task is done
-                    clearInterval(intervalId);
-                } else {
-                    // If task is still processing, keep polling
-                    console.log("JSON file not found")
-                    $('#status').text('Processing...');
+                    // do graph stuff here
+                    clearInterval(intervalId);      // stops the polling
                 }
             },
             error: function(error) {
@@ -207,7 +201,7 @@ function pollForFixationStatus() {
                 clearInterval(intervalId); // Stop polling on error
             }
         });
-    }, 2000); // Poll every 2 seconds
+    }, 2000); // Poll every 2 seconds (can/should? be modified)
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
