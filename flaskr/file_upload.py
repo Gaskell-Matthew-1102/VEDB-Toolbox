@@ -709,7 +709,13 @@ def load_visualizer():
             data_files = get_data_file_list()
             video_files = get_video_list()
 
+            print(data_files)
+            print(video_files)
+
+
+            csv_file = ""
             odometry_file = ""
+            gaze_file = ""
             video_file = ""
             imu_flag = False
             
@@ -722,23 +728,36 @@ def load_visualizer():
                         eye0_file = file
                     case "eye1.pldata":
                         eye1_file = file
+                    case "gaze.npz":
+                        gaze_file = file
 
             for file in video_files:
                 if "worldvideo" in file:
                     world_video_file = file
-                    break
+                elif "csv" in file:
+                    csv_file = file
 
             if odometry_file == "":
                 odometry_file = "NO IMU DATA"
 
+            SESSION_NAME = "fixation"
+            if csv_file != "":
+                try:
+                    date = get_session_date_from_csv(csv_file)
+                    SESSION_NAME = date + "_" + SESSION_NAME
+                except:
+                    print("CSV parsing failed, using fallback export name")
+            else:
+                print("CSV FILE NOT FOUND")
+
             # EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
-            EXPORT_JSON_PATH = "flaskr/static/javascript/fixation.json"
+            EXPORT_JSON_PATH = f"flaskr/static/javascript/{SESSION_NAME}.json"
             # EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
-            EXPORT_PARAMETERS_PATH = "flaskr/static/javascript/fixation_parameters.txt"
+            EXPORT_PARAMETERS_PATH = f"flaskr/static/javascript/{SESSION_NAME}_parameters.txt"
 
             # Let's start the fixation algorithm here
             fix_det_args = (
-                odometry_file, "flaskr\\fixation\\test_data\\2023_06_01_18_47_34\\processedGaze\\gaze.npz",
+                odometry_file, gaze_file,
                 world_video_file, EXPORT_JSON_PATH,
                 EXPORT_PARAMETERS_PATH,
                 300, 3, 750, 0.8, 30, 200, 400, 400, 2048, 1536, 90, 90, imu_flag,
@@ -761,6 +780,14 @@ def load_visualizer():
                                    right_gaze_timestamps = gaze_data[3], right_norm_pos_x = gaze_data[4], right_norm_pos_y = gaze_data[5])
         else:
             raise Exception(f"Invalid Action") #how did it get here
+
+def get_session_date_from_csv(filepath:str) -> str:
+    import csv
+    with open(filepath, 'r') as file:
+        csv_reader = csv.reader(file)
+        _ = next(csv_reader)
+        row = next(csv_reader)
+        return row[0]
 
 def start_fixation_algorithm(args):
     fix_det = Process(target=fixation_main, args=args)

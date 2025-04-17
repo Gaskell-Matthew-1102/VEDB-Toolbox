@@ -130,26 +130,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
         new_vec_list = fixation_packages.spatial_average.linear_upsample_dataset(CAMERA_RATE, desired_world_hz, global_OF_vec_list)
 
     # Step 5
-
-    DEBUG_OPTIC_FLOW = False
-    if DEBUG_OPTIC_FLOW:
-        with open(f"{export_fixation_file_path}.txt", "w") as f:
-            for i, subarray in enumerate(global_OF_vec_list):
-                f.write(f"Array {i}:\n")
-                np.savetxt(f, subarray, fmt='%.6f')  # format for 2 decimal places
-                f.write("\n")
-        return
-
     v_rel, status_code = fixation_packages.adaptive_threshold.gaze_velocity_correction(v_hat, global_OF_vec_list)
-
-    DEBUG_OPTIC_FLOW = False
-    if DEBUG_OPTIC_FLOW:
-        with open(f"{export_fixation_file_path}.txt", "w") as f:
-            for i, subarray in enumerate(v_rel):
-                f.write(f"Array {i}:\n")
-                np.savetxt(f, subarray, fmt='%.6f')
-                f.write("\n")
-        return
 
     # Step 6
     samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(200, 300)
