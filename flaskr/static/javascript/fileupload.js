@@ -194,6 +194,24 @@ function pollForFixationStatus() {
                 if (data.file != "") {
                     // do graph stuff here
                     console.log(data.file);
+                    const fixationGraphDiv = document.getElementById("fixations");
+                    fetch(data.file)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach((range, index) => {
+                                let fixationStart = range[0];
+                                let fixationEnd = range[1];
+
+                                let fixationTrace = {
+                                    x: [fixationStart, fixationEnd],
+                                    y: [1, 1],
+                                    mode: 'lines',
+                                    name: 'Fixation'
+                                };
+
+                                Plotly.update(fixationGraphDiv, fixationTrace, null);
+                            });
+                        });
                     clearInterval(intervalId);      // stops the polling
                 }
                 console.log(data.file);
