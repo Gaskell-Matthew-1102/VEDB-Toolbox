@@ -99,6 +99,7 @@
                 <div id='linear_velocity'></div>
                 <div id='angular_velocity'></div>
                 <div id='gaze'></div>
+                <div id='fixations'></div>
             </div>
         </div>
         <div class="controls_container">
@@ -265,5 +266,15 @@
         }
 
         Plotly.plot('gaze', gazeData, gazeLayout);
+
+        const fixationLayout = {
+            title: 'Detected Fixations',
+            xaxis: {title: 'Time', range: [0, 10]},
+            yaxis: {title: 'Fixations'},
+            height: 257,
+            width: 500
+        }
+
+        Plotly.plot('fixations', null, fixationLayout);
     </script>
 </html>
