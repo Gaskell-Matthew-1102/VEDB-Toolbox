@@ -70,7 +70,7 @@ def do_it(filepath: str):
 
         cv2.putText(frame, f"Frame: {frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
         cv2.putText(frame, f"Pts: {len(p0)}", (100,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)        # point tracking
-        # cv2.imshow("Optical Flow", frame)
+        cv2.imshow("Optical Flow", frame)
 
         # Check if the number of tracked points has dropped too low
         if len(good_new) < 0.25 * initial_point_count:  # If less than 25% remain

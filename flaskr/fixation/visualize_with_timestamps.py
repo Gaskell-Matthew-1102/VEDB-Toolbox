@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
 
 
-    for sample_i in range(data.size-1):
+    for sample_i in range(26, data.size-1):
         SHOW_FIXATIONS = True
         
         if SHOW_FIXATIONS:
@@ -143,6 +143,21 @@ if __name__ == "__main__":
             start_time = data[sample_i][1]
             end_time = data[sample_i+1][0]
 
-        if end_time - start_time < 0.15:
-            continue
+        # if end_time - start_time < 0.15:
+        #     continue
         visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_time, end_time, None)
+
+    # while True:
+    #     SAMPLE_I = 14
+    #     SHOW_FIXATIONS = True
+        
+    #     if SHOW_FIXATIONS:
+    #         start_time = data[SAMPLE_I][0]
+    #         end_time = data[SAMPLE_I][1]
+    #     # else:
+    #     #     start_time = data[sample_i][1]
+    #     #     end_time = data[sample_i+1][0]
+
+    #     if end_time - start_time < 0.15:
+    #         continue
+    #     visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_time, end_time, None)

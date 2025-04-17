@@ -765,6 +765,11 @@ def start_fixation_algorithm(args):
     print("Fixation detection algorithm begun")
     return fix_det
 
+def check_task_status():
+    # Check if the JSON file generate by fixation algo exists
+    file_exists = os.path.exists("flaskr/static/javascript/fixation.json")
+    return jsonify(completed=True if file_exists else False)
+
 def download_graphs():
     linear_graph = request.args.get('linearGraph')
     angular_graph = request.args.get('angularGraph')

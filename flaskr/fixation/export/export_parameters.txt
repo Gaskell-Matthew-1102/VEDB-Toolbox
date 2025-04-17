@@ -15,7 +15,7 @@ world_camera_width: 2048
 world_camera_height: 1536
 world_camera_fov_h: 90
 world_camera_fov_v: 90
-imu_flag: True
+imu_flag: False
 min_saccade_amp_deg: 1.0
 min_saccade_dur_ms: 10
 eye_hfov: 110

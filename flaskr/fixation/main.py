@@ -92,7 +92,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
         df = pd.DataFrame(pldata_data)
         imu_processor = fixation_packages.IMU_processing.IMU_Processor(df, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v)
         global_OF_vec_list = []
-        for i in range(10_000):
+        for i in range(50_000):
             if i % 10000 == 0:
                 print(i)
             vec_list = imu_processor.compute_grid_rotational_flow(step=100)
@@ -108,6 +108,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
     # input("AAA")
 
+    # import pickle
     # with open ('./fixation/saved_lucas_kanade_data_111s', 'rb') as fp:
     #     global_OF_vec_list = pickle.load(fp)
 
@@ -193,7 +194,8 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     # sanity rate checks (gaze then imu then world)
     GAZE_RATE = 1 / (upsampled_timestamps[1] - upsampled_timestamps[0])
     WORLD_RATE = 1 / (new_vec_list.size / global_OF_vec_list.size)
-    print(GAZE_RATE, IMU_RATE, WORLD_RATE)
+
+    print(GAZE_RATE, WORLD_RATE)
 
 
     # EXPORT TO JSON
@@ -205,7 +207,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
 def main():
     print("starting")
-    runner(pldata_to_load=PLDATA_TO_LOAD, gaze_npz=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=25, desired_world_hz=200, eye_camera_width_px=X_RES, eye_camera_height_px=Y_RES, world_camera_width=2048, world_camera_height=1536, world_camera_fov_h=90, world_camera_fov_v=90, imu_flag=True, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS, eye_hfov=EYE_HFOV_DEG, min_fixation_dur_ms=MIN_FIXATION_DUR_MS)
+    runner(pldata_to_load=PLDATA_TO_LOAD, gaze_npz=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=25, desired_world_hz=200, eye_camera_width_px=X_RES, eye_camera_height_px=Y_RES, world_camera_width=2048, world_camera_height=1536, world_camera_fov_h=90, world_camera_fov_v=90, imu_flag=False, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS, eye_hfov=EYE_HFOV_DEG, min_fixation_dur_ms=MIN_FIXATION_DUR_MS)
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry1.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_1.json", export_parameters_file_path="./fixation/export/export_imu1_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry2.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_2.json", export_parameters_file_path="./fixation/export/export_imu2_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     print("complete")
