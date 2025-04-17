@@ -70,7 +70,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     savgol_y = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[1], gaze_window_size_ms, polynomial_grade)
     savgol_gaze_vec = np.array(np.column_stack([savgol_x, savgol_y]))
     print(savgol_gaze_vec.shape)
-# THE GAZE VECTOR IS NORMALISED, MUST CONVERT TO PIXEL SPACE
+    # THE GAZE VECTOR IS NORMALISED, MUST CONVERT TO PIXEL SPACE
 
     # Step 2
     v_hat = fixation_packages.gaze_processing.calculateGazeVelocity(savgol_gaze_vec, upsampled_timestamps)
@@ -92,7 +92,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
         df = pd.DataFrame(pldata_data)
         imu_processor = fixation_packages.IMU_processing.IMU_Processor(df, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v)
         global_OF_vec_list = []
-        for i in range(50_000):
+        for i in range(20_000):
             if i % 10000 == 0:
                 print(i)
             vec_list = imu_processor.compute_grid_rotational_flow(step=100)

@@ -199,7 +199,7 @@ function pollForFixationStatus() {
                 console.log(data.file);
             },
             error: function(error) {
-                console.error('Error checking task status:', error);
+                console.error('Error checking fixation algorithm status:', error);
                 clearInterval(intervalId); // Stop polling on error
             }
         });
