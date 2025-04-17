@@ -731,8 +731,10 @@ def load_visualizer():
             if odometry_file == "":
                 odometry_file = "NO IMU DATA"
 
-            EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
-            EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
+            # EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
+            EXPORT_JSON_PATH = "flaskr/static/javascript/fixation.json"
+            # EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
+            EXPORT_PARAMETERS_PATH = "flaskr/static/javascript/fixation_parameters.txt"
 
             # Let's start the fixation algorithm here
             fix_det_args = (
