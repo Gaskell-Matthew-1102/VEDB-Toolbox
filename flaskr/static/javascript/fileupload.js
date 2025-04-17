@@ -187,14 +187,16 @@ function pollForFixationStatus() {
         // Send an AJAX request to the Flask endpoint that checks task status
         console.log("Polling...")
         $.ajax({
-            url: '/check_task_status',
+            url: '/check_fixation_status',
             method: 'GET',
             success: function(data) {
                 // If task is complete, update the status on the frontend
-                if (data.completed) {
+                if (data.file != "") {
                     // do graph stuff here
+                    console.log(data.file);
                     clearInterval(intervalId);      // stops the polling
                 }
+                console.log(data.file);
             },
             error: function(error) {
                 console.error('Error checking task status:', error);

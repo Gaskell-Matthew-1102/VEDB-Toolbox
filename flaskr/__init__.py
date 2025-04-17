@@ -65,7 +65,7 @@ def create_app(test_config):
         app.add_url_rule('/upload_different_data', 'upload_different_data', file_upload.upload_different_data, methods=["POST"])
         app.add_url_rule('/go_back', 'back_to_file_upload', file_upload.back_to_file_upload, methods=["POST"])
         app.add_url_rule('/visualizer', 'load_visualizer', file_upload.load_visualizer, methods=[ "POST"])
-        app.add_url_rule('/check_task_status', 'check_task_status', file_upload.check_task_status, methods=["GET"])
+        app.add_url_rule('/check_fixation_status', 'check_fixation_status', file_upload.check_fixation_status, methods=["GET"])
 
         app.add_url_rule('/exit_visualizer', 'exit_visualizer', visualizer.exit_visualizer, methods=["POST"])
 
