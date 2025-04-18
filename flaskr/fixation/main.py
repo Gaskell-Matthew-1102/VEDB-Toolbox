@@ -69,7 +69,6 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     savgol_x = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[0], gaze_window_size_ms, polynomial_grade)
     savgol_y = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[1], gaze_window_size_ms, polynomial_grade)
     savgol_gaze_vec = np.array(np.column_stack([savgol_x, savgol_y]))
-    print(savgol_gaze_vec.shape)
     # THE GAZE VECTOR IS NORMALISED, MUST CONVERT TO PIXEL SPACE
 
     # Step 2
