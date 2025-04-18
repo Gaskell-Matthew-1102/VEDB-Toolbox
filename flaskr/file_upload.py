@@ -698,6 +698,7 @@ def generate_gaze_graph(filename_list):
 
 def get_data_of_video(video_path:str) -> tuple[int, int, int]:
     import cv2
+    print(video_path)
     vcap = cv2.VideoCapture(video_path)
     width = 0
     height = 0
@@ -744,10 +745,6 @@ def load_visualizer():
                     case "odometry.pldata":
                         odometry_file = file
                         imu_flag = True
-                    case "eye0.pldata":
-                        eye0_file = file
-                    case "eye1.pldata":
-                        eye1_file = file
                     case "gaze.npz":
                         gaze_file = file
 
@@ -756,6 +753,10 @@ def load_visualizer():
                     world_video_file = file
                 elif "csv" in file:
                     csv_file = file
+                elif "eye0" in file:
+                    eye0_file = file
+                elif "eye1" in file:
+                    eye1_file = file
 
             if odometry_file == "":
                 odometry_file = "NO IMU DATA"
@@ -778,11 +779,6 @@ def load_visualizer():
             # EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
             EXPORT_PARAMETER_PATH = f"{EXPORT_FOLDER_PATH}/{SESSION_NAME}_parameters.txt"
 
-            print('-'*100)
-            print(EXPORT_JSON_PATH)
-            print(EXPORT_PARAMETER_PATH)
-            print('-'*100)
-
             world_frame_width, world_frame_height, world_fps = get_data_of_video(world_video_file)
             eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_file)
 
@@ -794,6 +790,10 @@ def load_visualizer():
                 300, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90, 90, imu_flag,
                 1.0, 10, 110, 70
             )
+
+            print('-'*100)
+            print(fix_det_args)
+            print('-'*100)
             
 
             start_fixation_algorithm(fix_det_args)
@@ -837,7 +837,7 @@ def check_fixation_status():
         if EXPORT_PARAMETER_PATH not in data_file_list:
             data_file_list.append(EXPORT_PARAMETER_PATH)
 
-    return jsonify(file=f"{SESSION_NAME}.json" if file_exists else "")
+    return jsonify(file=EXPORT_JSON_PATH if file_exists else "")
 
 def download_graphs():
     linear_graph = request.args.get('linearGraph')
