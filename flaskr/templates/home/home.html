@@ -1,5 +1,4 @@
 {% extends 'home/base.jinja' %}
-{% from 'bootstrap5/form.html' import render_form %}
 
 {% block header %}
     <h1>{% block title %}Home{% endblock %}</h1>
@@ -12,45 +11,6 @@
 
 
 {% block content %}
-<section class="py-7">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4 mx-auto">
-          <div class="nav-wrapper position-relative end-0">
-            <!-- Tabs Navigation -->
-            <ul class="nav nav-pills nav-fill p-1" role="tablist">
-              <!-- Login Tab -->
-              <li class="nav-item">
-                <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">
-                  Login
-                </a>
-              </li>
-              <!-- Sign-up Tab -->
-              <li class="nav-item">
-                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">
-                  Sign-up
-                </a>
-              </li>
-            </ul>
-          </div>
-          <!-- Tab Content -->
-          <div class="tab-content mt-4">
-            <!-- Login Form -->
-            <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-              {{ render_form(login_form) }}
-            </div>
-  
-            <!-- Sign-up Form -->
-            <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-              {{ render_form(signup_form) }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-
 <section class="">
     <div class="container py-5">
         <div class="row align-items-center">
@@ -69,7 +29,7 @@
             </div>
             <div class="col-md-6">
                 <div class="blur-shadow-image text-center">
-                    <img src="{{ url_for('static', filename='home_bp/img/headset.png') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                    <img src="{{ url_for('static', filename='home/img/headset.png') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
                 </div>
             </div>
         </div>
@@ -81,13 +41,13 @@
         <div class="row align-items-center">
             <div class="col-md-6">
                 <div class="blur-shadow-image text-center">
-                    <img src="{{ url_for('static', filename='home_bp/img/visualizer.jpg') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                    <img src="{{ url_for('static', filename='home/img/visualizer.jpg') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
                 </div>
             </div>
             <div class="col-md-6 mb-md-0 mb-4">
                 <h3>How do we fit in?</h3>
                 <p class="lead mb-md-5 mb-4">
-                    Admittedly, VEDB session data not particularly intuitive nor easy to understand; there is no existing, one-size-fits-all application for it either.
+                    Admittedly, VEDB session data not particularly intuitive nor easy to understand; not everyone is a computer scientist, after all.
                     In response, our team has developed an open-source Toolbox of Python applications which aim to provide an accessible and efficient tool for visualizing/analyzing a session's eye and head movement data.
                     This component, the web app, offers:
                 </p>

@@ -1,0 +1,56 @@
+{% extends 'user_auth/base.jinja' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+
+{% block header %}
+  <h1>{% block title %}Landing{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<section>
+    <div class="container py-7">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card">
+                    <!-- Card Header -->
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-success shadow-success border-radius-lg py-4 text-center">
+                            <h4 class="font-weight-bolder text-white mt-1">Welcome</h4>
+                            <p class="mb-1 text-sm text-white">Sign in or create a new account</p>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Navigation -->
+                    <div class="nav-wrapper position-relative mt-3 px-3">
+                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">
+                                    Login
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">
+                                    Sign-up
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="card-body tab-content mt-3">
+                        <!-- Login Form -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel">
+                            {{ render_form(login_form) }}
+                        </div>
+
+                        <!-- Register Form -->
+                        <div class="tab-pane fade" id="register" role="tabpanel">
+                            {{ render_form(register_form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

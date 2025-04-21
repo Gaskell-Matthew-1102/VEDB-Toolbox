@@ -1,17 +1,25 @@
+# Flask bits
 Flask
+Flask_Minify # compress webpage stuff for better serving
 Flask-Login
-Flask-WTF
 Flask-SQLAlchemy
+Flask_WTF
 Bootstrap-Flask
+
+# production-ready WSGI server
 gunicorn
 
-plotly
+# fixations and visualization
 numpy
-pandas
+opencv-python
+scipy
 msgpack
 requests
+pytest
+pytest-mock
+bitarray
+numpy-quaternion
+plotly
+pandas
 pathlib
-scipy
 matplotlib
-opencv-python
-#zipfile

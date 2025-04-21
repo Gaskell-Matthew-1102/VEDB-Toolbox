@@ -1,0 +1,129 @@
+{% extends 'home/base.jinja' %}
+
+{% block header %}
+  <h1>{% block title %}Tutorial{% endblock %}</h1>
+{% endblock %}
+
+{% block bodyheading %}
+    <h1 class="text-white font-weight-black pt-3 mt-n5">Tutorial</h1>
+    <p class="lead text-white mt-3">How to use the VEDB Toolbox</p>
+{% endblock %}
+
+{% block content %}
+<section class="">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-md-0 mb-4">
+                <h3>Step 1: Register and Login</h3>
+                <p class="lead mb-md-5 mb-4">
+<!--                    REFACTOR THIS FOR OAUTH-->
+                    An account is required to access the Toolbox. On our landing page, you can register an account with an email address,
+                    username, and password. A captcha is provided for security reasons, and your information will be securely stored.
+                    Once you have registered an account, you will be automatically logged in, or if you have already registered an account,
+                    you can just log in with those credentials.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="blur-shadow-image text-center">
+                    <img src="{{ url_for('static', filename='home/img/headset.png') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="blur-shadow-image text-center">
+                    <img src="{{ url_for('static', filename='home/img/visualizer.jpg') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                </div>
+            </div>
+            <div class="col-md-6 mb-md-0 mb-4">
+                <h3>Step 2: Acquire Files</h3>
+                <p class="lead mb-md-5 mb-4">
+                    Currently, the files for the VEDB are located in multiple places. The video files need
+                    authorization to acquire, however the data files are hosted by the
+                    <a href="https://osf.io/2gdkb/" style="color:rgb(122, 196, 223)" target="_blank" ref="noopener noreferrer">Open Science Foundation (OSF)</a>.
+                    Either download and unzip the data files from this link, or copy the download link, and save it for later. All of the video
+                    files are required, however, the only two data files that are currently conventionally required are 'odometry.py' and 'gaze.npz'.
+                    However, some datasets don't have the gaze file, and if not provided the visualizer will still function, it will just be
+                    missing gaze position graphs and fixation detection.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-md-0 mb-4">
+                <h3>Step 3: Upload Files</h3>
+                <p class="lead mb-md-5 mb-4">
+                    The file upload screen is presented after logging in. Here, files for both the data and the videos of the
+                    VEDB can be uploaded. For the video files, the three videos (two eyes, one world) are required. The CSV file
+                    is optional. For the data files, only odometry.pldata and gaze.npz are required. However, you may upload as many of the other
+                    data files are you'd like, for conventionality. Files can be drag and dropped from File Explorer or Finder, and for
+                    the data files found on OSF, a link to that download may be entered, and the system will download and unzip the files
+                    for you. The gaze.npz file will be found in the processedGaze folder, however, please remove it from that folder and upload it
+                    alongside the other data files.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="blur-shadow-image text-center">
+                    <img src="{{ url_for('static', filename='home/img/headset.png') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="blur-shadow-image text-center">
+                    <img src="{{ url_for('static', filename='home/img/visualizer.jpg') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                </div>
+            </div>
+            <div class="col-md-6 mb-md-0 mb-4">
+                <h3>Step 4: Enter Visualizer</h3>
+                <p class="lead mb-md-5 mb-4">
+                    Once both sets of files have been correctly uploaded, a button will appear to allow you to enter the visualizer.
+                    This may take a little bit of time, as it needs to generate the graphs and begin running fixation detection. After
+                    these are completed, the visualizer will appear, with the three videos, video controls and progress bar, the three graphs,
+                    and navigation controls to return to file upload, to log out, or to download images of the generated graphs. Once playing,
+                    the graphs will move in time with the videos, showing recorded data as it was seen by the participant. The videos can
+                    be paused, stopped and reset, or skipped through, either with the skip ten seconds buttons or by dragging the progress
+                    bar.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-md-0 mb-4">
+                <h3>Step 5: Resetting or Exiting</h3>
+                <p class="lead mb-md-5 mb-4">
+                    To change the files to be visualized, you may exit the viewer by clicking the exit button at the top. This will bring
+                    you back to the file upload screen, where you can select the option to upload different video and/or data files. The
+                    new files will go through the same review process as before, and n you can re-enter the visualizer. If you would like to
+                    exit the program all together, you can either exit the visualizer first and then close the window, or log-out and then
+                    close the window. Your login will be cached if you return shortly, but you will have to re-login if coming back after a
+                    while.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="blur-shadow-image text-center">
+                    <img src="{{ url_for('static', filename='home/img/headset.png') }}" alt="img-shadow" class="img-fluid shadow-xl border-radius-lg max-height-500" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
