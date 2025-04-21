@@ -76,6 +76,9 @@ class EventList:
         new_arr = np.array([])
         while i < len(bitarr):
             if(bitarr[i] == 1):
+                if new_arr.size == 0:
+                    i += 1          # idk man this code was written at 3:30am
+                    continue
                 append_event = self.return_merge_event_list(new_arr[-1], self.list[i+1])
                 new_arr = np.concatenate((new_arr[:-1], append_event))
                 i += 1

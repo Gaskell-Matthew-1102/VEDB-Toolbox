@@ -787,7 +787,7 @@ def load_visualizer():
                 odometry_file, gaze_file,
                 world_video_file, EXPORT_JSON_PATH,
                 EXPORT_PARAMETER_PATH,
-                300, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90, 90, imu_flag,
+                55, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90, 90, imu_flag,
                 1.0, 10, 110, 70
             )
 

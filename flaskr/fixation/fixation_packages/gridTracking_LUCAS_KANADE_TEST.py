@@ -16,15 +16,22 @@ def create_grid(shape, step=10):
     y, x = np.mgrid[step//2:h:step, step//2:w:step]  # Generate grid points
     return np.float32(np.stack((x, y), axis=-1).reshape(-1, 1, 2))  # Reshape to (N, 1, 2)
 
-def do_it(filepath: str):
+def do_it(filepath: str, scale_factor: float):
 
     cap = cv2.VideoCapture(filepath)  # Load video
     # cap.set(cv2.CAP_PROP_POS_FRAMES, 10000)
     ret, old_frame = cap.read()
+    height, width, _ = old_frame.shape
+
+    new_h = int(height*scale_factor)
+    new_w = int(width*scale_factor)
+    
+    old_frame = cv2.resize(old_frame, (new_w, new_h))
     old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
 
     # Create initial grid
-    step_size = min(old_gray.shape) // 100  # Adjust step size dynamically
+    # step_size = min(old_gray.shape) // 100  # Adjust step size dynamically
+    step_size = min(height, width) // 100  # Static step size
     p0 = create_grid(old_gray.shape, step=step_size)
     initial_point_count = len(p0)
 
@@ -38,7 +45,7 @@ def do_it(filepath: str):
         ret, frame = cap.read()
         if not ret:
             break
-
+        frame = cv2.resize(frame, (new_w, new_h))
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Calculate optical flow
@@ -68,8 +75,8 @@ def do_it(filepath: str):
         vec_list.append(spatial_average.calculateGlobalOpticFlowVec(frame_vec_list))
         # vec_list.append( frame_vec_list )
 
-        cv2.putText(frame, f"Frame: {frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
-        cv2.putText(frame, f"Pts: {len(p0)}", (100,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)        # point tracking
+        # cv2.putText(frame, f"Frame: {frame_count}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
+        # cv2.putText(frame, f"Pts: {len(p0)}", (100,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)        # point tracking
         cv2.imshow("Optical Flow", frame)
 
         # Check if the number of tracked points has dropped too low
@@ -84,8 +91,10 @@ def do_it(filepath: str):
         if cv2.waitKey(30) & 0xFF == 27:
             break
         frame_count += 1
-        if frame_count == 1000:
-            break
+        # if frame_count == 1000:
+        #     break
+        # if(frame_count % 100 == 0):
+        #     print(frame_count)
     cap.release()
     cv2.destroyAllWindows()
     return vec_list
@@ -93,4 +102,4 @@ def do_it(filepath: str):
 if __name__ == '__main__':
     # VIDEO_PATH = './test_data/videos/video.mp4'
     VIDEO_PATH = 'fixation/test_data/videos/video.mp4'
-    do_it(VIDEO_PATH)
+    do_it(VIDEO_PATH, 0.25)
