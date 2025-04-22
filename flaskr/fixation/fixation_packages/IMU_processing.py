@@ -10,13 +10,13 @@ from .ingestion import parse_pldata
 from scipy.spatial.transform import Rotation as R
 
 class IMU_Processor:
-    def __init__(self, IMU_stream_data, image_width, image_height, camera_fov_h, camera_fov_v):
+    def __init__(self, IMU_stream_data, image_width, image_height, world_camera_fov_h, world_camera_fov_v):
         self.IMU_stream_data = np.array([parse_pldata(x) for x in IMU_stream_data[1].iloc[:]])  # significant time cost here
         self.current_sample_idx = 0  # Initially set it to an invalid index (e.g., -1)
         
         # World scene camera variables
-        self.camera_fov_h = camera_fov_h
-        self.camera_fov_v = camera_fov_v
+        self.world_camera_fov_h = world_camera_fov_h
+        self.world_camera_fov_v = world_camera_fov_v
         self.image_width = image_width
         self.image_height = image_height
 
@@ -90,8 +90,8 @@ class IMU_Processor:
         x_centered = self.image_width/2
         y_centered = self.image_height/2
 
-        f_horizontal = self.image_width / (2 * math.tan(self.camera_fov_h/2))
-        f_vertical = self.image_height / (2 * math.tan(self.camera_fov_v/2))
+        f_horizontal = self.image_width / (2 * math.tan(self.world_camera_fov_h/2))
+        f_vertical = self.image_height / (2 * math.tan(self.world_camera_fov_v/2))
 
         x = (raw_x - x_centered)/f_horizontal
         y = (raw_y - y_centered)/f_vertical

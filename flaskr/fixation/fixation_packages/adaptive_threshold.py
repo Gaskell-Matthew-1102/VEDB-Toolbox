@@ -8,10 +8,6 @@ def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_f
     gaze_vec_len = len(gaze_velocity_vector)
     opt_flow_len = len(global_optic_flow)
 
-    print(gaze_vec_len)
-    print(opt_flow_len)
-
-
     min_len = min(gaze_vec_len, opt_flow_len)
     status_code = -1
 
@@ -31,7 +27,7 @@ def gaze_velocity_correction(gaze_velocity_vector: np.ndarray[2], global_optic_f
     # print(gaze_velocity_vector[0:min_len,:])
     # print(global_optic_flow[0:min_len,:])
     relative_gaze_vel = gaze_velocity_vector[0:min_len,:] - global_optic_flow[0:min_len,:]
-    return (relative_gaze_vel, status_code)
+    return relative_gaze_vel, status_code
     # return np.linalg.norm(relative_gaze_vel)
 
 # old header: calculate_samples_in_window(sample_list: list[np.ndarray], sample_rate_hz: int, window_size_ms:int):

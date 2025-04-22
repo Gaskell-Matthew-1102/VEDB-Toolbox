@@ -58,7 +58,7 @@ class EventList:
 
         if(filter == Event.microsaccade_filter):
             for event_i in range(arr.size):
-                bitarr[event_i] = arr[event_i].microsaccade_filter(kwargs["min_saccade_amp_deg"], kwargs["min_saccade_dur_ms"], kwargs["width_of_image_px"], kwargs["hfov"])
+                bitarr[event_i] = arr[event_i].microsaccade_filter(kwargs["min_saccade_amp_deg"], kwargs["min_saccade_dur_ms"], kwargs["width_of_image_px"], kwargs["eye_hfov"])
         elif(filter == Event.short_fixation_filter):
             for event_i in range(arr.size):
                 bitarr[event_i] = arr[event_i].short_fixation_filter(kwargs["min_fixation_dur_ms"])
@@ -76,6 +76,9 @@ class EventList:
         new_arr = np.array([])
         while i < len(bitarr):
             if(bitarr[i] == 1):
+                if new_arr.size == 0:
+                    i += 1          # idk man this code was written at 3:30am
+                    continue
                 append_event = self.return_merge_event_list(new_arr[-1], self.list[i+1])
                 new_arr = np.concatenate((new_arr[:-1], append_event))
                 i += 1

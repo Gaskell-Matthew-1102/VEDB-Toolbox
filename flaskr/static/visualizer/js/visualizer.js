@@ -181,8 +181,54 @@ function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
     // })
 }
 
+function pollForFixationStatus() {
+    // Set up an interval to poll the server every 2 seconds
+    const intervalId = setInterval(function() {
+        // Send an AJAX request to the Flask endpoint that checks task status
+        console.log("Polling...")
+        $.ajax({
+            url: '/check_fixation_status',
+            method: 'GET',
+            success: function(data) {
+                // If task is complete, update the status on the frontend
+                if (data.file != "") {
+                    // do graph stuff here
+                    console.log(data.file);
+                    const fixationGraphDiv = document.getElementById("fixations");
+                    fetch(data.file)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach((range, index) => {
+                                let fixationStart = range[0];
+                                let fixationEnd = range[1];
+
+                                let fixationTrace = {
+                                    x: [fixationStart, fixationEnd],
+                                    y: [1, 1],
+                                    mode: 'lines',
+                                    name: 'Fixation'
+                                };
+
+                                Plotly.update(fixationGraphDiv, fixationTrace, null);
+                            });
+                        });
+                    clearInterval(intervalId);      // stops the polling
+                }
+                console.log(data.file);
+            },
+            error: function(error) {
+                console.error('Error checking fixation algorithm status:', error);
+                clearInterval(intervalId); // Stop polling on error
+            }
+        });
+    }, 2000); // Poll every 2 seconds (can/should? be modified)
+}
+
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
 jQuery(function ($) {
+    $(window).ready(function() {
+        pollForFixationStatus();        // begins polling the backend every 2000 ms to check for the status of the output JSON file
+      });
     $(window).on('load', function() {
         var wvideo = $("#worldvideo")[0];
 
