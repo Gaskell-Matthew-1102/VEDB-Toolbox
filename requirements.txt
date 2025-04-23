@@ -5,6 +5,7 @@ Flask-Login
 Flask-SQLAlchemy
 Flask_WTF
 Bootstrap-Flask
+email_validator
 
 # production-ready WSGI server
 gunicorn

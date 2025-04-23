@@ -1,6 +1,5 @@
 {% extends 'user_auth/base.jinja' %}
-{% from 'bootstrap5/form.html' import render_form %}
-
+{% from 'bootstrap5/utils.html' import render_messages %}
 
 {% block header %}
   <h1>{% block title %}Landing{% endblock %}</h1>
@@ -8,6 +7,7 @@
 
 {% block content %}
 <section>
+    {{ render_messages() }}
     <div class="container py-7">
         <div class="row justify-content-center">
             <div class="col-lg-5 col-md-7">
@@ -40,12 +40,59 @@
                     <div class="card-body tab-content mt-3">
                         <!-- Login Form -->
                         <div class="tab-pane fade show active" id="login" role="tabpanel">
-                            {{ render_form(login_form) }}
+                                                        <form role="form" method="post" autocomplete="off">
+                                    <div class="card-body pb-2">
+                                        {{ login_form.csrf_token }}
+                                        <div class="input-group input-group-static mb-4">
+                                            {{ login_form.l_username.label(class="form-label") }}
+                                            {{ login_form.l_username(class="form-control", aria_label="Username") }}
+                                        </div>
+                                        <div class="input-group input-group-static mb-4">
+                                            {{ login_form.l_password.label(class="form-label") }}
+                                            {{ login_form.l_password(class="form-control", aria_label="Password") }}
+                                            {% for error in login_form.l_password.errors %}
+                                                <div class="text-danger">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        </div>
+                                        <div class="text-center">
+                                            {{ login_form.l_submit(class="btn bg-gradient-dark mt-3 mb-0") }}
+                                        </div>
+                                </form>
                         </div>
 
                         <!-- Register Form -->
                         <div class="tab-pane fade" id="register" role="tabpanel">
-                            {{ render_form(register_form) }}
+                            <form role="form" method="post" autocomplete="off">
+                                    <div class="card-body pb-2">
+                                        {{ register_form.csrf_token }}
+                                        <div class="input-group input-group-static mb-4">
+                                            {{ register_form.r_username.label(class="form-label") }}
+                                            {{ register_form.r_username(class="form-control", aria_label="Username") }}
+                                        </div>
+                                        <div class="input-group input-group-static mb-4">
+                                            {{ register_form.r_email.label(class="form-label") }}
+                                            {{ register_form.r_email(class="form-control", aria_label="Email") }}
+                                        </div>
+                                        <div class="input-group input-group-static mb-4">
+                                            {{ register_form.r_password.label(class="form-label") }}
+                                            {{ register_form.r_password(class="form-control", aria_label="Password") }}
+                                            {% for error in register_form.r_password.errors %}
+                                                <div class="text-danger">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="input-group input-group-static mb-4">
+                                            {{ register_form.r_repeat_password.label(class="form-label") }}
+                                            {{ register_form.r_repeat_password(class="form-control", aria_label="Repeat Password") }}
+                                            {% for error in register_form.r_repeat_password.errors %}
+                                                <div class="text-danger">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="text-center">
+                                            {{ register_form.r_submit(class="btn bg-gradient-dark mt-3 mb-0") }}
+                                        </div>
+                                    </div>
+                                </form>
                         </div>
                     </div>
                 </div>

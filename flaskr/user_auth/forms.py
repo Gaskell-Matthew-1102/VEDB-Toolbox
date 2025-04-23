@@ -8,7 +8,7 @@ from flask_wtf import FlaskForm, RecaptchaField
 
 # pip, for flask_wtf
 from wtforms import StringField, EmailField, PasswordField, SubmitField, ValidationError
-from wtforms.validators import InputRequired, Length, EqualTo, Email
+from wtforms.validators import InputRequired, Length, Email
 
 def password_complexity_check(form, field):
     password = field.data
@@ -23,15 +23,15 @@ def password_complexity_check(form, field):
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField("Username", validators=[InputRequired(), Length(min=3, max=256)])
-    email = EmailField("Email", validators=[InputRequired(), Email()])
-    password = PasswordField("Password", validators=[InputRequired(), Length(min=12, max=256), password_complexity_check])
-    repeat_password = PasswordField("Repeat Password", validators=[InputRequired(), EqualTo('password', message='Passwords must match.')])
-    recaptcha = RecaptchaField()
-    submit = SubmitField()
+    r_username = StringField("Username", validators=[InputRequired(), Length(min=3, max=256)])
+    r_email = EmailField("Email", validators=[InputRequired(), Email()])
+    r_password = PasswordField("Password", validators=[InputRequired(), Length(min=12, max=256), password_complexity_check])
+    r_repeat_password = PasswordField("Repeat Password", validators=[InputRequired()])
+    r_recaptcha = RecaptchaField()
+    r_submit = SubmitField("Register")
 
 class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[InputRequired()])
-    password = PasswordField("Password", validators=[InputRequired()])
-    recaptcha = RecaptchaField()
-    submit = SubmitField()
+    l_username = StringField("Username", validators=[InputRequired()])
+    l_password = PasswordField("Password", validators=[InputRequired()])
+    l_recaptcha = RecaptchaField()
+    l_submit = SubmitField("Login")
