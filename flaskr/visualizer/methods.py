@@ -247,3 +247,60 @@ def get_fig_numbers():
                     flag = 0
             return [linear_number, angular_number]
     return None
+
+def start_fixation_algorithm(odometry_file:str, gaze_file:str, world_video_file:str, csv_file:str, eye0_file:str, eye1_file:str, in_args:dict, ):
+    imu_flag = False
+    export_filepath = "fixation"
+    
+    if odometry_file == "":
+        imu_flag = True
+    world_frame_width, world_frame_height, world_fps = get_data_of_video(world_video_file)
+    eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_file)
+
+    if csv_file != "":
+        try:
+            date = get_session_date_from_csv(csv_file)
+            SESSION_NAME = date + "_" + SESSION_NAME
+        except:
+            print("CSV parsing failed, using fallback export name")
+        else:
+            print("CSV FILE NOT FOUND")
+
+    fix_det_args = (
+        odometry_file, gaze_file,
+        world_video_file, EXPORT_JSON_PATH,
+        EXPORT_PARAMETER_PATH,
+        55, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90, 90, imu_flag,
+        1.0, 10, 110, 70
+    )
+    
+    from multiprocessing import Process
+    from fixation import main as fixation_main
+
+    fix_det = Process(target=fixation_main, args=fix_det_args)
+    fix_det.start()
+    print("Fixation detection algorithm begun")
+    return fix_det
+
+def get_session_date_from_csv(filepath:str) -> str:
+    import csv
+    with open(filepath, 'r') as file:
+        csv_reader = csv.reader(file)
+        _ = next(csv_reader)
+        row = next(csv_reader)
+        return row[0]
+
+def get_data_of_video(video_path:str) -> tuple[int, int, int]:
+    import cv2
+    print(video_path)
+    vcap = cv2.VideoCapture(video_path)
+    width = 0
+    height = 0
+    fps = 0
+    
+    if vcap.isOpened(): 
+        # get vcap property 
+        width  = vcap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
+        height = vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+        fps = vcap.get(cv2.CAP_PROP_FPS)
+    return int(width), int(height), int(fps)

@@ -10,6 +10,8 @@ from flask import render_template, session, redirect
 from flaskr.visualizer import blueprint
 from flaskr.visualizer.methods import *
 
+import pathlib
+
 UPLOAD_FOLDER = 'uploads'
 
 @blueprint.route("/visualizer")
@@ -21,6 +23,18 @@ def visualizer():
     world_path = os.path.join(upload_path, 'world.mp4')
     odo_pldata_path = os.path.join(upload_path, 'odometry.pldata')
     gaze_npz_path = os.path.join(upload_path, 'gaze.npz')
+    csv_list = list(pathlib.Path(upload_path).glob('*.csv'))
+
+    csv_path = ""
+    if len(csv_list) == 1:
+        csv_path = csv_list[0]
+    elif len(csv_list) == 0:
+        print("No CSV files uploaded")
+    else:
+        print("More than one CSV file uploaded")
+
+    # Start the fixation detection algorithm here
+    start_fixation_algorithm(odometry_file=odo_pldata_path, gaze_file=gaze_npz_path, world_video_file=world_path, csv_file=csv_path, eye0_file=eye0_path, eye1_file=eye1_path, in_args=???, )
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
     vel_data = generate_velocity_graphs([odo_pldata_path])
