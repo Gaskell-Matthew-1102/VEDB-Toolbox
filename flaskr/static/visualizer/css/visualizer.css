@@ -9,7 +9,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   padding: 20px;
-  gap: 20px;
+  gap: 200px;
 }
 
 .video_container {
@@ -47,15 +47,17 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.graph_container > div {
-  height: 150px;
-  background-color: #fafafa;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/*.graph_container > div {*/
+/*  background-color: #fafafa;*/
+/*  border: 1px solid #e0e0e0;*/
+/*  border-radius: 4px;*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  padding: 2px;*/
+/*  width: auto; !* or auto depending on layout *!*/
+/*  height: auto;*/
+/*}*/
 
 /* Box style for controls */
 .controls_container {

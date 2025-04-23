@@ -4,7 +4,12 @@
 import os
 
 # flask and its plugins
-from flask import render_template, session, redirect
+from flask import render_template, session, redirect, send_from_directory
+from flask_login import current_user, login_required
+
+# pip
+import plotly.io as pio
+import plotly.graph_objects as go
 
 # local
 from flaskr.visualizer import blueprint
@@ -13,12 +18,18 @@ from flaskr.visualizer.methods import *
 UPLOAD_FOLDER = 'uploads'
 
 @blueprint.route("/visualizer")
+@login_required
 def visualizer():
+    if not session['data_submitted'] or not session['videos_submitted']:
+        return redirect("/file_upload")
+
+    # base directory for all files
     upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
 
+    # paths to all relevant files
+    world_path = os.path.join(upload_path, 'world.mp4')
     eye0_path = os.path.join(upload_path, 'eye0.mp4')
     eye1_path = os.path.join(upload_path, 'eye1.mp4')
-    world_path = os.path.join(upload_path, 'world.mp4')
     odo_pldata_path = os.path.join(upload_path, 'odometry.pldata')
     gaze_npz_path = os.path.join(upload_path, 'gaze.npz')
 
@@ -26,10 +37,35 @@ def visualizer():
     vel_data = generate_velocity_graphs([odo_pldata_path])
     gaze_data = generate_gaze_graph([gaze_npz_path])
 
+    # video manip., metadata
+    world_frame_width, world_frame_height, world_fps = get_data_of_video(world_path)
+    eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_path)
+
+    # # fixations, paths
+    # # EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
+    # EXPORT_JSON_PATH = f"{EXPORT_FOLDER_PATH}/{SESSION_NAME}.json"
+    # # EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
+    # EXPORT_PARAMETER_PATH = f"{EXPORT_FOLDER_PATH}/{SESSION_NAME}_parameters.txt"
+    #
+    # # Let's start the fixation algorithm here
+    # fix_det_args = (
+    #     odometry_file, gaze_file,
+    #     world_video_file, EXPORT_JSON_PATH,
+    #     EXPORT_PARAMETER_PATH,
+    #     55, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90,
+    #     90, imu_flag,
+    #     1.0, 10, 110, 70
+    # )
+    #
+    # start_fixation_algorithm(fix_det_args)
+
     return render_template("visualizer/visualizer.html",
                            eye0_path=eye0_path,
                            eye1_path=eye1_path,
                            world_path=world_path,
+                           world_frame_width=world_frame_width, world_frame_height=world_frame_height,
+                           eye_frame_width=eye_frame_width, eye_frame_height=eye_frame_height,
+
                            velocity_timestamps=vel_data[0],
                            linear_0=vel_data[1], linear_1=vel_data[2], linear_2=vel_data[3],
                            angular_0=vel_data[4], angular_1=vel_data[5], angular_2=vel_data[6],
@@ -38,6 +74,7 @@ def visualizer():
                            )
 
 @blueprint.route("/download")
+@login_required
 def download_graphs():
     if request.method == "POST":
         graphs = request.get_json()
@@ -54,8 +91,13 @@ def download_graphs():
         pio.write_image(linear_graph, "images/linear_graph" + str(fig_numbers[0]) + ".png")
         pio.write_image(angular_graph, "images/angular_graph" + str(fig_numbers[1]) + ".png")
 
+@blueprint.route('/uploads/<uuid>/<filename>')
+@login_required
+def uploaded_file(uuid, filename):
+    return send_from_directory(os.path.join(UPLOAD_FOLDER, uuid), filename)
 
 @blueprint.route("/return_to_file_upload")
+@login_required
 def return_to_file_upload():
     session.pop('upload_uuid', None)
     return redirect("/file_upload")

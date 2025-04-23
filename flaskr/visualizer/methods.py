@@ -15,11 +15,11 @@ import numpy as np
 import pandas as pd
 import cv2
 import plotly.io as pio
+import plotly.graph_objects as go
 
-# data manipulation
+# dataset manipulation
 # The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
-# of Paul MacNeilage's Self Motion Lab.
-# They work with the pldata files, turning them into readable format for our graphing code
+# of Paul MacNeilage's Self Motion Lab. They work with the pldata files, turning them into readable format for our graphing code
 def read_pldata(file_path):    
     try:
         with open(file_path, 'rb') as file:
@@ -62,42 +62,33 @@ def load_as_dict(path):
               params[k] = v
     return params
 
-# returning a number
 # Some data files in the VEDB record NANs when the hardware stops recording (for whatever reason)
 def count_nans(vel_list):
     nan_count = sum(1 for value in vel_list if isinstance(value, float) and math.isnan(value))
-    print("Nan Count Ratio:", nan_count / len(vel_list))
     print("Nan Count:", nan_count)
+    print("Nan Count Ratio:", nan_count / len(vel_list))
     return nan_count
 
-#Sourced dimension code from here https://stackoverflow.com/questions/7348505/get-dimensions-of-a-video-file
-def get_video_height(vid_file):
-    video_file = cv2.VideoCapture(vid_file)
-    height = video_file.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    video_file.release()
-    return height
+# videoset manipulation
+# return values
+def get_data_of_video(video_path: str) -> tuple[int, int, int]:
+    vcap = cv2.VideoCapture(video_path)
+    if not vcap.isOpened():
+        return 0, 0, 0
 
-def get_video_width(vid_file):
-    video_file = cv2.VideoCapture(vid_file)
-    width = video_file.get(cv2.CAP_PROP_FRAME_WIDTH)
-    video_file.release()
-    return width
+    return (
+        int(vcap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+        int(vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
+        int(vcap.get(cv2.CAP_PROP_FPS))
+    )
 
-def get_video_duration(vid_file):
-    video_file = cv2.VideoCapture(vid_file)
-    frame_rate = video_file.get(cv2.CAP_PROP_FPS)
-    frames = video_file.get(cv2.CAP_PROP_FRAME_COUNT)
-    video_file.release()
-    length = frames/frame_rate
-    return length
-
-# generation
+# graph generation
+# velocity
 def generate_velocity_graphs(filename_list: list[str]):
-    # assuming either 1. both files exist, 2. neither file exists
-    global graph_file_list
     for filename in filename_list:
         data = read_pldata(filename)
         df = pd.DataFrame(data)
+
         linear_vel_0_list = []
         linear_vel_1_list = []
         linear_vel_2_list = []
@@ -146,6 +137,7 @@ def generate_velocity_graphs(filename_list: list[str]):
         return json_list
     return None
 
+# gaze graph
 def generate_gaze_graph(filename_list):
     for filename in filename_list:
         gaze_dict = load_as_dict(filename)

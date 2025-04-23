@@ -2,7 +2,7 @@
 
 # flask stuff
 from flask import url_for, session, redirect, flash, render_template
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 # pip other
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -60,6 +60,7 @@ def landing():
 
 # logout clearing session
 @blueprint.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect("/")

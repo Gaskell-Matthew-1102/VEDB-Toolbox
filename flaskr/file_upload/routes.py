@@ -6,7 +6,7 @@ import uuid
 
 # flask
 from flask import render_template, flash, request, redirect, jsonify
-from flask_login import current_user
+from flask_login import login_required
 
 # local
 from flaskr.file_upload import blueprint
@@ -18,6 +18,7 @@ UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @blueprint.before_request
+@login_required
 def setup():
     # Only generate a new UUID if it's not already in the session
     if 'upload_uuid' not in session:
@@ -32,14 +33,14 @@ def setup():
     # designate an uuid-upload folder, creating it if it doesn't exist
     request.upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
     if not os.path.exists(request.upload_path):
-        remove_empty_dirs(UPLOAD_FOLDER)
+        remove_unaccounted_dirs(UPLOAD_FOLDER)
         os.makedirs(request.upload_path, exist_ok=True)
 
-@blueprint.route("/file_upload", methods=["GET", "POST"])
-def file_upload():
-    if not current_user.is_authenticated:
-        return redirect("/")
+    print('using ' + request.upload_path)
 
+@blueprint.route("/file_upload", methods=["GET", "POST"])
+@login_required
+def file_upload():
     # url forms and buttons
     databraryurl = DatabraryURLForm()
     osfurl = OSFURLForm()
@@ -83,11 +84,12 @@ def file_upload():
                 # Normalize video filenames and add session to database
                 print('success! will add to db and redirect to visualizer')
                 normalize_video_filenames(request.upload_path)
-                add_session_to_db(session['upload_uuid'])
+                add_session_to_db(session['upload_uuid'], get_csv_filename(request.upload_path))
 
-                # Pop session variables
-                session.pop('data_submitted', None)
-                session.pop('videos_submitted', None)
+                # would be useful for maintaining state if returning from visualizer to modify fixation variables
+                # # Pop session variables
+                # session.pop('data_submitted', None)
+                # session.pop('videos_submitted', None)
 
                 # Redirect to the visualizer
                 return redirect("/visualizer")
@@ -98,10 +100,10 @@ def file_upload():
 
     # Handle reset button
     if reset_button.validate_on_submit() and reset_button.reset.data:
-        clear_directory(request.upload_path)
+        session.pop('upload_uuid', None)
         session.pop('data_submitted', None)
         session.pop('videos_submitted', None)
-
+        return redirect("/file_upload")
 
     return render_template("file_upload/file_upload.html",
                            is_admin=is_admin(),
@@ -110,10 +112,11 @@ def file_upload():
                            databraryurl=databraryurl,
                            osfurl=osfurl,
                            visualizer_button=visualizer_button,
-                           reset_button=reset_button
+                           reset_button=reset_button,
                            )
 
 @blueprint.route('/upload', methods=['POST'])
+@login_required
 def upload_file():
     if 'filepond' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -130,7 +133,7 @@ def upload_file():
     ext = os.path.splitext(file.filename)[1].lower()
     if ext in ['.mp4', '.csv']:
         session['videos_submitted'] = True
-        print(f"Data Submitted: {session.get('data_submitted')}")
+        print(f"Video Submitted: {session.get('videos_submitted')}")
     
     if ext in ['.pldata', '.npy', '.npz', '.yaml', '.intrinsics', '.extrinsics']:
         session['data_submitted'] = True

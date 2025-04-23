@@ -3,9 +3,11 @@
 
 # base
 import csv
+from functools import wraps
 
 # flask
-from flask import flash, render_template
+from flask import flash, render_template, redirect
+from flask_login import current_user
 
 # pip
 from werkzeug.security import generate_password_hash
@@ -15,6 +17,15 @@ from flaskr import db
 from flaskr.models import User
 
 ALLOWED_EXTENSIONS = {'csv'}
+
+# created @admin_required
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not getattr(current_user, 'admin', False):
+            return redirect("/file_upload")
+        return f(*args, **kwargs)
+    return decorated_function
 
 # simplification of routes.py
 def render_dashboard(search_filter, search_type, warning, **kwargs):

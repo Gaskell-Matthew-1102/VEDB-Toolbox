@@ -9,83 +9,60 @@ var lastGraphedValue = 1;
 var left = 0;
 var right = 3;
 
-function play(){
-    var world_video = document.getElementById("worldvideo")
-    var eye0_video = document.getElementById("eye0video")
-    var eye1_video = document.getElementById("eye1video")
-    if(world_video.paused){
-        world_video.play();
-        eye0_video.play();
-        eye1_video.play();
-    }
+function getVideos() {
+    return [
+        document.getElementById("worldvideo"),
+        document.getElementById("eye0video"),
+        document.getElementById("eye1video")
+    ].filter(video => video !== null); // filter in case any aren't found
 }
 
-function pause(){
-    var world_video = document.getElementById("worldvideo")
-    var eye0_video = document.getElementById("eye0video")
-    var eye1_video = document.getElementById("eye1video")
-    if(!world_video.paused){
-        world_video.pause();
-        eye0_video.pause();
-        eye1_video.pause();
-    }
+function play() {
+    getVideos().forEach(video => {
+        if (video.paused) video.play();
+    });
 }
 
-function skip_10_forward(){
-    var world_video = document.getElementById("worldvideo")
-    var eye0_video = document.getElementById("eye0video")
-    var eye1_video = document.getElementById("eye1video")
-    world_video.currentTime += 10;
-    eye0_video.currentTime += 10;
-    eye1_video.currentTime += 10;
+function pause() {
+    getVideos().forEach(video => {
+        if (!video.paused) video.pause();
+    });
 }
 
-function skip_10_backward(){
-    var world_video = document.getElementById("worldvideo")
-    var eye0_video = document.getElementById("eye0video")
-    var eye1_video = document.getElementById("eye1video")
-    world_video.currentTime -= 10;
-    eye0_video.currentTime -= 10;
-    eye1_video.currentTime -= 10;
+function skip(seconds) {
+    getVideos().forEach(video => {
+        video.currentTime += seconds;
+    });
 }
 
-function stop_video(){
-    var world_video = document.getElementById("worldvideo")
-    var eye0_video = document.getElementById("eye0video")
-    var eye1_video = document.getElementById("eye1video")
-    world_video.currentTime = 0;
-    eye0_video.currentTime = 0;
-    eye1_video.currentTime = 0;
-    world_video.pause();
-    eye0_video.pause();
-    eye1_video.pause();
+function stop() {
+    getVideos().forEach(video => {
+        video.currentTime = 0;
+        video.pause();
+    });
 }
 
-// Functionality for manipulating videos using Space, Escape, and arrow keys for accessibility and convenience
 window.addEventListener('keydown', function(event) {
-   var world_video = document.getElementById("worldvideo")
-   var eye0_video = document.getElementById("eye0video")
-   var eye1_video = document.getElementById("eye1video")
-
-   switch(event.key) {
-       case ' ':
-           if (world_video.paused) {
-               play();
-           }
-           else if (!world_video.paused) {
-               pause();
-           }
-           break;
-       case 'Escape':
-           stop_video();
-           break;
-       case 'ArrowLeft':
-           skip_10_backward();
-           break;
-       case 'ArrowRight':
-           skip_10_forward();
-           break;
-   }
+    switch(event.key) {
+        case ' ':
+            event.preventDefault(); // prevent page scroll
+            const [mainVideo] = getVideos();
+            if (mainVideo && mainVideo.paused) {
+                play();
+            } else {
+                pause();
+            }
+            break;
+        case 'Escape':
+            stop();
+            break;
+        case 'ArrowLeft':
+            skip(-10);
+            break;
+        case 'ArrowRight':
+            skip(10);
+            break;
+    }
 });
 
 // Function to plot fixations on a separate graph. May refactor later to add them onto an existing graph

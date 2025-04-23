@@ -1,4 +1,4 @@
-# All of the code in this file is our own, apart from some pldata functions, which have been credited below
+# All the code in this file is our own, apart from some pldata functions, which have been credited below
 
 import shutil
 from multiprocessing import Process, Manager
@@ -696,20 +696,7 @@ def generate_gaze_graph(filename_list):
         gaze_json = [json_left_timestamp, json_left_norm_pos_x, json_left_norm_pos_y, json_right_timestamp, json_right_norm_pos_x, json_right_norm_pos_y]
         return gaze_json
 
-def get_data_of_video(video_path:str) -> tuple[int, int, int]:
-    import cv2
-    print(video_path)
-    vcap = cv2.VideoCapture(video_path)
-    width = 0
-    height = 0
-    fps = 0
-    
-    if vcap.isOpened(): 
-        # get vcap property 
-        width  = vcap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
-        height = vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
-        fps = vcap.get(cv2.CAP_PROP_FPS)
-    return int(width), int(height), int(fps)
+
 
 # Loads the visualizer once files have been correctly uploaded
 def load_visualizer():
