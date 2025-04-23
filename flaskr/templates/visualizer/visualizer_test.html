@@ -1,0 +1,248 @@
+{% extends 'visualizer/base.jinja' %}
+
+{# {{ url_for('visualizer.fetch', filename='filename.mp4') }} #}
+
+{% block header %}
+    <h1>{% block title %}Visualizer{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="row g-4">
+        <!-- Videos Section -->
+        <div class="col-lg-7">
+            <div class="video_container mb-4 p-3 shadow-sm rounded-4 bg-light">
+                <div class="row g-3 align-items-center">
+                    <!-- World Video (Left) -->
+                    <div class="col-md-8 d-flex justify-content-center">
+                        <video id="worldvideo" class="world_video" width="640" height="480">
+                            <source src="{{ url_for('visualizer.fetch_test', filename='world.mp4') }}" type="video/mp4">
+                            Browser support failed.
+                        </video>
+                    </div>
+
+                    <!-- Eye Videos (Right) -->
+                    <div class="col-md-4 d-flex flex-column align-items-center gap-3">
+                        <video id="eye0video" class="eye_video" width="240" height="240">
+                            <source src="{{ url_for('visualizer.fetch_test', filename='eye0.mp4') }}" type="video/mp4">
+                            Browser support failed.
+                        </video>
+                        <video id="eye1video" class="eye_video" width="240" height="240">
+                            <source src="{{ url_for('visualizer.fetch_test', filename='eye1.mp4') }}" type="video/mp4">
+                            Browser support failed.
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Box -->
+            <div class="controls_container mt-4">
+                <div class="seek-container">
+                    <input type="text" class="video-times form-control" id="currentTime" readonly />
+                    <input type="range" class="seek-bar form-range" id="seek-bar" value="0" />
+                    <input type="text" class="video-times form-control" id="totalTime" readonly />
+                </div>
+                <div class="button_container d-flex justify-content-center">
+                    <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Rewind 10s" onclick="skip(-10)">
+                        <i class="material-symbols-rounded fs-4">fast_rewind</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2 mx-2" type="button" data-bs-toggle="tooltip" title="Play" onclick="play()">
+                        <i class="material-symbols-rounded fs-4">play_arrow</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Pause" onclick="pause()">
+                        <i class="material-symbols-rounded fs-4">pause</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2 mx-2" type="button" data-bs-toggle="tooltip" title="Stop" onclick="stop()">
+                        <i class="material-symbols-rounded fs-4">stop</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Forward 10s" onclick="skip(10)">
+                        <i class="material-symbols-rounded fs-4">fast_forward</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphs Section -->
+        <div class="col-lg-5">
+            <div class="graph_container">
+                <!-- Nav Tabs -->
+                <ul class="nav nav-pills nav-fill mb-3" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#linear_velocity_tab" role="tab">Linear Velocity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#angular_velocity_tab" role="tab">Angular Velocity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#gaze_tab" role="tab">Gaze</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#fixations_tab" role="tab">Fixations</a>
+                    </li>
+                </ul>
+
+                <!-- Tab Content (Graph Panels) -->
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="linear_velocity_tab" role="tabpanel">
+                        <div id="linear_velocity"></div>
+                    </div>
+                    <div class="tab-pane fade" id="angular_velocity_tab" role="tabpanel">
+                        <div id="angular_velocity"></div>
+                    </div>
+                    <div class="tab-pane fade" id="gaze_tab" role="tabpanel">
+                        <div id="gaze"></div>
+                    </div>
+                    <div class="tab-pane fade" id="fixations_tab" role="tabpanel">
+                        <div id="fixations"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%  block js %}
+    <!-- plotly, very important -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- local, visualizer -->
+    <script src="{{ url_for('static',filename='visualizer/js/graphs.js') }}"></script>
+    <script src="{{ url_for('static',filename='visualizer/js/videos.js') }}"></script>
+    <script type="text/javascript">
+        // Assigning variables passed in through render_template on the backend
+        var velocityTimestamps = {{velocity_timestamps | safe}};
+
+        var linear0 = {{linear_0 | safe}};
+        var linear1 = {{linear_1 | safe}};
+        var linear2 = {{linear_2 | safe}};
+
+        var angular0 = {{angular_0 | safe}};
+        var angular1 = {{angular_1 | safe}};
+        var angular2 = {{angular_2 | safe}};
+
+        var leftGazeTime = {{left_gaze_timestamps | safe}};
+        var leftNormX = {{left_norm_pos_x | safe}};
+        var leftNormY = {{left_norm_pos_y | safe}};
+
+        var rightGazeTime = {{right_gaze_timestamps | safe}};
+        var rightNormX = {{right_norm_pos_x | safe}};
+        var rightNormY = {{right_norm_pos_y | safe}};
+
+        // initial values
+        initTimelist = [velocityTimestamps[0], velocityTimestamps[1]];
+        initLinVel0 = [linear0[0], linear0[1]];
+        initLinVel1 = [linear1[0], linear1[1]];
+        initLinVel2 = [linear2[0], linear2[1]];
+
+        const trace1 = {
+            x: velocityTimestamps,
+            y: linear0,
+            mode: 'lines',
+            name: 'v0'
+        }
+        const trace2 = {
+            x: velocityTimestamps,
+            y: linear1,
+            mode: 'lines',
+            name: 'v1'
+        }
+        const trace3 = {
+            x: velocityTimestamps,
+            y: linear2,
+            mode: 'lines',
+            name: 'v2'
+        }
+
+        const linearData = [trace1, trace2, trace3];
+
+        const linearLayout = {
+            title: 'Linear Velocity v',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'v'},
+            height: 300,
+            width: 450
+        }
+
+        Plotly.plot('linear_velocity', linearData, linearLayout);
+
+        const trace4 = {
+            x: velocityTimestamps,
+            y: angular0,
+            mode: 'lines',
+            name: 'ω0'
+        }
+        const trace5 = {
+            x: velocityTimestamps,
+            y: angular1,
+            mode: 'lines',
+            name: 'ω1'
+        }
+        const trace6 = {
+            x: velocityTimestamps,
+            y: angular2,
+            mode: 'lines',
+            name: 'ω2'
+        }
+
+        const angularData = [trace4, trace5, trace6];
+
+        const angularLayout = {
+            title: 'Angular Velocity ω',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'ω'},
+            height: 300,
+            width: 450
+        }
+
+        Plotly.plot('angular_velocity', angularData, angularLayout);
+
+        const trace7 = {
+            x: leftGazeTime,
+            y: leftNormX,
+            mode: 'lines',
+            name: 'L Norm Pos X'
+        }
+
+        const trace8 = {
+            x: leftGazeTime,
+            y: leftNormY,
+            mode: 'lines',
+            name: 'L Norm Pos Y'
+        }
+
+        const trace9 = {
+            x: rightGazeTime,
+            y: rightNormX,
+            mode: 'lines',
+            name: 'R Norm Pos X'
+        }
+
+        const trace10 = {
+            x: rightGazeTime,
+            y: rightNormY,
+            mode: 'lines',
+            name: 'R Norm Pos Y'
+        }
+
+        const gazeData = [trace7, trace8, trace9, trace10];
+
+        const gazeLayout = {
+            title: 'Normalized Gaze Positions',
+            xaxis: {title: 'Time', range: [-2, 2]},
+            yaxis: {title: 'Position'},
+            height: 300,
+            width: 450
+        }
+
+        Plotly.plot('gaze', gazeData, gazeLayout);
+
+        const fixationLayout = {
+            title: 'Detected Fixations',
+            xaxis: {title: 'Time', range: [0, 10]},
+            yaxis: {title: 'Fixations'},
+            height: 300,
+            width: 450
+        }
+
+        Plotly.plot('fixations', null, fixationLayout);
+    </script>
+{% endblock %}

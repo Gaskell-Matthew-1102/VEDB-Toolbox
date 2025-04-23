@@ -43,7 +43,7 @@ def landing():
             flash("Passwords do not match.")
         else:
             # create user
-            user = User(username=register_form.username.data, email=register_form.email.data, password_hash=generate_password_hash(register_form.password.data), admin=is_first_user())
+            user = User(username=register_form.r_username.data, email=register_form.r_email.data, password_hash=generate_password_hash(register_form.r_password.data), admin=is_first_user())
             db.session.add(user)
             db.session.commit()
             flash("Success!")
