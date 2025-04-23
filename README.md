@@ -19,7 +19,7 @@ Now the Toolbox is ready to be run.
 ## Running the Toolbox
 In the same general directory, a file named 'run_me.py' can be found. This can be ran from the command line:
 ```
-python run_me.py
+python run.py
 ```
 The Toolbox is now locally accessible at http://127.0.0.1:5000. Navigating to this link in your browser (Chrome recommended) will bring you to the login page of the Toolbox.
 ## Using the Toolbox

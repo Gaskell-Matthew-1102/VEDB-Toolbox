@@ -1,122 +1,89 @@
-body {
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  background-color: #f4f5f7;
-  color: #212121;
-}
-
-.parent_container {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 20px;
-  gap: 200px;
-}
-
+/* General Video Container */
 .video_container {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 100%;
 }
 
-/* Box style for videos */
-.video-box {
-  background-color: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+.world_video {
+    max-width: 100%;
+    width: 640px;
+    height: 480px;
+    object-fit: contain;
+    border-radius: 12px;
 }
 
-#worldvideo {
-  width: 800px;
-  height: 600px;
+.eye_video {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 12px;
 }
 
-#eye0video,
-#eye1video {
-  width: 300px;
-  height: 300px;
+#eye0video {
+    transform: rotate(180deg);
 }
-
-.world_video_container,
-.eye_videos_container {
-  /* These are now handled by .video-box */
-  display: contents; /* Let .video-box manage the layout */
-}
-
-.graph_container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background-color: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/*.graph_container > div {*/
-/*  background-color: #fafafa;*/
-/*  border: 1px solid #e0e0e0;*/
-/*  border-radius: 4px;*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  padding: 2px;*/
-/*  width: auto; !* or auto depending on layout *!*/
-/*  height: auto;*/
-/*}*/
 
 /* Box style for controls */
 .controls_container {
-  padding: 20px;
-  text-align: center;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .seek-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
 .video-times {
-  width: 60px;
-  text-align: center;
+    width: 60px;
+    text-align: center;
 }
 
 .seek-bar {
-  width: 400px;
+    width: 400px;
 }
 
 .button_container {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
 .btn-icon {
-  background: none;
-  border: none;
-  padding: 12px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+    background: none;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .btn-icon:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
-.material-video {
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Graphs */
+.graph_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tab-pane > div {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center;     /* Vertically center */
 }

@@ -3,8 +3,8 @@
 #   User is to store user credentials returned from the auth0 json.
 #    - During use, the json is stored in the Flask session, so we can use that to creat queries
 #   SessionHistory stores a UUID as its PK, which corresponds to a subfolder in 'uploads'
-#	 - During use, files are uploaded to that directory
-#    - Files stay there, allowing the user to delete whole "sessions" at their discretion
+#	 - During use, files are uploaded to that directory and stay there
+#    - the user can delete whole "sessions" at their discretion (unimplemented!)
 
 # flask bits
 from flask_login import UserMixin

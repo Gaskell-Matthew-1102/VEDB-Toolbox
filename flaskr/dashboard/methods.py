@@ -1,5 +1,6 @@
 # written by leon, organized by brian
 # converted some of the routes' logic to methods
+# admin_required by brian
 
 # base
 import csv

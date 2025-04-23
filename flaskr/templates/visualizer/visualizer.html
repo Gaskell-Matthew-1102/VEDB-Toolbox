@@ -1,103 +1,103 @@
 {% extends 'visualizer/base.jinja' %}
 
+{# {{ url_for('visualizer.fetch', filename='filename.mp4') }} #}
+
 {% block header %}
-  <h1>{% block title %}Visualizer{% endblock %}</h1>
+    <h1>{% block title %}Visualizer{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-<div class="row g-4">
-    <!-- Videos Side-by-Side -->
-    <div class="col-lg-7">
-<div class="video_container">
-    <div class="video-box">
+    <div class="row g-4">
+        <!-- Videos Section -->
+        <div class="col-lg-7">
+            <div class="video_container mb-4 p-3 shadow-sm rounded-4 bg-light">
+                <div class="row g-3 align-items-center">
+                    <!-- World Video (Left) -->
+                    <div class="col-md-8 d-flex justify-content-center">
+                        <video id="worldvideo" class="world_video" width="640" height="480">
+                            <source src="{{ url_for('visualizer.fetch', filename='world.mp4') }}" type="video/mp4">
+                            Browser support failed.
+                        </video>
+                    </div>
 
-        <!-- World Video (Left) -->
-        <div class="world_video_container">
-            <video id="worldvideo" class="material-video" controls>
-                <source src="{{ url_for('visualizer.fetch', filename='world.mp4') }}" type="video/mp4">
-                Your browser does not support video.
-            </video>
+                    <!-- Eye Videos (Right) -->
+                    <div class="col-md-4 d-flex flex-column align-items-center gap-3">
+                        <video id="eye0video" class="eye_video" width="240" height="240">
+                            <source src="{{ url_for('visualizer.fetch', filename='eye0.mp4') }}" type="video/mp4">
+                            Browser support failed.
+                        </video>
+                        <video id="eye1video" class="eye_video" width="240" height="240">
+                            <source src="{{ url_for('visualizer.fetch', filename='eye1.mp4') }}" type="video/mp4">
+                            Browser support failed.
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Box -->
+            <div class="controls_container mt-4">
+                <div class="seek-container">
+                    <input type="text" class="video-times form-control" id="currentTime" readonly />
+                    <input type="range" class="seek-bar form-range" id="seek-bar" value="0" />
+                    <input type="text" class="video-times form-control" id="totalTime" readonly />
+                </div>
+                <div class="button_container d-flex justify-content-center">
+                    <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Rewind 10s" onclick="skip(-10)">
+                        <i class="material-symbols-rounded fs-4">fast_rewind</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2 mx-2" type="button" data-bs-toggle="tooltip" title="Play" onclick="play()">
+                        <i class="material-symbols-rounded fs-4">play_arrow</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Pause" onclick="pause()">
+                        <i class="material-symbols-rounded fs-4">pause</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2 mx-2" type="button" data-bs-toggle="tooltip" title="Stop" onclick="stop()">
+                        <i class="material-symbols-rounded fs-4">stop</i>
+                    </button>
+                    <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Forward 10s" onclick="skip(10)">
+                        <i class="material-symbols-rounded fs-4">fast_forward</i>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Eye Videos (Right) -->
-        <div class="eye_videos_container d-flex flex-column align-items-center gap-3">
-            <video id="eye0video" class="material-video" controls>
-                <source src="{{ url_for('visualizer.fetch', filename='eye0.mp4') }}" type="video/mp4">
-                Your browser does not support video.
-            </video>
-            <video id="eye1video" class="material-video" controls>
-                <source src="{{ url_for('visualizer.fetch', filename='eye1.mp4') }}" type="video/mp4">
-                Your browser does not support video.
-            </video>
-        </div>
+        <!-- Graphs Section -->
+        <div class="col-lg-5">
+            <div class="graph_container">
+                <!-- Nav Tabs -->
+                <ul class="nav nav-pills nav-fill mb-3" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#linear_velocity_tab" role="tab">Linear Velocity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#angular_velocity_tab" role="tab">Angular Velocity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#gaze_tab" role="tab">Gaze</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#fixations_tab" role="tab">Fixations</a>
+                    </li>
+                </ul>
 
-    </div>
-</div>
-
-    <!-- Controls Box -->
-    <div class="controls_container mt-4">
-        <div class="seek-container">
-        <input type="text" class="video-times form-control" id="currentTime" readonly>
-        <input type="range" class="seek-bar form-range" id="seek-bar" value="0">
-        <input type="text" class="video-times form-control" id="totalTime" readonly>
-        </div>
-        <div class="button_container d-flex justify-content-center">
-        <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Rewind 10s" onclick="skip(-10)">
-            <i class="material-symbols-rounded fs-4">fast_rewind</i>
-        </button>
-        <button class="btn btn-outline-dark rounded-circle p-2 mx-2" type="button" data-bs-toggle="tooltip" title="Play" onclick="play()">
-            <i class="material-symbols-rounded fs-4">play_arrow</i>
-        </button>
-        <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Pause" onclick="pause()">
-            <i class="material-symbols-rounded fs-4">pause</i>
-        </button>
-        <button class="btn btn-outline-dark rounded-circle p-2 mx-2" type="button" data-bs-toggle="tooltip" title="Stop" onclick="stop()">
-            <i class="material-symbols-rounded fs-4">stop</i>
-        </button>
-        <button class="btn btn-outline-dark rounded-circle p-2" type="button" data-bs-toggle="tooltip" title="Forward 10s" onclick="skip(10)">
-            <i class="material-symbols-rounded fs-4">fast_forward</i>
-        </button>
+                <!-- Tab Content (Graph Panels) -->
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="linear_velocity_tab" role="tabpanel">
+                        <div id="linear_velocity"></div>
+                    </div>
+                    <div class="tab-pane fade" id="angular_velocity_tab" role="tabpanel">
+                        <div id="angular_velocity"></div>
+                    </div>
+                    <div class="tab-pane fade" id="gaze_tab" role="tabpanel">
+                        <div id="gaze"></div>
+                    </div>
+                    <div class="tab-pane fade" id="fixations_tab" role="tabpanel">
+                        <div id="fixations"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
-
-    <!-- Graphs -->
-<div class="col-lg-5">
-  <div class="graph_container">
-    <!-- Nav Tabs -->
-    <ul class="nav nav-pills nav-fill mb-3" role="tablist">
-      <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#linear_velocity_tab" role="tab">Linear Velocity</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#angular_velocity_tab" role="tab">Angular Velocity</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#gaze_tab" role="tab">Gaze</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#fixations_tab" role="tab">Fixations</a>
-      </li>
-    </ul>
-
-    <!-- Tab Content (Graph Panels) -->
-    <div class="tab-content">
-      <div class="tab-pane fade show active" id="linear_velocity_tab" role="tabpanel">
-        <div id="linear_velocity"></div>
-      </div>
-      <div class="tab-pane fade" id="angular_velocity_tab" role="tabpanel">
-        <div id="angular_velocity"></div>
-      </div>
-      <div class="tab-pane fade" id="gaze_tab" role="tabpanel">
-        <div id="gaze"></div>
-      </div>
-      <div class="tab-pane fade" id="fixations_tab" role="tabpanel">
-        <div id="fixations"></div>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {%  block js %}
@@ -105,12 +105,9 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <!-- local, visualizer -->
-    <script src="{{ url_for('static',filename='visualizer/js/visualizer.js') }}"></script>
+    <script src="{{ url_for('static',filename='visualizer/js/graphs.js') }}"></script>
+    <script src="{{ url_for('static',filename='visualizer/js/videos.js') }}"></script>
     <script type="text/javascript">
-        // var linear_graph = {{linear_vel_JSON | safe}};
-        // var angular_graph = {{angular_vel_JSON | safe}};
-        // var gaze_graph = {{gaze_JSON | safe}}
-
         // Assigning variables passed in through render_template on the backend
         var velocityTimestamps = {{velocity_timestamps | safe}};
 
@@ -129,10 +126,6 @@
         var rightGazeTime = {{right_gaze_timestamps | safe}};
         var rightNormX = {{right_norm_pos_x | safe}};
         var rightNormY = {{right_norm_pos_y | safe}};
-
-        // Plotly.plot("linear_velocity", linear_graph, {});
-        // Plotly.plot("angular_velocity", angular_graph, {});
-        // Plotly.plot("gaze", gaze_graph, {});
 
         // initial values
         initTimelist = [velocityTimestamps[0], velocityTimestamps[1]];

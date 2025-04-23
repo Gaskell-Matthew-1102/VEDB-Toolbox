@@ -51,6 +51,7 @@ def adduser():
 
 @blueprint.route("/deleteuser", methods=["GET", "POST"])
 @login_required
+@admin_required
 def deleteuser():
     deleting = request.form.get('user_to_delete', "")
     foundUser = User.query.with_entities(User.id).filter_by(username=deleting).all()
@@ -109,5 +110,8 @@ def csvupload():
     return render_dashboard("", "reset", rejectFlag, rejectedNumber=rejectCount, totalNumber=userCount)
     #i haven't even watched the minecraft movie but these sound bits are rotting my brain as we speak
 
+# @blueprint.route("/edituser", methods=["GET", "POST"])
+# @login_required
+# @admin_required
 # def edituser():
 # will be used later for when editing an already existing user

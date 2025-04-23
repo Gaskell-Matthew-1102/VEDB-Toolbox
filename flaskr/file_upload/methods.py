@@ -49,12 +49,12 @@ def files_exist(upload_path, allowed_extensions=None):
                 return True
     return False
 
-# renames eye0*.mp4 to eye0.mp4, and so forth to make it easier for us to use
+# renames *eye0*.mp4 to eye0.mp4, and so forth to make it easier for us to use
 def normalize_video_filenames(upload_path):
     filename_map = {
-        'eye0': re.compile(r'^eye0.*\.mp4$', re.IGNORECASE),
-        'eye1': re.compile(r'^eye1.*\.mp4$', re.IGNORECASE),
-        'world': re.compile(r'^world.*\.mp4$', re.IGNORECASE),
+        'eye0': re.compile(r'^.*eye0.*\.mp4$', re.IGNORECASE),
+        'eye1': re.compile(r'^.*eye1.*\.mp4$', re.IGNORECASE),
+        'world': re.compile(r'^.*world.*\.mp4$', re.IGNORECASE),
     }
 
     for target_name, pattern in filename_map.items():
