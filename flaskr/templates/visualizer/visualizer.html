@@ -9,29 +9,31 @@
 <div class="row g-4">
     <!-- Videos Side-by-Side -->
     <div class="col-lg-7">
+<div class="video_container">
     <div class="video-box">
-        <div class="row">
+
         <!-- World Video (Left) -->
-        <div class="col-md-8 d-flex justify-content-center align-items-center">
-            <video id="worldvideo" width="{{ world_frame_width }}" height="{{ world_frame_height }}">
-            <source src="{{ world_path }}" type="video/mp4">
-            Your browser does not support video.
+        <div class="world_video_container">
+            <video id="worldvideo" class="material-video" controls>
+                <source src="{{ url_for('visualizer.fetch', filename='world.mp4') }}" type="video/mp4">
+                Your browser does not support video.
             </video>
         </div>
 
         <!-- Eye Videos (Right) -->
-        <div class="col-md-4 d-flex flex-column justify-content-center align-items-center gap-3">
-            <video id="eye0video" width="{{ eye_frame_width }}" height="{{ eye_frame_height }}">
-                <source src="{{ eye0_path }}" type="video/mp4">
+        <div class="eye_videos_container d-flex flex-column align-items-center gap-3">
+            <video id="eye0video" class="material-video" controls>
+                <source src="{{ url_for('visualizer.fetch', filename='eye0.mp4') }}" type="video/mp4">
                 Your browser does not support video.
             </video>
-            <video id="eye1video" width="{{ eye_frame_width }}" height="{{ eye_frame_height }}">
-                <source src="{{ eye1_path }}" type="video/mp4">
+            <video id="eye1video" class="material-video" controls>
+                <source src="{{ url_for('visualizer.fetch', filename='eye1.mp4') }}" type="video/mp4">
                 Your browser does not support video.
             </video>
         </div>
-        </div>
+
     </div>
+</div>
 
     <!-- Controls Box -->
     <div class="controls_container mt-4">

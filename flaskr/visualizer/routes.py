@@ -5,7 +5,7 @@ import os
 
 # flask and its plugins
 from flask import render_template, session, redirect, send_from_directory
-from flask_login import current_user, login_required
+from flask_login import login_required
 
 # pip
 import plotly.io as pio
@@ -60,9 +60,6 @@ def visualizer():
     # start_fixation_algorithm(fix_det_args)
 
     return render_template("visualizer/visualizer.html",
-                           eye0_path=eye0_path,
-                           eye1_path=eye1_path,
-                           world_path=world_path,
                            world_frame_width=world_frame_width, world_frame_height=world_frame_height,
                            eye_frame_width=eye_frame_width, eye_frame_height=eye_frame_height,
 
@@ -72,6 +69,13 @@ def visualizer():
                            left_gaze_timestamps=gaze_data[0], left_norm_pos_x=gaze_data[1], left_norm_pos_y=gaze_data[2],
                            right_gaze_timestamps=gaze_data[3], right_norm_pos_x=gaze_data[4], right_norm_pos_y=gaze_data[5]
                            )
+
+@blueprint.route('/fetch/<filename>')
+@login_required
+def fetch(filename):
+    fixed_path = os.path.join('..', UPLOAD_FOLDER)
+    session_root = os.path.join(fixed_path, session['upload_uuid'])
+    return send_from_directory(session_root, filename)
 
 @blueprint.route("/download")
 @login_required
@@ -91,10 +95,7 @@ def download_graphs():
         pio.write_image(linear_graph, "images/linear_graph" + str(fig_numbers[0]) + ".png")
         pio.write_image(angular_graph, "images/angular_graph" + str(fig_numbers[1]) + ".png")
 
-@blueprint.route('/uploads/<uuid>/<filename>')
-@login_required
-def uploaded_file(uuid, filename):
-    return send_from_directory(os.path.join(UPLOAD_FOLDER, uuid), filename)
+
 
 @blueprint.route("/return_to_file_upload")
 @login_required

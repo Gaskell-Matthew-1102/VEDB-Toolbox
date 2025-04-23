@@ -28,6 +28,18 @@ body {
   display: flex;
   justify-content: center;
   gap: 20px;
+  flex-wrap: wrap;
+}
+
+#worldvideo {
+  width: 800px;
+  height: 600px;
+}
+
+#eye0video,
+#eye1video {
+  width: 300px;
+  height: 300px;
 }
 
 .world_video_container,

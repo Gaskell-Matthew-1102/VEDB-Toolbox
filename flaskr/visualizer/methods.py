@@ -156,7 +156,7 @@ def generate_gaze_graph(filename_list):
         #     left_timestamps.append(value - left_first_timestamp)
         counter = 0
         for value in left_gaze['norm_pos']:
-            if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
+            if 1.0 > value[0] > -0.1 and 1.0 > value[1] > -0.1:
                 left_norm_pos_x.append(value[0])
                 left_norm_pos_y.append(value[1])
                 left_timestamps.append(left_gaze['timestamp'][counter] - left_first_timestamp)
@@ -167,7 +167,7 @@ def generate_gaze_graph(filename_list):
         #     right_timestamps.append(value - right_first_timestamp)
         counter = 0
         for value in  right_gaze['norm_pos']:
-            if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
+            if 1.0 > value[0] > -0.1 and 1.0 > value[1] > -0.1:
                 right_norm_pos_x.append(value[0])
                 right_norm_pos_y.append(value[1])
                 right_timestamps.append(right_gaze['timestamp'][counter] - right_first_timestamp)
