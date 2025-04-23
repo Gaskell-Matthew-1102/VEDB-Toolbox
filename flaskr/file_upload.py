@@ -642,14 +642,40 @@ def generate_velocity_graphs(filename_list: list[str]):
 
 # This function samples timestamps from the world camera and then down-samples the eye camera videos to those times for syncing
 def closest(world_time, eye0_time, eye1_time):
+    world_time_values = np.load(world_time)
+    world_time_list = world_time_values.tolist()
+    eye0_time_values = np.load(eye0_time)
+    eye0_time_list = eye0_time_values.tolist()
+    eye1_time_values = np.load(eye1_time)
+    eye1_time_list = eye1_time_values.tolist()
+
     new_eye0 = []
     new_eye1 = []
-    for value in world_time:
-        # I sourced this code here: https://stackoverflow.com/questions/12141150/from-list-of-integers-get-number-closest-to-a-given-value
-        closest_eye0 = min(eye0_time, key = lambda x:abs(x - value))
-        new_eye0.append(closest_eye0)
-        closest_eye1 = min(eye1_time, key=lambda x: abs(x - value))
-        new_eye1.append(closest_eye1)
+
+    #Technically the correct way to do this, IT IS SO SLOW
+    # for value in world_time_list:
+    #     # I sourced this code here: https://stackoverflow.com/questions/12141150/from-list-of-integers-get-number-closest-to-a-given-value
+    #     closest_eye0 = min(eye0_time_list, key = lambda x:abs(x - value))
+    #     new_eye0.append(closest_eye0 - world_time_list[0])
+    #     closest_eye1 = min(eye1_time_list, key=lambda x: abs(x - value))
+    #     new_eye1.append(closest_eye1- world_time_list[0])
+    # print(len(eye0_time_list)) #80 some thousand
+    # print(len(eye1_time_list)) #80 some thousand
+    # print(len(world_time_list)) #20 some thousand
+
+    counter = 0
+    closest_eye0 = min(eye0_time_list, key = lambda x:abs(x - world_time_list[0]))
+    closest_eye1 = min(eye1_time_list, key=lambda x: abs(x - world_time_list[0]))
+    # This is a little bit of a fudged method but SIGNIFICANTLY quicker, and not too far off
+    for i in range(len(eye0_time_list)):
+        if eye0_time_values[i] < closest_eye0 and eye1_time_values[i] < closest_eye1:
+            pass
+        elif counter % 4 == 0:
+            new_eye0.append(eye0_time_values[i])
+            new_eye1.append(eye1_time_values[i])
+        counter = counter + 1
+    # print(len(new_eye0)) # 20 some thousand, a little more than world times but not far off, should work
+    # print(len(new_eye1)) # same as above
     return new_eye0, new_eye1
 
 def generate_gaze_graph(filename_list):
@@ -679,22 +705,22 @@ def generate_gaze_graph(filename_list):
     #     left_timestamps.append(value - left_first_timestamp)
     counter = 0
     for value in left_gaze['norm_pos']:
-        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
+        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1 and left_gaze['timestamp'][counter] - first_timestamp > 0:
             left_norm_pos_x.append(value[0])
             left_norm_pos_y.append(value[1])
             left_timestamps.append(left_gaze['timestamp'][counter] - first_timestamp)
-            counter = counter + 1
+        counter = counter + 1
 
     # right_first_timestamp = right_gaze['timestamp'][0]
     # for value in  right_gaze['timestamp']:
     #     right_timestamps.append(value - right_first_timestamp)
     counter = 0
     for value in  right_gaze['norm_pos']:
-        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
+        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1 and right_gaze['timestamp'][counter] - first_timestamp > 0:
             right_norm_pos_x.append(value[0])
             right_norm_pos_y.append(value[1])
             right_timestamps.append(right_gaze['timestamp'][counter] - first_timestamp)
-            counter = counter + 1
+        counter = counter + 1
 
     # NON DOWN SAMPLED TIMESTAMPS (around 82000 left or 78000 right), removed <0 and >1, i think those are out of bounds
     # json_left_timestamp = dumps(left_timestamps)
@@ -755,6 +781,8 @@ def load_visualizer():
                 file_to_graph = "world_timestamps.npy"
                 files_to_graph.append(file_to_graph)
             gaze_data = generate_gaze_graph(files_to_graph)
+
+            closest("world_timestamps.npy", "eye0_timestamps.npy", "eye1_timestamps.npy")
 
             return render_template("visualizer/visualizer.html", velocity_timestamps = vel_data[0], linear_0 = vel_data[1],
                                    linear_1 = vel_data[2], linear_2 = vel_data[3], angular_0 = vel_data[4], angular_1 = vel_data[5], angular_2 = vel_data[6],
