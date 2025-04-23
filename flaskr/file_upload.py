@@ -2,6 +2,7 @@
 
 import shutil
 
+import cv2
 from flask import *
 import atexit
 import os
@@ -671,12 +672,61 @@ def closest(world_time, eye0_time, eye1_time):
         if eye0_time_values[i] < closest_eye0 and eye1_time_values[i] < closest_eye1:
             pass
         elif counter % 4 == 0:
-            new_eye0.append(eye0_time_values[i])
-            new_eye1.append(eye1_time_values[i])
+            new_eye0.append(eye0_time_values[i] - world_time_list[0])
+            new_eye1.append(eye1_time_values[i] - world_time_list[0])
         counter = counter + 1
     # print(len(new_eye0)) # 20 some thousand, a little more than world times but not far off, should work
     # print(len(new_eye1)) # same as above
+    for i in range(5):
+        print(new_eye0[i])
+    for i in range(5):
+        print(new_eye1[i])
     return new_eye0, new_eye1
+
+def down_sample_fps(e0_time, e1_time):
+    e0_file = "flaskr/static/eye0.mp4"
+    e1_file = "flaskr/static/eye1.mp4"
+    new_e0_file = "flaskr/static/30fps_eye0.mp4"
+    new_e1_file = "flaskr/static/30fps_eye1.mp4"
+
+    video_width = 400
+    video_height = 400
+    target_fps = 30
+
+    e0_cap = cv2.VideoCapture(e0_file)
+    e1_cap = cv2.VideoCapture(e1_file)
+
+    # https://stackoverflow.com/questions/30103077/what-is-the-codec-for-mp4-videos-in-python-opencv
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    e0_out = cv2.VideoWriter(new_e0_file, fourcc, target_fps, (video_width, video_height))
+    e1_out = cv2.VideoWriter(new_e1_file, fourcc, target_fps, (video_width, video_height))
+
+    test_counter = 0
+    for tyme in e0_time:
+        if tyme > 0:
+            e0_cap.set(cv2.CAP_PROP_POS_FRAMES, tyme*1000)
+            ret, frame = e0_cap.read()
+            if ret:
+                test_counter = test_counter + 1
+                e0_out.write(frame)
+            else:
+                pass
+                # print("FAILED")
+
+    test_counter2 = 0
+    for tyme in e1_time:
+        if tyme > 0:
+            e1_cap.set(cv2.CAP_PROP_POS_FRAMES, tyme*1000)
+            ret, frame = e1_cap.read()
+            if ret:
+                test_counter2 = test_counter2 + 1
+                e1_out.write(frame)
+            else:
+                pass
+                # print("FAILED")
+
+    print(test_counter)
+    print(test_counter2)
 
 def generate_gaze_graph(filename_list):
     for filename in filename_list:
@@ -782,7 +832,8 @@ def load_visualizer():
                 files_to_graph.append(file_to_graph)
             gaze_data = generate_gaze_graph(files_to_graph)
 
-            closest("world_timestamps.npy", "eye0_timestamps.npy", "eye1_timestamps.npy")
+            # fps30_0list, fps30_1list = closest("world_timestamps.npy", "eye0_timestamps.npy", "eye1_timestamps.npy")
+            # down_sample_fps(fps30_0list, fps30_1list)
 
             return render_template("visualizer/visualizer.html", velocity_timestamps = vel_data[0], linear_0 = vel_data[1],
                                    linear_1 = vel_data[2], linear_2 = vel_data[3], angular_0 = vel_data[4], angular_1 = vel_data[5], angular_2 = vel_data[6],
