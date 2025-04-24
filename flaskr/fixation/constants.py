@@ -14,7 +14,7 @@ POLYNOMIAL_GRADE = 3
 # adaptive threshold (5, 6, 7)
 MIN_VEL_THRESH = 750                # pixels/sec      OLD WAS 750, 700 for fallback
 GAIN_FACTOR = 0.8
-ADAP_WINDOW_SIZE_MS = 200           # milliseconds      200ms for fallback option
+ADAP_WINDOW_SIZE_MS = 300           # milliseconds      200ms for fallback option
 
 # filters (9, 10)
 MIN_SACCADE_AMP_DEG = 1.0           # degrees
