@@ -36,9 +36,9 @@ def render_dashboard(search_filter, search_type, warning, **kwargs):
 ### used to be accountManagement.py
 def upload_user(uploaded_data):  #Uploading a single user
     if uploaded_data[3] == "on" or uploaded_data[3] == "true":
-        user = User(username=uploaded_data[0], email=uploaded_data[1], password=generate_password_hash(uploaded_data[2]), admin=True)
+        user = User(username=uploaded_data[0], email=uploaded_data[1], password_hash=generate_password_hash(uploaded_data[2]), admin=True)
     else:
-        user = User(username=uploaded_data[0], email=uploaded_data[1], password=generate_password_hash(uploaded_data[2]), admin=False)
+        user = User(username=uploaded_data[0], email=uploaded_data[1], password_hash=generate_password_hash(uploaded_data[2]), admin=False)
     
     # write to DB
     db.session.add(user)
