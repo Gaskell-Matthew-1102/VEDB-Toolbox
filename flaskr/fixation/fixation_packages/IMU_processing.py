@@ -59,6 +59,10 @@ class IMU_Processor:
         out = (2 * log_q_delta.imag) / delta_time
         return out
     
+    def get_zero_start_timestamp_list(self):
+        first_timestamp = self.IMU_stream_data[0]['timestamp']
+        return [self.IMU_stream_data[i]['timestamp']-first_timestamp for i in range(self.current_sample_idx-1)]
+
     def get_time_at(self, sample_idx):
         return self.IMU_stream_data[sample_idx]['timestamp']
     

@@ -172,3 +172,5 @@ cython_debug/
 
 # User-uploaded files produced by the application
 uploads/
+
+flaskr/fixation/test_data/.
