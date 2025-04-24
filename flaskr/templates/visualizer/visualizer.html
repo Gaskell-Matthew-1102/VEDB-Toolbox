@@ -64,34 +64,33 @@
         <!-- Graphs Section -->
         <div class="col-lg-5">
             <div class="graph_container">
-                <!-- Nav Tabs -->
-                <ul class="nav nav-pills nav-fill mb-3" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#linear_velocity_tab" role="tab">Linear Velocity</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#angular_velocity_tab" role="tab">Angular Velocity</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#gaze_tab" role="tab">Gaze</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#fixations_tab" role="tab">Fixations</a>
-                    </li>
-                </ul>
+                <!-- Checkbox Buttons -->
+                <div class="btn-group mb-3" role="group" aria-label="Graph toggle buttons">
+                        <input type="checkbox" class="btn-check" id="toggle_linear" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="toggle_linear">Linear Velocity</label>
+                    
+                        <input type="checkbox" class="btn-check" id="toggle_angular" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="toggle_angular">Angular Velocity</label>
+                    
+                        <input type="checkbox" class="btn-check" id="toggle_gaze" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="toggle_gaze">Gaze</label>
+                    
+                        <input type="checkbox" class="btn-check" id="toggle_fixations" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="toggle_fixations">Fixations</label>
+                </div>
 
                 <!-- Tab Content (Graph Panels) -->
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="linear_velocity_tab" role="tabpanel">
+                <div class="graph_panels">
+                    <div class="graph_panel" id="linear_velocity_tab">
                         <div id="linear_velocity"></div>
                     </div>
-                    <div class="tab-pane fade" id="angular_velocity_tab" role="tabpanel">
+                    <div class="graph_panel" id="angular_velocity_tab" style="display: none;">
                         <div id="angular_velocity"></div>
                     </div>
-                    <div class="tab-pane fade" id="gaze_tab" role="tabpanel">
+                    <div class="graph_panel" id="gaze_tab" style="display: none;">
                         <div id="gaze"></div>
                     </div>
-                    <div class="tab-pane fade" id="fixations_tab" role="tabpanel">
+                    <div class="graph_panel" id="fixations_tab" style="display: none;">
                         <div id="fixations"></div>
                     </div>
                 </div>

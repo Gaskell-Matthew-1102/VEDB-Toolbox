@@ -14,22 +14,22 @@
                 <div class="row g-3 align-items-center">
                     <!-- World Video (Left) -->
                     <div class="col-md-8 d-flex justify-content-center">
-                        <video id="worldvideo" class="world_video" width="640" height="480">
+                        <!-- <video id="worldvideo" class="world_video" width="640" height="480">
                             <source src="{{ url_for('visualizer.fetch_test', filename='world.mp4') }}" type="video/mp4">
                             Browser support failed.
-                        </video>
+                        </video> -->
                     </div>
 
                     <!-- Eye Videos (Right) -->
                     <div class="col-md-4 d-flex flex-column align-items-center gap-3">
-                        <video id="eye0video" class="eye_video" width="240" height="240">
+                        <!-- <video id="eye0video" class="eye_video" width="240" height="240">
                             <source src="{{ url_for('visualizer.fetch_test', filename='eye0.mp4') }}" type="video/mp4">
                             Browser support failed.
                         </video>
                         <video id="eye1video" class="eye_video" width="240" height="240">
                             <source src="{{ url_for('visualizer.fetch_test', filename='eye1.mp4') }}" type="video/mp4">
                             Browser support failed.
-                        </video>
+                        </video> -->
                     </div>
                 </div>
             </div>
@@ -64,34 +64,33 @@
         <!-- Graphs Section -->
         <div class="col-lg-5">
             <div class="graph_container">
-                <!-- Nav Tabs -->
-                <ul class="nav nav-pills nav-fill mb-3" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#linear_velocity_tab" role="tab">Linear Velocity</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#angular_velocity_tab" role="tab">Angular Velocity</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#gaze_tab" role="tab">Gaze</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#fixations_tab" role="tab">Fixations</a>
-                    </li>
-                </ul>
+                <!-- Checkbox Buttons -->
+                <div class="btn-group mb-3" role="group" aria-label="Graph toggle buttons">
+                        <input type="checkbox" class="btn-check" id="toggle_linear" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="toggle_linear">Linear Velocity</label>
+                    
+                        <input type="checkbox" class="btn-check" id="toggle_angular" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="toggle_angular">Angular Velocity</label>
+                    
+                        <input type="checkbox" class="btn-check" id="toggle_gaze" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="toggle_gaze">Gaze</label>
+                    
+                        <input type="checkbox" class="btn-check" id="toggle_fixations" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="toggle_fixations">Fixations</label>
+                </div>
 
                 <!-- Tab Content (Graph Panels) -->
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="linear_velocity_tab" role="tabpanel">
+                <div class="graph_panels">
+                    <div class="graph_panel" id="linear_velocity_tab">
                         <div id="linear_velocity"></div>
                     </div>
-                    <div class="tab-pane fade" id="angular_velocity_tab" role="tabpanel">
+                    <div class="graph_panel" id="angular_velocity_tab" style="display: none;">
                         <div id="angular_velocity"></div>
                     </div>
-                    <div class="tab-pane fade" id="gaze_tab" role="tabpanel">
+                    <div class="graph_panel" id="gaze_tab" style="display: none;">
                         <div id="gaze"></div>
                     </div>
-                    <div class="tab-pane fade" id="fixations_tab" role="tabpanel">
+                    <div class="graph_panel" id="fixations_tab" style="display: none;">
                         <div id="fixations"></div>
                     </div>
                 </div>
@@ -156,10 +155,9 @@
 
         const linearLayout = {
             title: 'Linear Velocity v',
-            xaxis: {title: 'Time', range: [-2, 2]},
+            xaxis: {title: 'Time t (s)', range: [-2, 2]},
             yaxis: {title: 'v'},
-            height: 300,
-            width: 450
+            autosize: true
         }
 
         Plotly.plot('linear_velocity', linearData, linearLayout);
@@ -187,7 +185,7 @@
 
         const angularLayout = {
             title: 'Angular Velocity ω',
-            xaxis: {title: 'Time', range: [-2, 2]},
+            xaxis: {title: 'Time t (s)', range: [-2, 2]},
             yaxis: {title: 'ω'},
             height: 300,
             width: 450
@@ -227,7 +225,7 @@
 
         const gazeLayout = {
             title: 'Normalized Gaze Positions',
-            xaxis: {title: 'Time', range: [-2, 2]},
+            xaxis: {title: 'Time t (s)', range: [-2, 2]},
             yaxis: {title: 'Position'},
             height: 300,
             width: 450
@@ -237,7 +235,7 @@
 
         const fixationLayout = {
             title: 'Detected Fixations',
-            xaxis: {title: 'Time', range: [0, 10]},
+            xaxis: {title: 'Time t (s)', range: [0, 10]},
             yaxis: {title: 'Fixations'},
             height: 300,
             width: 450
@@ -245,4 +243,23 @@
 
         Plotly.plot('fixations', null, fixationLayout);
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const toggles = [
+            { btn: "toggle_linear", panel: "linear_velocity_tab" },
+            { btn: "toggle_angular", panel: "angular_velocity_tab" },
+            { btn: "toggle_gaze", panel: "gaze_tab" },
+            { btn: "toggle_fixations", panel: "fixations_tab" },
+          ];
+      
+          toggles.forEach(({ btn, panel }) => {
+            const checkbox = document.getElementById(btn);
+            const panelEl = document.getElementById(panel);
+      
+            checkbox.addEventListener("change", () => {
+              panelEl.style.display = checkbox.checked ? "block" : "none";
+            });
+          });
+        });
+      </script>
 {% endblock %}

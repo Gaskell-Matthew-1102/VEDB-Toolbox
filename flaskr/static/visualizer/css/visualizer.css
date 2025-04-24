@@ -82,7 +82,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.tab-pane > div {
+.graph_panel > div {
     display: flex;
     justify-content: center; /* Horizontally center */
     align-items: center;     /* Vertically center */

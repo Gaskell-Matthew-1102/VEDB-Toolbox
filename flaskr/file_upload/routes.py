@@ -74,7 +74,7 @@ def file_upload():
     # Handle visualizer button
     if visualizer_button.validate_on_submit() and visualizer_button.submit.data:
         # check if certain files are in the directory
-        required_files = ['odometry.pldata', 'gaze.npz']
+        required_files = ['odometry.pldata', 'gaze.npz', 'world_timestamps.npy']
         missing_files = [f for f in required_files if not os.path.isfile(os.path.join(request.upload_path, f))]
 
         if missing_files:
