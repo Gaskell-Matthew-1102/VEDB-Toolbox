@@ -32,10 +32,11 @@ def visualizer():
     eye1_path = os.path.join(upload_path, 'eye1.mp4')
     odo_pldata_path = os.path.join(upload_path, 'odometry.pldata')
     gaze_npz_path = os.path.join(upload_path, 'gaze.npz')
+    world_time_path = os.path.join(upload_path, 'world_timestamps.npy')
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
-    vel_data = generate_velocity_graphs([odo_pldata_path])
-    gaze_data = generate_gaze_graph([gaze_npz_path])
+    vel_data = generate_velocity_graphs([odo_pldata_path, world_time_path])
+    gaze_data = generate_gaze_graph([gaze_npz_path, world_time_path])
 
     # video manip., metadata
     world_frame_width, world_frame_height, world_fps = get_data_of_video(world_path)
