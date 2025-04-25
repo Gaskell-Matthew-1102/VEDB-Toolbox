@@ -1,3 +1,5 @@
+<!-- i would like to thank matt for the basic layout and javascript, and chatgpt for the bootstrap help - brian -->
+
 {% extends 'visualizer/base.jinja' %}
 
 {# {{ url_for('visualizer.fetch', filename='filename.mp4') }} #}
@@ -8,8 +10,9 @@
 
 {% block content %}
     <div class="row g-4">
-        <!-- Videos Section -->
-        <div class="col-lg-7">
+        <!-- video-controls section -->
+        <div class="col-lg-8">
+            <!-- Videos Section -->
             <div class="video_container mb-4 p-3 shadow-sm rounded-4 bg-light">
                 <div class="row g-3 align-items-center">
                     <!-- World Video (Left) -->
@@ -62,7 +65,7 @@
         </div>
 
         <!-- Graphs Section -->
-        <div class="col-lg-5">
+        <div class="col-lg-4">
             <div class="graph_container">
                 <!-- Checkbox Buttons -->
                 <div class="btn-group mb-3" role="group" aria-label="Graph toggle buttons">
@@ -157,7 +160,8 @@
             title: 'Linear Velocity v',
             xaxis: {title: 'Time t (s)', range: [-2, 2]},
             yaxis: {title: 'v'},
-            autosize: true
+            height: 300,
+            width: 450
         }
 
         Plotly.plot('linear_velocity', linearData, linearLayout);
