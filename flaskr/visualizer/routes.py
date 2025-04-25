@@ -46,7 +46,7 @@ def visualizer():
         print("More than one CSV file uploaded")
 
     # Start the fixation detection algorithm here
-    start_fixation_algorithm(odometry_file=odo_pldata_path, gaze_file=gaze_npz_path, world_video_file=world_path, csv_file=csv_path, eye0_file=eye0_path, eye1_file=eye1_path, in_args=???, )
+    # start_fixation_algorithm(odometry_file=odo_pldata_path, gaze_file=gaze_npz_path, world_video_file=world_path, csv_file=csv_path, eye0_file=eye0_path, eye1_file=eye1_path, in_args=???, )
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
     vel_data = generate_velocity_graphs([odo_pldata_path, world_time_path])
