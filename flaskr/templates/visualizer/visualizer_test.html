@@ -14,26 +14,22 @@
         <div class="col-lg-8">
             <!-- Videos Section -->
             <div class="video_container mb-4 p-3 shadow-sm rounded-4 bg-light">
-                <div class="row g-3 align-items-center">
-                    <!-- World Video (Left) -->
-                    <div class="col-md-8 d-flex justify-content-center">
-                        <!-- <video id="worldvideo" class="world_video" width="640" height="480">
-                            <source src="{{ url_for('visualizer.fetch_test', filename='world.mp4') }}" type="video/mp4">
-                            Browser support failed.
-                        </video> -->
-                    </div>
+                <div class="world_column">
+                    <video id="worldvideo" class="world_video">
+                        <source src="{{ url_for('visualizer.fetch_test', filename='world.mp4') }}" type="video/mp4">
+                        Browser support failed.
+                    </video>
+                </div>
 
-                    <!-- Eye Videos (Right) -->
-                    <div class="col-md-4 d-flex flex-column align-items-center gap-3">
-                        <!-- <video id="eye0video" class="eye_video" width="240" height="240">
-                            <source src="{{ url_for('visualizer.fetch_test', filename='eye0.mp4') }}" type="video/mp4">
-                            Browser support failed.
-                        </video>
-                        <video id="eye1video" class="eye_video" width="240" height="240">
-                            <source src="{{ url_for('visualizer.fetch_test', filename='eye1.mp4') }}" type="video/mp4">
-                            Browser support failed.
-                        </video> -->
-                    </div>
+                <div class="eye_column">
+                    <video id="eye0video" class="eye_video">
+                        <source src="{{ url_for('visualizer.fetch_test', filename='eye0.mp4') }}" type="video/mp4">
+                        Browser support failed.
+                    </video>
+                    <video id="eye1video" class="eye_video">
+                        <source src="{{ url_for('visualizer.fetch_test', filename='eye1.mp4') }}" type="video/mp4">
+                        Browser support failed.
+                    </video>
                 </div>
             </div>
 
