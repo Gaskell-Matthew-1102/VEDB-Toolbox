@@ -116,3 +116,7 @@ class TestSpatialAverage:
             spatial_average.linear_upsample_dataset(50, 200, [])
         assert str(excinfo.value) == "Empty vec_list"
     
+    def test_resample(self):
+        test_timestamps = (0, 0.25, 0.5, 0.75, 1)
+
+        out = spatial_average.resample()

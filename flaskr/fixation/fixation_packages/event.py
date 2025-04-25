@@ -72,6 +72,7 @@ class Event:
         return (self.type == value.type) and (self.start_time_s == value.start_time_s) and (self.end_time_s == value.end_time_s) and (np.array_equal(self.start_pos, value.start_pos)) and (np.array_equal(self.end_pos, value.end_pos))
     
 def classify_event(relative_gaze_velocity, threshold):
+    print("Relative gaze vel:", relative_gaze_velocity, "| Threshold:", threshold)
     if relative_gaze_velocity < threshold:
         return Event.Sample_Type.FIXATION
     else:

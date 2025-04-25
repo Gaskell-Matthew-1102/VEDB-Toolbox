@@ -47,7 +47,7 @@ except ModuleNotFoundError:
     except ModuleNotFoundError as e:
         raise e
 
-def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, desired_hz, eye_camera_width_px, eye_camera_height_px, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v, imu_flag, min_saccade_amp_deg, min_saccade_dur_ms, eye_hfov, min_fixation_dur_ms):
+def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, adaptive_thresh_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, desired_hz, eye_camera_width_px, eye_camera_height_px, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v, imu_flag, min_saccade_amp_deg, min_saccade_dur_ms, eye_hfov, min_fixation_dur_ms):
     import inspect
     frame = inspect.currentframe()
     args, _, _, values = inspect.getargvalues(frame)
@@ -70,6 +70,16 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     gaze_stream = (gaze_timestamp, raw_gaze_vec)
     resampled_gaze_timestamps, resampled_raw_gaze = fixation_packages.spatial_average.resample(gaze_stream, desired_hz)
 
+    print(1/np.median(np.diff(gaze_stream[0])))
+    print(gaze_stream[0][0:5])
+    print()
+    print(gaze_stream[1][0:20])
+    print()
+    print(1/np.median(np.diff(resampled_gaze_timestamps)))
+    print(resampled_gaze_timestamps[0:20])
+    print(resampled_raw_gaze[0:20])
+
+    # exit()
 
 
 
@@ -145,7 +155,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
         imu_processor = fixation_packages.IMU_processing.IMU_Processor(df, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v)
         global_OF_vec_list = []
         print(len(df))      # = 332691
-        for i in range(2500):      # passes here, crashes when len(df)-1
+        for i in range(len(df)-2):      # passes here, crashes when len(df)-1
             if i % 10000 == 0:
                 print(i)
             vec_list = imu_processor.compute_grid_rotational_flow(step=100)
@@ -187,8 +197,14 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
     optic_flow_stream = (global_OF_timestamps, global_OF_vec_list)
     new_vec_timestamps, new_vec_list = fixation_packages.spatial_average.resample(optic_flow_stream, desired_hz)
+    print(global_OF_timestamps[-1])
+    print(new_vec_timestamps[-1])
 
     ######## SANITY CHECK ########
+    print("Old vec timestamp len:", len(gaze_timestamp))
+    print("New vec timestamp len:", len(resampled_gaze_timestamps))
+    print("New vec timestamp len:", len(new_vec_timestamps))
+
     new_vec_rate = (1 / (np.median(np.diff(new_vec_timestamps))))
     new_gaze_rate = (1 / (np.median(np.diff(resampled_gaze_timestamps))))
     assert new_vec_rate - new_gaze_rate < 0.01
@@ -199,13 +215,16 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     v_rel, status_code = fixation_packages.adaptive_threshold.gaze_velocity_correction(v_hat, new_vec_list)
 
     # Step 6
-    samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(desired_hz, gaze_window_size_ms)
+    samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(desired_hz, adaptive_thresh_window_size_ms)
     v_thr_list = []
     for i in range(len(new_vec_list)- (samples_in_window-1) ):
         v_thr_list.append(fixation_packages.adaptive_threshold.calculate_v_thr(min_vel_thresh, gain_factor, new_vec_list, i, samples_in_window))
 
     # Begin classification
     temp_event_list = []
+    print("Len of v_rel:", len(v_rel))
+    print("Len of v_thr_list - 1:", len(v_thr_list)-1)
+    print("v_rel shape:", v_rel.shape)
     for sample_i in range(min(len(v_rel), len(v_thr_list))-1):
         rel_gaze_vel = np.linalg.norm(np.array([v_rel[sample_i][0], v_rel[sample_i][1]]))
 
@@ -244,10 +263,11 @@ def main():
            export_fixation_file_path="./fixation/export/export_fixation.json", 
            export_parameters_file_path="./fixation/export/export_parameters.txt" , 
            gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, 
-           polynomial_grade=POLYNOMIAL_GRADE, 
-           min_vel_thresh=MIN_VEL_THRESH, 
+           adaptive_thresh_window_size_ms=ADAP_WINDOW_SIZE_MS,
+           polynomial_grade=POLYNOMIAL_GRADE,
+           min_vel_thresh=MIN_VEL_THRESH,
            gain_factor=GAIN_FACTOR, 
-           desired_hz=200, 
+           desired_hz=25, 
            eye_camera_width_px=X_RES, 
            eye_camera_height_px=Y_RES, 
            world_camera_width=2048, 
@@ -265,6 +285,61 @@ def main():
     # npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_1.json", export_parameters_file_path="./fixation/export/export_imu1_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry2.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_2.json", export_parameters_file_path="./fixation/export/export_imu2_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     print("complete")
+
+
+"""
+Example input: 
+    {
+        "gaze_window_size" : "55",
+        "polynomial_grade" : 3,
+        ...
+    }
+"""
+def parse_viewer_arguments(arg_dict:dict) -> tuple:
+    """
+    Converts the argument dictionary passed from the viewer into the tuple form that the algorithm takes in.
+    """
+    try:
+        gaze_window_size_ms = arg_dict['gaze_window_size']
+        polynomial_grade = arg_dict['']
+        minimum_vel_thresh = arg_dict['']
+        gain = arg_dict['']
+        world_camera_fov_horizontal = arg_dict['']
+        world_camera_fov_vertical = arg_dict['']
+        min_saccade_amp_deg = arg_dict['']
+        min_saccade_dur_ms = arg_dict['']
+        min_fix_dur_ms = arg_dict['']
+        eye_horiz_fov = arg_dict['']
+    except Exception as e:
+        print("Unable to parse viewer arguments")
+        raise e
+    
+    args = (
+        "./fixation/test_data/viewer_input2/data/odometry.pldata", 
+        "./fixation/test_data/viewer_input2/data/gaze.npz", 
+        './fixation/test_data/viewer_input2/video/worldPrivate.mp4', 
+        "./fixation/export/export_fixation.json", 
+        "./fixation/export/export_parameters.txt" , 
+        gaze_window_size_ms, 
+        ADAP_WINDOW_SIZE_MS,
+        polynomial_grade, 
+        minimum_vel_thresh, 
+        gain, 
+        25, 
+        X_RES, 
+        Y_RES, 
+        2048, 
+        1536, 
+        90, 
+        90, 
+        False, 
+        min_saccade_amp_deg, 
+        min_saccade_dur_ms, 
+        eye_horiz_fov, 
+        min_fix_dur_ms
+    )
+    return args
+
 
 if __name__ == "__main__":
     print("Run in console from flaskr/ as:\npython -m fixation.main")

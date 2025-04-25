@@ -114,7 +114,7 @@ def resample(stream, target_hz):
 
     # New time grid
     num_samples = int(duration * target_hz)
-    new_timestamps = np.linspace(0, duration, num_samples, endpoint=False)
+    new_timestamps = np.linspace(0, duration, num_samples, endpoint=True)       # endpoint was originally False (changed 4/24)
 
     def resample_stream(t_orig, data_orig):
         return np.vstack([

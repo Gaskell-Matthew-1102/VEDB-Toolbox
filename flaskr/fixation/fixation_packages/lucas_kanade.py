@@ -91,14 +91,17 @@ def do_it(filepath: str, scale_factor: float):
         # if cv2.waitKey(30) & 0xFF == 27:
         #     break
         frame_count += 1
-        if frame_count == 2_500:
+        if frame_count == 125:
             break
         # if(frame_count % 100 == 0):
         #     print(frame_count)
     cap.release()
     cv2.destroyAllWindows()
 
-    timestamp_list = np.linspace(0, frame_count/FRAMERATE, frame_count, endpoint=False)
+
+    # 4/24 - The correct linspace is formed (2014.56) seconds is the final timestamp
+
+    timestamp_list = np.linspace(0, frame_count/FRAMERATE, frame_count, endpoint=True)
     return timestamp_list, vec_list
 
 if __name__ == '__main__':
