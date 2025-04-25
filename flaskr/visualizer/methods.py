@@ -15,11 +15,11 @@ import numpy as np
 import pandas as pd
 import cv2
 import plotly.io as pio
+import plotly.graph_objects as go
 
-# data manipulation
+# dataset manipulation
 # The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
-# of Paul MacNeilage's Self Motion Lab.
-# They work with the pldata files, turning them into readable format for our graphing code
+# of Paul MacNeilage's Self Motion Lab. They work with the pldata files, turning them into readable format for our graphing code
 def read_pldata(file_path):    
     try:
         with open(file_path, 'rb') as file:
@@ -62,56 +62,58 @@ def load_as_dict(path):
               params[k] = v
     return params
 
-# returning a number
 # Some data files in the VEDB record NANs when the hardware stops recording (for whatever reason)
 def count_nans(vel_list):
     nan_count = sum(1 for value in vel_list if isinstance(value, float) and math.isnan(value))
-    print("Nan Count Ratio:", nan_count / len(vel_list))
     print("Nan Count:", nan_count)
+    print("Nan Count Ratio:", nan_count / len(vel_list))
     return nan_count
 
-#Sourced dimension code from here https://stackoverflow.com/questions/7348505/get-dimensions-of-a-video-file
-def get_video_height(vid_file):
-    video_file = cv2.VideoCapture(vid_file)
-    height = video_file.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    video_file.release()
-    return height
+# videoset manipulation
+# return values
+def get_data_of_video(video_path: str) -> tuple[int, int, int]:
+    vcap = cv2.VideoCapture(video_path)
+    if not vcap.isOpened():
+        return 0, 0, 0
 
-def get_video_width(vid_file):
-    video_file = cv2.VideoCapture(vid_file)
-    width = video_file.get(cv2.CAP_PROP_FRAME_WIDTH)
-    video_file.release()
-    return width
+    return (
+        int(vcap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+        int(vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
+        int(vcap.get(cv2.CAP_PROP_FPS))
+    )
 
-def get_video_duration(vid_file):
-    video_file = cv2.VideoCapture(vid_file)
-    frame_rate = video_file.get(cv2.CAP_PROP_FPS)
-    frames = video_file.get(cv2.CAP_PROP_FRAME_COUNT)
-    video_file.release()
-    length = frames/frame_rate
-    return length
+# graph generation
+# velocity
 
-# generation
 def generate_velocity_graphs(filename_list: list[str]):
     # assuming either 1. both files exist, 2. neither file exists
     global graph_file_list
     for filename in filename_list:
-        data = read_pldata(filename)
-        df = pd.DataFrame(data)
-        linear_vel_0_list = []
-        linear_vel_1_list = []
-        linear_vel_2_list = []
+        if "world" in filename:
+            world_times = filename
+        elif "odometry" in filename:
+            odo = filename
 
-        angular_velocity_0_list = []
-        angular_velocity_1_list = []
-        angular_velocity_2_list = []
+    data = read_pldata(odo)
+    df = pd.DataFrame(data)
+    linear_vel_0_list = []
+    linear_vel_1_list = []
+    linear_vel_2_list = []
 
-        timestamp_list = []
-        first_timestamp = parse_pldata(df[1].iloc[0])['timestamp']
+    angular_velocity_0_list = []
+    angular_velocity_1_list = []
+    angular_velocity_2_list = []
 
-        for i in range(len(df)):
-            data_frame = parse_pldata(df[1].iloc[i])
+    timestamp_list = []
+    world_time_values = np.load(world_times)
+    world_time_list = world_time_values.tolist()
+    # first_timestamp = parse_pldata(df[1].iloc[0])['timestamp']
+    first_timestamp = world_time_list[0]
 
+    min_length = min(len(df), len(world_time_list))
+    for i in range(min_length):
+        data_frame = parse_pldata(df[1].iloc[i])
+        if data_frame['timestamp'] - first_timestamp >= 0:
             data_type_1 = 'linear_velocity_0'
             data_type_2 = 'linear_velocity_1'
             data_type_3 = 'linear_velocity_2'
@@ -131,85 +133,85 @@ def generate_velocity_graphs(filename_list: list[str]):
 
                 timestamp_list.append(data_frame['timestamp'] - first_timestamp)
 
-        json_timestamp = dumps(timestamp_list)
+    json_timestamp = dumps(timestamp_list)
 
-        json_lin0 = dumps(linear_vel_0_list)
-        json_lin1 = dumps(linear_vel_1_list)
-        json_lin2 = dumps(linear_vel_2_list)
+    json_lin0 = dumps(linear_vel_0_list)
+    json_lin1 = dumps(linear_vel_1_list)
+    json_lin2 = dumps(linear_vel_2_list)
 
-        json_ang0 = dumps(angular_velocity_0_list)
-        json_ang1 = dumps(angular_velocity_1_list)
-        json_ang2 = dumps(angular_velocity_2_list)
-        # i am leaving behind absolutely horrific legacy code
+    json_ang0 = dumps(angular_velocity_0_list)
+    json_ang1 = dumps(angular_velocity_1_list)
+    json_ang2 = dumps(angular_velocity_2_list)
+    # i am leaving behind absolutely horrific legacy code
 
-        json_list = [json_timestamp, json_lin0, json_lin1, json_lin2, json_ang0, json_ang1, json_ang2]
-        return json_list
-    return None
+    json_list = [json_timestamp, json_lin0, json_lin1, json_lin2, json_ang0, json_ang1, json_ang2]
+    return json_list
+
+# gaze graph
 
 def generate_gaze_graph(filename_list):
     for filename in filename_list:
-        gaze_dict = load_as_dict(filename)
-        left_gaze = gaze_dict['left']
-        right_gaze = gaze_dict['right']
+        if "world" in filename:
+            world_times = filename
+        elif "gaze" in filename:
+            gaz = filename
 
-        left_timestamps = []
-        right_timestamps = []
-        left_norm_pos_x = []
-        left_norm_pos_y = []
-        right_norm_pos_x = []
-        right_norm_pos_y = []
 
-        left_first_timestamp = left_gaze['timestamp'][0]
-        # for value in left_gaze['timestamp']:
-        #     left_timestamps.append(value - left_first_timestamp)
-        counter = 0
-        for value in left_gaze['norm_pos']:
-            if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
-                left_norm_pos_x.append(value[0])
-                left_norm_pos_y.append(value[1])
-                left_timestamps.append(left_gaze['timestamp'][counter] - left_first_timestamp)
-                counter = counter + 1
+    gaze_dict = load_as_dict(gaz)
+    left_gaze = gaze_dict['left']
+    right_gaze = gaze_dict['right']
 
-        right_first_timestamp = right_gaze['timestamp'][0]
-        # for value in  right_gaze['timestamp']:
-        #     right_timestamps.append(value - right_first_timestamp)
-        counter = 0
-        for value in  right_gaze['norm_pos']:
-            if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1:
-                right_norm_pos_x.append(value[0])
-                right_norm_pos_y.append(value[1])
-                right_timestamps.append(right_gaze['timestamp'][counter] - right_first_timestamp)
-                counter = counter + 1
+    left_timestamps = []
+    right_timestamps = []
+    left_norm_pos_x = []
+    left_norm_pos_y = []
+    right_norm_pos_x = []
+    right_norm_pos_y = []
 
-        # NON DOWN SAMPLED TIMESTAMPS (around 82000 left or 78000 right), removed <0 and >1, i think those are out of bounds
-        # json_left_timestamp = dumps(left_timestamps)
-        # json_left_norm_pos_x = dumps(left_norm_pos_x)
-        # json_left_norm_pos_y = dumps(left_norm_pos_y)
-        #
-        # json_right_timestamp = dumps(right_timestamps)
-        # json_right_norm_pos_x = dumps(right_norm_pos_x)
-        # json_right_norm_pos_y = dumps(right_norm_pos_y)
+    # left_first_timestamp = left_gaze['timestamp'][0]
+    world_time_values = np.load(world_times)
+    world_time_list = world_time_values.tolist()
+    first_timestamp = world_time_list[0]
+    # for value in left_gaze['timestamp']:
+    #     left_timestamps.append(value - left_first_timestamp)
+    counter = 0
+    for value in left_gaze['norm_pos']:
+        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1 and left_gaze['timestamp'][counter] - first_timestamp > 0:
+            left_norm_pos_x.append(value[0])
+            left_norm_pos_y.append(value[1])
+            left_timestamps.append(left_gaze['timestamp'][counter] - first_timestamp)
+        counter = counter + 1
 
-        # DOWN SAMPLED TIMESTAMPS, these have 1/10 of the original value so around 8200 left or 7800 right
-        sampled_left_x = left_norm_pos_x[::10]
-        sampled_left_y = left_norm_pos_y[::10]
-        sampled_right_x = right_norm_pos_x[::10]
-        sampled_right_y = right_norm_pos_y[::10]
+    # right_first_timestamp = right_gaze['timestamp'][0]
+    # for value in  right_gaze['timestamp']:
+    #     right_timestamps.append(value - right_first_timestamp)
+    counter = 0
+    for value in  right_gaze['norm_pos']:
+        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1 and right_gaze['timestamp'][counter] - first_timestamp > 0:
+            right_norm_pos_x.append(value[0])
+            right_norm_pos_y.append(value[1])
+            right_timestamps.append(right_gaze['timestamp'][counter] - first_timestamp)
+        counter = counter + 1
 
-        sampled_left_time = left_timestamps[::10]
-        sampled_right_time = right_timestamps[::10]
+    # DOWN SAMPLED TIMESTAMPS, these have 1/10 of the original value so around 8200 left or 7800 right
+    sampled_left_x = left_norm_pos_x[::10]
+    sampled_left_y = left_norm_pos_y[::10]
+    sampled_right_x = right_norm_pos_x[::10]
+    sampled_right_y = right_norm_pos_y[::10]
 
-        json_left_timestamp = dumps(sampled_left_time)
-        json_left_norm_pos_x = dumps(sampled_left_x)
-        json_left_norm_pos_y = dumps(sampled_left_y)
+    sampled_left_time = left_timestamps[::10]
+    sampled_right_time = right_timestamps[::10]
 
-        json_right_timestamp = dumps(sampled_right_time)
-        json_right_norm_pos_x = dumps(sampled_right_x)
-        json_right_norm_pos_y = dumps(sampled_right_y)
+    json_left_timestamp = dumps(sampled_left_time)
+    json_left_norm_pos_x = dumps(sampled_left_x)
+    json_left_norm_pos_y = dumps(sampled_left_y)
 
-        gaze_json = [json_left_timestamp, json_left_norm_pos_x, json_left_norm_pos_y, json_right_timestamp, json_right_norm_pos_x, json_right_norm_pos_y]
-        return gaze_json
-    return None
+    json_right_timestamp = dumps(sampled_right_time)
+    json_right_norm_pos_x = dumps(sampled_right_x)
+    json_right_norm_pos_y = dumps(sampled_right_y)
+
+    gaze_json = [json_left_timestamp, json_left_norm_pos_x, json_left_norm_pos_y, json_right_timestamp, json_right_norm_pos_x, json_right_norm_pos_y]
+    return gaze_json
 
 def download_graphs():
     linear_graph = request.args.get('linearGraph')

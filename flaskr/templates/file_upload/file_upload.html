@@ -16,6 +16,7 @@
                 <!-- notice about file upload -->
                 <div class="alert alert-warning alert-dismissible text-white fade show" role="alert">
                     <strong>Notice!</strong> You must upload both video and data filesets, ensuring <strong>odometry.pldata</strong> and <strong>gaze.npz</strong> are included, before proceeding to the visualizer
+                    Furthermore, please only use one upload form at a time (e.g., let videos fully upload before moving onto data)
                     <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -32,6 +33,7 @@
                             </p>
                         </div>
 
+                        {% if not videos_submitted %}
                         <div class="nav-wrapper position-relative end-0 mt-4">
                             <ul class="nav nav-pills nav-fill p-1" role="tablist">
                                 <li class="nav-item">
@@ -57,12 +59,6 @@
 
                         <div class="tab-content mt-4">
                             <div class="tab-pane fade show active" id="dtb_file_upload" role="tabpanel">
-                                <div class="alert alert-warning alert-dismissible text-white fade show" role="alert">
-                                    <strong>Notice!</strong> If uploading via drag and drop. please upload required filesets and reload the page.
-                                    <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
                                 <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
                                 <input id="dtb_file_upload" type="file" name="filepond" multiple accept=".mp4,.csv" />
 
@@ -86,6 +82,14 @@
                                 </form>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="toast fade show d-flex align-items-center justify-content-between bg-gradient-dark border-0 pe-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
+                                    <div class="toast-body text-white">
+                                        Submitted!
+                                    </div>
+                                    <i class="fas fa-times text-md cursor-pointer pe-2 text-white" data-bs-dismiss="toast" aria-label="Close"></i>
+                                </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -100,7 +104,7 @@
                                 Alternatively, paste the ZIP file URL below.
                             </p>
                         </div>
-
+                        {% if not data_submitted %}
                         <div class="nav-wrapper position-relative end-0 mt-4">
                             <ul class="nav nav-pills nav-fill p-1" role="tablist">
                                 <li class="nav-item">
@@ -126,12 +130,6 @@
 
                         <div class="tab-content mt-4">
                             <div class="tab-pane fade show active" id="osf_file_upload" role="tabpanel">
-                                <div class="alert alert-warning alert-dismissible text-white fade show" role="alert">
-                                    <strong>Notice!</strong> If uploading via drag and drop. please upload required filesets and reload the page.
-                                    <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
                                 <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
                                 <input type="file" id="osf_file_upload" name="filepond" multiple accept=".pldata,.npy,.npz,.yaml,.intrinsics,.extrinsics">
                             </div>
@@ -154,6 +152,14 @@
                                 </form>
                             </div>
                         </div>
+                        {% else %}
+                                                        <div class="toast fade show d-flex align-items-center justify-content-between bg-gradient-dark border-0 pe-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
+                                    <div class="toast-body text-white">
+                                        Submitted!
+                                    </div>
+                                    <i class="fas fa-times text-md cursor-pointer pe-2 text-white" data-bs-dismiss="toast" aria-label="Close"></i>
+                                </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -223,7 +229,9 @@
         // Create FilePond instance for OSF file input
         const osf_pond = FilePond.create(osf_file_upload_input_element, {
             allowMultiple: true,
+            maxParallelUploads: 4,
             allowFileTypeValidation: false,
+            allowRemove: false,
             server: {
                 url: './upload',
                 process: {
@@ -245,7 +253,6 @@
 
                 if (!isValid) {
                     osf_pond.removeFile(file.id);
-                    alert(`Invalid file type. Allowed extensions: ${allowedExtensions.join(', ')}`);
                 }
             }
         });
@@ -253,7 +260,9 @@
         // Create FilePond instance for Databrary file input
         const dtb_pond = FilePond.create(dtb_file_upload_input_element, {
             allowMultiple: true,
+            maxParallelUploads: 4,
             allowFileTypeValidation: false,
+            allowRemove: false,
             server: {
                 url: './upload',
                 process: {
@@ -277,9 +286,29 @@
                 // If the file is invalid, remove it from FilePond and show an alert
                 if (!isValid) {
                     dtb_pond.removeFile(file.id);
-                    alert(`Invalid file type. Allowed extensions: ${allowedExtensions.join(', ')}`);
                 }
             }
+        });
+
+        function checkIfBothQueuesAreDone() {
+            const osfIsProcessing = osf_pond.getFiles().some(file => file.status !== 5); // 5 = FilePond.FileStatus.PROCESSING_COMPLETE
+            const dtbIsProcessing = dtb_pond.getFiles().some(file => file.status !== 5);
+
+            if (!osfIsProcessing && !dtbIsProcessing) {
+                // Small delay to ensure UI updates are complete before reloading
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
+        }
+
+        // Hook into the processfile event for both ponds
+        osf_pond.on('processfile', () => {
+            checkIfBothQueuesAreDone();
+        });
+
+        dtb_pond.on('processfile', () => {
+            checkIfBothQueuesAreDone();
         });
     </script>
 

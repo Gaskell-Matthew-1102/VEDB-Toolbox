@@ -59,4 +59,4 @@ class EnterVisualizer(FlaskForm):
     submit = SubmitField("Enter Visualizer")
     
 class ResetFileUpload(FlaskForm):
-    reset = SubmitField("Remove all uploaded files and restart")
+    reset = SubmitField("Remove all uploaded files in session")

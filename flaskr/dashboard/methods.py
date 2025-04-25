@@ -1,11 +1,14 @@
 # written by leon, organized by brian
 # converted some of the routes' logic to methods
+# admin_required by brian
 
 # base
 import csv
+from functools import wraps
 
 # flask
-from flask import flash, render_template
+from flask import flash, render_template, redirect
+from flask_login import current_user
 
 # pip
 from werkzeug.security import generate_password_hash
@@ -16,6 +19,15 @@ from flaskr.models import User
 
 ALLOWED_EXTENSIONS = {'csv'}
 
+# created @admin_required
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not getattr(current_user, 'admin', False):
+            return redirect("/file_upload")
+        return f(*args, **kwargs)
+    return decorated_function
+
 # simplification of routes.py
 def render_dashboard(search_filter, search_type, warning, **kwargs):
     result_list = searchbar(search_filter, search_type)
@@ -24,9 +36,9 @@ def render_dashboard(search_filter, search_type, warning, **kwargs):
 ### used to be accountManagement.py
 def upload_user(uploaded_data):  #Uploading a single user
     if uploaded_data[3] == "on" or uploaded_data[3] == "true":
-        user = User(username=uploaded_data[0], email=uploaded_data[1], password=generate_password_hash(uploaded_data[2]), admin=True)
+        user = User(username=uploaded_data[0], email=uploaded_data[1], password_hash=generate_password_hash(uploaded_data[2]), admin=True)
     else:
-        user = User(username=uploaded_data[0], email=uploaded_data[1], password=generate_password_hash(uploaded_data[2]), admin=False)
+        user = User(username=uploaded_data[0], email=uploaded_data[1], password_hash=generate_password_hash(uploaded_data[2]), admin=False)
     
     # write to DB
     db.session.add(user)

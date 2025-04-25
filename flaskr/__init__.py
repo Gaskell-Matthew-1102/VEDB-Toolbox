@@ -55,6 +55,9 @@ def create_app(test_config=None):
     blueprint_list = ["home", "user_auth", "file_upload", "visualizer", "dashboard"]
     register_blueprints(app, blueprint_list)
 
+    # 401 error = user not authenticated. redirect to /
+    login_manager.login_view = "/"
+
     with app.app_context():
         db.create_all()
         

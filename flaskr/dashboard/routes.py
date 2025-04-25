@@ -6,7 +6,7 @@ from os import rename as rename_file
 
 # flask and its plugins
 from flask import redirect, request
-from flask_login import current_user
+from flask_login import login_required
 
 # local
 from flaskr.models import User
@@ -15,6 +15,8 @@ from flaskr.dashboard.methods import *
 
 # Dashboard Route
 @blueprint.route("/dashboard", methods=["GET", "POST"])
+@login_required
+@admin_required
 def dashboard():
     user = User.query.filter_by(username=current_user.username).first()
     if user.admin:
@@ -23,6 +25,8 @@ def dashboard():
         return redirect("/file_upload")
 
 @blueprint.route("/searchuser", methods=["GET", "POST"])
+@login_required
+@admin_required
 def searchuser():
     if request.form["formType"] == "email":   #Search through email bar
         return render_dashboard(request.form.get('email_search', ""), "email", 0)
@@ -32,6 +36,8 @@ def searchuser():
         return render_dashboard("", "reset", 0)
 
 @blueprint.route("/adduser", methods=["GET", "POST"])
+@login_required
+@admin_required
 def adduser():
     # check if user already exists
     if User.query.filter_by(username=request.form.get('unEnter', "")).first():
@@ -44,6 +50,8 @@ def adduser():
         return render_dashboard("", "reset", 2)
 
 @blueprint.route("/deleteuser", methods=["GET", "POST"])
+@login_required
+@admin_required
 def deleteuser():
     deleting = request.form.get('user_to_delete', "")
     foundUser = User.query.with_entities(User.id).filter_by(username=deleting).all()
@@ -63,6 +71,8 @@ def deleteuser():
     return render_dashboard(request.form.get('user_search', ""), "username", 3)
 
 @blueprint.route("/csvupload", methods=["GET", "POST"])
+@login_required
+@admin_required
 def csvupload():
     rejectFlag = 2
     rejectCount = 0
@@ -100,5 +110,8 @@ def csvupload():
     return render_dashboard("", "reset", rejectFlag, rejectedNumber=rejectCount, totalNumber=userCount)
     #i haven't even watched the minecraft movie but these sound bits are rotting my brain as we speak
 
+# @blueprint.route("/edituser", methods=["GET", "POST"])
+# @login_required
+# @admin_required
 # def edituser():
 # will be used later for when editing an already existing user

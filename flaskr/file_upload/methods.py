@@ -24,21 +24,66 @@ from sqlalchemy.exc import SQLAlchemyError
 from flaskr import db
 from flaskr.models import User, SessionHistory
 
-# Recursively removes empty (checks) UUID-directories in the given root directory.
-def remove_empty_dirs(base_dir):
+# file/folder manipulation
+# Recursively removes UUID-directories not accounted for in the session history table. this avoids leaving unused non-empty directories
+def remove_unaccounted_dirs(base_dir):
+    # Fetch all session_ids from the session_history table
+    session_ids = {session_entry.session_id for session_entry in SessionHistory.query.all()}
+
+    # Walk through the directory
     for root, dirs, files in os.walk(base_dir, topdown=False):
         for name in dirs:
             dir_path = os.path.join(root, name)
-            if not os.listdir(dir_path):
-                os.rmdir(dir_path)
-                print(f"Deleted empty directory: {dir_path}")
 
-# returns the admin bool (T/F) from the table
-def is_admin():
-    return User.query.filter_by(username=current_user.username).first().admin
+            # Check if the directory's name (UUID) is not in session_history
+            if name not in session_ids:
+                # Remove the unaccounted directory
+                shutil.rmtree(dir_path)
+                print(f"Deleted unaccounted directory: {dir_path}")
 
-# Helper function to download video files from a Databrary URL
-# NOTE!! UNTESTED!! DATABRARY IS NOT KIND
+# checks if files exist in upload_path, particularly with an array of allowed extensions
+def files_exist(upload_path, allowed_extensions=None):
+    for f in os.listdir(upload_path):
+        if os.path.isfile(os.path.join(upload_path, f)):
+            if allowed_extensions is None or f.lower().endswith(tuple(allowed_extensions)):
+                return True
+    return False
+
+# renames *eye0*.mp4 to eye0.mp4, and so forth to make it easier for us to use
+def normalize_video_filenames(upload_path):
+    filename_map = {
+        'eye0': re.compile(r'^.*eye0.*\.mp4$', re.IGNORECASE),
+        'eye1': re.compile(r'^.*eye1.*\.mp4$', re.IGNORECASE),
+        'world': re.compile(r'^.*world.*\.mp4$', re.IGNORECASE),
+    }
+
+    for target_name, pattern in filename_map.items():
+        for filename in os.listdir(upload_path):
+            if pattern.match(filename):
+                source_path = os.path.join(upload_path, filename)
+                target_path = os.path.join(upload_path, f"{target_name}.mp4")
+
+                # If the file is already normalized, skip
+                if source_path == target_path:
+                    continue
+
+                # Remove existing target to prevent rename error
+                if os.path.exists(target_path):
+                    os.remove(target_path)
+
+                os.rename(source_path, target_path)
+                break  # Stop after renaming the first match
+
+# grabs name of csv (likely datetime of session) and returns it for use in SessionHistory
+def get_csv_filename(upload_path):
+    for filename in os.listdir(upload_path):
+        if filename.lower().endswith('.csv') and os.path.isfile(os.path.join(upload_path, filename)):
+            # Remove the .csv extension, so its just the datetime
+            return os.path.splitext(filename)[0]
+    return None  # or raise an error if you expect one to always be there
+
+# URL-downloading functions
+# UNTESTED!!! helper function to download video files from a Databrary URL
 def download_databrary_videos(link: str) -> bytes:
     headers = {
         'Accept': 'text/html, */*; q=0.01, gzip, deflate, br, zstd, en-US, en; q=0.9',
@@ -47,14 +92,14 @@ def download_databrary_videos(link: str) -> bytes:
     }
     return urlopen(Request(link, headers=headers)).read()
 
-# Helper function to download data files from OSF
+# Helper function to download data files from an OSF URL
 def download_osf_data(link: str) -> bytes:
     response = requests.get(link)
     if response.status_code != 200:
         raise Exception(f"Failed to download file: {response.status_code}")
     return response.content
 
-# Helper function to unzip content into a specified directory without creating a new subdir
+# "General" function to fetch data and unzip it in a specified directory and returns that as a string
 def fetch_and_unzip(download_func, url_string: str, unzip_to: str) -> str:
     try:
         if url_string.startswith("https"):
@@ -104,27 +149,20 @@ def fetch_and_unzip(download_func, url_string: str, unzip_to: str) -> str:
     except Exception as e:
         return str(e)
 
-def files_exist(upload_path, allowed_extensions=None):
-    for f in os.listdir(upload_path):
-        if os.path.isfile(os.path.join(upload_path, f)):
-            if allowed_extensions is None or f.lower().endswith(tuple(allowed_extensions)):
-                return True
-    return False
-
-# delete files in a given path
-def clear_directory(path):
-    if os.path.exists(path):
-        shutil.rmtree(path)
-        os.makedirs(path)
+# Database querying
+# returns the admin bool (T/F) from the table
+def is_admin():
+    return User.query.filter_by(username=current_user.username).first().admin
 
 # Add new session to database (after successful dual upload)
-def add_session_to_db(uuidfolder: str):
+def add_session_to_db(uuidfolder: str, sesh_name: str):
     user = User.query.filter_by(username=current_user.username).first()
     
     try:
         new_session = SessionHistory (
             session_id = uuidfolder,  # created folder. will have files in it and thus will not be deleted during create_user_directory()
-            user_id = user.id
+            user_id = user.id,
+            session_name = sesh_name
         )
         db.session.add(new_session)
         db.session.commit()
@@ -137,28 +175,3 @@ def add_session_to_db(uuidfolder: str):
     except Exception as e:
         # Handle other errors
         return {"status": "error", "message": "An unexpected error occurred."}
-
-# renames eye0*.mp4 to eye0.mp4, and so forth
-def normalize_video_filenames(upload_path):
-    filename_map = {
-        'eye0': re.compile(r'^eye0.*\.mp4$', re.IGNORECASE),
-        'eye1': re.compile(r'^eye1.*\.mp4$', re.IGNORECASE),
-        'world': re.compile(r'^world.*\.mp4$', re.IGNORECASE),
-    }
-
-    for target_name, pattern in filename_map.items():
-        for filename in os.listdir(upload_path):
-            if pattern.match(filename):
-                source_path = os.path.join(upload_path, filename)
-                target_path = os.path.join(upload_path, f"{target_name}.mp4")
-
-                # If the file is already normalized, skip
-                if source_path == target_path:
-                    continue
-
-                # Remove existing target to prevent rename error
-                if os.path.exists(target_path):
-                    os.remove(target_path)
-
-                os.rename(source_path, target_path)
-                break  # Stop after renaming the first match
