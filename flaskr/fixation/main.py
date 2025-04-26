@@ -11,6 +11,8 @@ except ModuleNotFoundError as e:
         input("exitting")
         raise e
 
+TEMP_COOL_ARGS = ('uploads\\a50a09b0-4d03-4709-8834-5f9f3f9f6ca5\\odometry.pldata', 'uploads\\a50a09b0-4d03-4709-8834-5f9f3f9f6ca5\\gaze.npz', 'uploads\\a50a09b0-4d03-4709-8834-5f9f3f9f6ca5\\world.mp4', './fixation/export/export_fixation.json', './fixation/export/export_fixation_parameters.txt', 55, 300, 3, 750, 0.8, 25, 400, 400, 2048, 1536, 90, 90, True, 1.0, 10, 110, 70)
+
 # from fixation.fixation_packages import *
 
 # import fixation_packages.event
@@ -47,7 +49,7 @@ except ModuleNotFoundError:
     except ModuleNotFoundError as e:
         raise e
 
-def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, min_vel_thresh, gain_factor, initial_world_hz, desired_world_hz, eye_camera_width_px, eye_camera_height_px, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v, imu_flag, min_saccade_amp_deg, min_saccade_dur_ms, eye_hfov, min_fixation_dur_ms):
+def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_file_path, export_parameters_file_path, gaze_window_size_ms, polynomial_grade, adap_window_size_ms, min_vel_thresh, gain_factor, desired_world_hz, eye_camera_width_px, eye_camera_height_px, world_camera_width, world_camera_height, world_camera_fov_h, world_camera_fov_v, imu_flag, min_saccade_amp_deg, min_saccade_dur_ms, eye_hfov, min_fixation_dur_ms):
     import inspect
     frame = inspect.currentframe()
     args, _, _, values = inspect.getargvalues(frame)
@@ -65,6 +67,8 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
     upsampled_timestamps, upsampled_raw_gaze = fixation_packages.spatial_average.linear_interpolate(gaze_timestamp, raw_gaze_vec_.transpose(), 120, 200)
     upsampled_raw_gaze = upsampled_raw_gaze.transpose()
+
+    print("LEN:", len(upsampled_raw_gaze[0]))
 
     savgol_x = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[0], gaze_window_size_ms, polynomial_grade)
     savgol_y = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[1], gaze_window_size_ms, polynomial_grade)
@@ -114,9 +118,9 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
     # input("AAA")
 
-    import pickle
-    with open ('./fixation/2022_08_25_10_18_37_saved_lucas_kanade_data_entire_dataset', 'rb') as fp:
-        global_OF_vec_list = pickle.load(fp)
+    # import pickle
+    # with open ('./fixation/2022_08_25_10_18_37_saved_lucas_kanade_data_entire_dataset', 'rb') as fp:
+    #     global_OF_vec_list = pickle.load(fp)
 
     #############################################################################
 
@@ -138,7 +142,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     v_rel, status_code = fixation_packages.adaptive_threshold.gaze_velocity_correction(v_hat, new_vec_list)
 
     # Step 6
-    samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(200, 300)
+    samples_in_window = fixation_packages.adaptive_threshold.calculate_samples_in_window(200, adap_window_size_ms)
     v_thr_list = []
     for i in range(len(new_vec_list)- (samples_in_window-1) ):
         v_thr_list.append(fixation_packages.adaptive_threshold.calculate_v_thr(min_vel_thresh, gain_factor, new_vec_list, i, samples_in_window))
@@ -194,10 +198,97 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 def main():
     print("starting")
     # runner(pldata_to_load=PLDATA_TO_LOAD, gaze_npz=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=25, desired_world_hz=200, eye_camera_width_px=X_RES, eye_camera_height_px=Y_RES, world_camera_width=2048, world_camera_height=1536, world_camera_fov_h=90, world_camera_fov_v=90, imu_flag=False, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS, eye_hfov=EYE_HFOV_DEG, min_fixation_dur_ms=MIN_FIXATION_DUR_MS)
-    runner(pldata_to_load="./fixation/test_data/viewer_input2/data/odometry.pldata", gaze_npz="./fixation/test_data/viewer_input2/data/gaze.npz", world_scene_video_path='./fixation/test_data/viewer_input2/video/worldPrivate.mp4', export_fixation_file_path="./fixation/export/export_fixation.json", export_parameters_file_path="./fixation/export/export_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=25, desired_world_hz=200, eye_camera_width_px=X_RES, eye_camera_height_px=Y_RES, world_camera_width=2048, world_camera_height=1536, world_camera_fov_h=90, world_camera_fov_v=90, imu_flag=False, min_saccade_amp_deg=MIN_SACCADE_AMP_DEG, min_saccade_dur_ms=MIN_SACCADE_DUR_MS, eye_hfov=EYE_HFOV_DEG, min_fixation_dur_ms=MIN_FIXATION_DUR_MS)
+    runner(pldata_to_load="./fixation/test_data/viewer_input2/data/odometry.pldata", 
+            gaze_npz="./fixation/test_data/viewer_input2/data/gaze.npz", 
+            world_scene_video_path='./fixation/test_data/viewer_input2/video/worldPrivate.mp4', 
+            export_fixation_file_path="./fixation/export/export_fixation.json", 
+            export_parameters_file_path="./fixation/export/export_parameters.txt" , 
+            gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, 
+            polynomial_grade=POLYNOMIAL_GRADE, 
+            min_vel_thresh=MIN_VEL_THRESH, 
+            gain_factor=GAIN_FACTOR, 
+            desired_world_hz=200, 
+            eye_camera_width_px=X_RES,
+            eye_camera_height_px=Y_RES,
+            world_camera_width=2048,
+            world_camera_height=1536,
+            world_camera_fov_h=90,
+            world_camera_fov_v=90,
+            imu_flag=False,
+            min_saccade_amp_deg=MIN_SACCADE_AMP_DEG,
+            min_saccade_dur_ms=MIN_SACCADE_DUR_MS,
+            eye_hfov=EYE_HFOV_DEG, 
+            min_fixation_dur_ms=MIN_FIXATION_DUR_MS
+        )
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry1.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_1.json", export_parameters_file_path="./fixation/export/export_imu1_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     # runner(date_of_url_data=DATE_OF_URL_DATA, pldata_to_load='odometry2.pldata', npz_to_load=NPZ_TO_LOAD, world_scene_video_path='./fixation/test_data/videos/video3.mp4', export_fixation_file_path="./fixation/export/TEST_IMU_DATA_2.json", export_parameters_file_path="./fixation/export/export_imu2_parameters.txt" , gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, polynomial_grade=POLYNOMIAL_GRADE, min_vel_thresh=MIN_VEL_THRESH, gain_factor=GAIN_FACTOR, initial_world_hz=30, desired_world_hz=200, world_camera_width=2048, world_camera_height=1536, camera_fov_h=90, camera_fov_v=90, imu_flag=True)
     print("complete")
+
+"""
+Example input: 
+    {
+        "gaze_window_size" : "55",
+        "polynomial_grade" : 3,
+        ...
+    }
+"""
+def parse_viewer_arguments(arg_dict:dict) -> tuple:
+    """
+    Converts the argument dictionary passed from the viewer into the tuple form that the algorithm takes in.
+    """
+    try:
+        odometry_path = str(arg_dict['odometry_path'])
+        gaze_path = str(arg_dict['gaze_path'])
+        world_video_path = str(arg_dict['world_video_path'])
+        export_json_path = str(arg_dict['export_json_path'])
+        export_parameters_path = str(arg_dict['export_parameters_path'])
+
+        gaze_window_size_ms = int(arg_dict['gaze_window_size'])
+        adap_window_size_ms = int(arg_dict['adap_window_size_ms'])
+        polynomial_grade = int(arg_dict['polynomial_grade'])
+        minimum_vel_thresh = int(arg_dict['min_vel_thresh'])
+        gain = float(arg_dict['gain'])
+        eye_camera_x_px = int(arg_dict['eye_camera_x_px'])
+        eye_camera_y_px = int(arg_dict['eye_camera_y_px'])
+        eye_horiz_fov = int(arg_dict['eye_horiz_fov'])
+        world_camera_fov_horizontal = int(arg_dict['world_camera_fov_horiz'])
+        world_camera_fov_vertical = int(arg_dict['world_camera_fov_vert'])
+        world_camera_x_px = int(arg_dict['world_camera_x_px'])
+        world_camera_y_px = int(arg_dict['world_camera_y_px'])
+        desired_hz = int(arg_dict['desired_hz'])
+        min_saccade_amp_deg = float(arg_dict['min_saccade_amp_deg'])
+        min_saccade_dur_ms = int(arg_dict['min_saccade_dur_ms'])
+        min_fix_dur_ms = int(arg_dict['min_fix_dur_ms'])
+        imu_flag = bool(arg_dict['imu_flag'])
+    except Exception as e:
+        print("Unable to parse viewer arguments")
+        raise e
+    
+    args = (
+        odometry_path, 
+        gaze_path, 
+        world_video_path, 
+        export_json_path, 
+        export_parameters_path, 
+        gaze_window_size_ms, 
+        polynomial_grade, 
+        adap_window_size_ms,
+        minimum_vel_thresh, 
+        gain, 
+        desired_hz, 
+        eye_camera_x_px, 
+        eye_camera_y_px, 
+        world_camera_x_px, 
+        world_camera_y_px, 
+        world_camera_fov_horizontal, 
+        world_camera_fov_vertical, 
+        imu_flag, 
+        min_saccade_amp_deg, 
+        min_saccade_dur_ms, 
+        eye_horiz_fov, 
+        min_fix_dur_ms
+    )
+    return args
 
 if __name__ == "__main__":
     print("Run in console from flaskr/ as:\npython -m fixation.main")

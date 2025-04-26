@@ -15,6 +15,11 @@ import plotly.graph_objects as go
 from flaskr.visualizer import blueprint
 from flaskr.visualizer.methods import *
 
+import pathlib
+
+from flaskr.fixation.main import runner as fixation_main
+
+
 UPLOAD_FOLDER = 'uploads'
 
 @blueprint.route("/visualizer")
@@ -33,14 +38,56 @@ def visualizer():
     odo_pldata_path = os.path.join(upload_path, 'odometry.pldata')
     gaze_npz_path = os.path.join(upload_path, 'gaze.npz')
     world_time_path = os.path.join(upload_path, 'world_timestamps.npy')
+    csv_list = list(pathlib.Path(upload_path).glob('*.csv'))
+
+    csv_path = ""
+    if len(csv_list) == 1:
+        csv_path = csv_list[0]
+    elif len(csv_list) == 0:
+        print("No CSV files uploaded")
+    else:
+        print("More than one CSV file uploaded")
+
+    # Start the fixation detection algorithm here
+
+    # video manip., metadata
+    world_frame_width, world_frame_height, world_fps = get_data_of_video(world_path)
+    eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_path)
+
+    # Use this until the actual dictionary is provided
+    TEMP_arg_dict = {
+        "gaze_window_size" : "55",
+        "polynomial_grade" : 3,
+        "adap_window_size_ms" : 200,
+        "min_vel_thresh" : 750,
+        "gain" : 0.8,
+        "eye_camera_x_px" : 400,
+        "eye_camera_y_px" : 400,
+        "eye_horiz_fov" : 110,
+        "world_camera_fov_horiz" : 90,
+        "world_camera_fov_vert" : 90,
+        "world_camera_x_px" : 2048,
+        "world_camera_y_px" : 1536,
+        "desired_hz" : 200,
+        "min_saccade_amp_deg" : 1.0,
+        "min_saccade_dur_ms" : 10,
+        "min_fix_dur_ms" : 70,
+
+        "optic_flow_override" : True,
+        "force_imu" : False,
+    }
+
+    EXPORT_JSON_PATH = "./fixation/export/export_fixation.json"
+    EXPORT_PARAMETER_PATH = "./fixation/export/export_fixation_parameters.txt"
+
+
+
+    start_fixation_algorithm(odometry_file=odo_pldata_path, gaze_file=gaze_npz_path, world_video_file=world_path, csv_file=csv_path, eye0_file=eye0_path, eye1_file=eye1_path, export_json_path=EXPORT_JSON_PATH, export_parameters_path=EXPORT_PARAMETER_PATH, in_args=TEMP_arg_dict)
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
     vel_data = generate_velocity_graphs([odo_pldata_path, world_time_path])
     gaze_data = generate_gaze_graph([gaze_npz_path, world_time_path])
 
-    # video manip., metadata
-    world_frame_width, world_frame_height, world_fps = get_data_of_video(world_path)
-    eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_path)
 
     # # fixations, paths
     # # EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
@@ -48,17 +95,6 @@ def visualizer():
     # # EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
     # EXPORT_PARAMETER_PATH = f"{EXPORT_FOLDER_PATH}/{SESSION_NAME}_parameters.txt"
     #
-    # # Let's start the fixation algorithm here
-    # fix_det_args = (
-    #     odometry_file, gaze_file,
-    #     world_video_file, EXPORT_JSON_PATH,
-    #     EXPORT_PARAMETER_PATH,
-    #     55, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90,
-    #     90, imu_flag,
-    #     1.0, 10, 110, 70
-    # )
-    #
-    # start_fixation_algorithm(fix_det_args)
 
     return render_template("visualizer/visualizer.html",
                            world_frame_width=world_frame_width, world_frame_height=world_frame_height,

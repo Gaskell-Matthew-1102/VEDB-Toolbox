@@ -172,3 +172,7 @@ cython_debug/
 
 # User-uploaded files produced by the application
 uploads/
+
+flaskr/fixation/test_data
+flaskr/fixation/.pytest_cache
+flaskr/fixation/fixation_packages/__pycache__
