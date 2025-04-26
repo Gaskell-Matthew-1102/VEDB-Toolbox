@@ -17,6 +17,8 @@ import cv2
 import plotly.io as pio
 import plotly.graph_objects as go
 
+from flaskr.fixation.main import parse_viewer_arguments
+
 # dataset manipulation
 # The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
 # of Paul MacNeilage's Self Motion Lab. They work with the pldata files, turning them into readable format for our graphing code
@@ -250,14 +252,19 @@ def get_fig_numbers():
             return [linear_number, angular_number]
     return None
 
-def start_fixation_algorithm(odometry_file:str, gaze_file:str, world_video_file:str, csv_file:str, eye0_file:str, eye1_file:str, in_args:dict, ):
+def start_fixation_algorithm(odometry_file:str, gaze_file:str, world_video_file:str, csv_file:str, eye0_file:str, eye1_file:str, export_json_path:str, export_parameters_path:str, in_args:dict):    
     imu_flag = False
     export_filepath = "fixation"
     
-    if odometry_file == "":
+    if odometry_file != "":
         imu_flag = True
     world_frame_width, world_frame_height, world_fps = get_data_of_video(world_video_file)
     eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_file)
+
+    # see if user wants to override the optic flow method used
+    # otherwise, go with what has been automatically decided
+    if(bool(in_args['optic_flow_override'])):
+        imu_flag = in_args['force_imu']
 
     if csv_file != "":
         try:
@@ -268,17 +275,27 @@ def start_fixation_algorithm(odometry_file:str, gaze_file:str, world_video_file:
         else:
             print("CSV FILE NOT FOUND")
 
-    fix_det_args = (
-        odometry_file, gaze_file,
-        world_video_file, EXPORT_JSON_PATH,
-        EXPORT_PARAMETER_PATH,
-        55, 3, 750, 0.8, world_fps, 200, eye_frame_width, eye_frame_height, world_frame_width, world_frame_height, 90, 90, imu_flag,
-        1.0, 10, 110, 70
-    )
-    
-    from multiprocessing import Process
-    from fixation import main as fixation_main
+    in_args['odometry_path'] = str(odometry_file)
+    in_args['gaze_path'] = str(gaze_file)
+    in_args['world_video_path'] = str(world_video_file)
+    in_args['export_json_path'] = str(export_json_path)
+    in_args['export_parameters_path'] = str(export_parameters_path)
 
+    in_args['eye_camera_x_px'] = int(eye_frame_height)
+    in_args['eye_camera_y_px'] = int(eye_frame_width)
+    in_args['world_camera_x_px'] = int(world_frame_width)
+    in_args['world_camera_y_px'] = int(world_frame_height)
+    in_args['world_fps'] = int(world_fps)
+
+    in_args['imu_flag'] = bool(imu_flag)
+
+    fix_det_args = parse_viewer_arguments(in_args)
+
+    from multiprocessing import Process
+    from flaskr.fixation.main import runner as fixation_main
+
+    print("ARGS:")
+    print(fix_det_args)
     fix_det = Process(target=fixation_main, args=fix_det_args)
     fix_det.start()
     print("Fixation detection algorithm begun")
