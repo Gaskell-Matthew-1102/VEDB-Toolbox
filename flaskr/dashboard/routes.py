@@ -87,7 +87,7 @@ def csvupload():
     #first, we MINE! (let's verify the file itself before we parse it)
         if not verify_csv(name): #if not the correct file,
             remove_file(name) #remove incorrect file
-            return render_dashboard("", "reset", 1)
+            return render_dashboard("", "reset", 7)
 
         rename_file(name, "flaskr/static/userupload.csv")
 
@@ -99,7 +99,6 @@ def csvupload():
             for row in listOfUsers:
                 userCount += 1
                 if User.query.filter_by(username=row[0]).first():  #reject if list has an existing user already
-                    print("no it is now ILLEGAL")
                     rejectFlag = 5
                     rejectCount += 1
                 else:
@@ -110,8 +109,29 @@ def csvupload():
     return render_dashboard("", "reset", rejectFlag, rejectedNumber=rejectCount, totalNumber=userCount)
     #i haven't even watched the minecraft movie but these sound bits are rotting my brain as we speak
 
-# @blueprint.route("/edituser", methods=["GET", "POST"])
-# @login_required
-# @admin_required
-# def edituser():
-# will be used later for when editing an already existing user
+@blueprint.route("/edituser", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edituser():
+    #retrieve both the status of toggle and user to be edited
+    toggle = request.form.get('editAdmin', "")
+    editing = request.form.get('user_to_edit', "")
+    foundUser = User.query.with_entities(User.id).filter_by(username=editing).all()
+
+    for a in foundUser:
+        for b in a:
+            #users should not be able to modify themselves
+            if b == current_user.id:
+                return render_dashboard(request.form.get('user_search', ""), "username", 4)
+            #otherwise, continue through with modification
+            else:
+                if toggle == "on":
+                    c = User.query.filter_by(id=b).first()
+                    c.admin = True
+                else:
+                    c = User.query.filter_by(id=b).first()
+                    c.admin = False
+                db.session.commit()
+
+    #render dashboard
+    return render_dashboard("", "reset", 6)

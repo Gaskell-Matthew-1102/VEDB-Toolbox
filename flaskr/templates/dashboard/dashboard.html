@@ -26,37 +26,51 @@
 
     <body>
     {# Warning #}
-    {% if warning == 1 %}
+    {% if warning == 1 %} {# User exists when adding #}
         <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
             <span class="alert-text"><strong>Warning!</strong> User already exists!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-    {% elif warning == 2 %}
+    {% elif warning == 2 %} {# User is successfully added #}
         <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
             <span class="alert-text"><strong>Success!</strong> User(s) successfully added!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-    {% elif warning == 3 %}
+    {% elif warning == 3 %} {# User is successfully removed #}
         <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
             <span class="alert-text"><strong>Success!</strong> User successfully removed!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-    {% elif warning == 4 %}
+    {% elif warning == 4 %} {# User being altered is the current user #}
         <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
             <span class="alert-text"><strong>Warning!</strong> This is the current user!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-    {% elif warning == 5 %}
+    {% elif warning == 5 %} {# Not all mass uploaded users were rejected #}
         <div class="alert alert-warning text-white" role="alert">
             <span class="alert-text"><strong>Warning!</strong> {{ rejectedNumber }} of {{ totalNumber }} total users were not uploaded!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% elif warning == 6 %} {# User is successfully modified #}
+        <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
+            <span class="alert-text"><strong>Success!</strong> User successfully modified!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% elif warning == 7 %} {# Invalid CSV file #}
+        <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
+            <span class="alert-text"><strong>Invalid file!</strong> Check file type or format!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -170,7 +184,38 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    {{ row[0] }}
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <span>{{ row[0] }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-100"></div>
+                                                        <div class="row">
+                                                            <form action='/edituser' method="POST">
+                                                                <div class="col">
+                                                                {% if row[2] ==  1 %}
+                                                                <div class="form-check form-switch">
+                                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="" name="editAdmin"/>
+                                                                    <label class="form-check-label" for="flexSwitchCheckDefault">Administrator?</label>
+                                                                </div>
+                                                                {% else %}
+                                                                <div class="form-check form-switch">
+                                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="editAdmin"/>
+                                                                    <label class="form-check-label" for="flexSwitchCheckDefault">Administrator?</label>
+                                                                </div>
+                                                                {% endif %}
+                                                                </div>
+                                                                <div class="col">
+                                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                    <input type="hidden" value="{{ row[0] }}" name="user_to_edit"/>
+                                                                    <button type="submit" class="btn bg-gradient-primary">Save changes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <form action='/deleteuser' method="POST">
@@ -181,8 +226,7 @@
                                                     <button type="button" class="btn bg-gradient-secondary"
                                                             data-bs-dismiss="modal">Close
                                                     </button>
-                                                    <button type="button" class="btn bg-gradient-primary">Save changes
-                                                    </button>
+{#                                                    <button type="submit" class="btn bg-gradient-primary">Save changes</button>#}
                                                 </div>
                                             </div>
                                         </div>
