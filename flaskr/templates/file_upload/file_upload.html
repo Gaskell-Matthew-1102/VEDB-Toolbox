@@ -1,315 +1,290 @@
 {% extends 'file_upload/base.jinja' %}
 
 {% block header %}
-    <h1>{% block title %}File Upload{% endblock %}</h1>
+<h1>{% block title %}File Upload{% endblock %}</h1>
 {% endblock %}
 
 {% block css %}
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
-    <!-- video upload and data upload side-by-side -->
-    <section>
-        <div class="container py-4">
-            <div class="row justify-content-center">
-                <!-- notice about file upload -->
-                <div class="alert alert-warning alert-dismissible text-white fade show" role="alert">
-                    <strong>Notice!</strong> You must upload both video and data filesets, ensuring <strong>odometry.pldata</strong> and <strong>gaze.npz</strong> are included, before proceeding to the visualizer
-                    Furthermore, please only use one upload form at a time (e.g., let videos fully upload before moving onto data)
-                    <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <!-- Video Upload Card -->
-                <div class="col-lg-6 d-flex justify-content-center flex-column mb-4 mb-lg-0">
-                    <div class="card d-flex justify-content-center p-4 shadow-lg">
-                        <div class="text-center">
-                            <h3 class="text-gradient text-primary">Video Upload</h3>
-                            <p class="mb-0">
-                                Session videos are available on Databrary via the link under Project Resources.
-                                You can download a .ZIP file (containing 3 .MP4s and 1 .CSV), and upload its contents.
-                                Alternatively, simply input the .ZIP file link into the form.
-                            </p>
-                        </div>
-
-                        {% if not videos_submitted %}
-                        <div class="nav-wrapper position-relative end-0 mt-4">
-                            <ul class="nav nav-pills nav-fill p-1" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active"
-                                       data-bs-toggle="tab"
-                                       href="#dtb_file_upload"
-                                       role="tab"
-                                       aria-selected="true">
-                                        <i class="material-symbols-rounded text-sm me-2">folder_open</i> File Upload
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       data-bs-toggle="tab"
-                                       href="#dtb_url_entry"
-                                       role="tab"
-                                       aria-selected="false">
-                                        <i class="material-symbols-rounded text-sm me-2">public</i> URL Entry
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="tab-content mt-4">
-                            <div class="tab-pane fade show active" id="dtb_file_upload" role="tabpanel">
-                                <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
-                                <input id="dtb_file_upload" type="file" name="filepond" multiple accept=".mp4,.csv" />
-
-                            </div>
-
-                            <div class="tab-pane fade" id="dtb_url_entry" role="tabpanel">
-                                <form role="form" method="post" autocomplete="off">
-                                    <div class="card-body pb-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            {{ databraryurl.csrf_token }}
-                                            {{ databraryurl.dtb_url.label(class="form-label") }}
-                                            {{ databraryurl.dtb_url(class="form-control", aria_label="Databrary URL") }}
-                                            {% for error in databraryurl.dtb_url.errors %}
-                                                <div class="text-danger">{{ error }}</div>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="text-center">
-                                            {{ databraryurl.dtb_submit(class="btn bg-gradient-dark mt-3 mb-0") }}
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        {% else %}
-                        <div class="toast fade show d-flex align-items-center justify-content-between bg-gradient-dark border-0 pe-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
-                                    <div class="toast-body text-white">
-                                        Submitted!
-                                    </div>
-                                    <i class="fas fa-times text-md cursor-pointer pe-2 text-white" data-bs-dismiss="toast" aria-label="Close"></i>
-                                </div>
-                        {% endif %}
+<!-- video upload and data upload side-by-side -->
+<section>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <!-- notice about file upload -->
+            <div class="alert alert-warning alert-dismissible text-white fade show" role="alert">
+                <strong>Notice!</strong> You must upload both video and data filesets, ensuring <strong>odometry.pldata</strong> and <strong>gaze.npz</strong> are included, before proceeding to the visualizer Furthermore, please only use
+                one upload form at a time (e.g., let videos fully upload before moving onto data)
+                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- Video Upload Card -->
+            <div class="col-lg-6 d-flex justify-content-center flex-column mb-4 mb-lg-0">
+                <div class="card d-flex justify-content-center p-4 shadow-lg">
+                    <div class="text-center">
+                        <h3 class="text-gradient text-primary">Video Upload</h3>
+                        <p class="mb-0">
+                            Session videos are available on Databrary via the link under Project Resources. You can download a .ZIP file (containing 3 .MP4s and 1 .CSV), and upload its contents. Alternatively, simply input the .ZIP file
+                            link into the form.
+                        </p>
                     </div>
-                </div>
 
-                <!-- Data Upload Card -->
-                <div class="col-lg-6 d-flex justify-content-center flex-column">
-                    <div class="card d-flex justify-content-center p-4 shadow-lg">
-                        <div class="text-center">
-                            <h3 class="text-gradient text-primary">Data Upload</h3>
-                            <p class="mb-0">
-                                Download the session sensor data (.ZIP with .NPY and .PLDATA files) from the OSF link under Project Resources,
-                                then upload its contents here. Also upload the gaze.npz file from the processedGaze folder.
-                                Alternatively, paste the ZIP file URL below.
-                            </p>
-                        </div>
-                        {% if not data_submitted %}
-                        <div class="nav-wrapper position-relative end-0 mt-4">
-                            <ul class="nav nav-pills nav-fill p-1" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active"
-                                       data-bs-toggle="tab"
-                                       href="#osf_file_upload"
-                                       role="tab"
-                                       aria-selected="true">
-                                        <i class="material-symbols-rounded text-sm me-2">folder_open</i> File Upload
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       data-bs-toggle="tab"
-                                       href="#osf_url_entry"
-                                       role="tab"
-                                       aria-selected="false">
-                                        <i class="material-symbols-rounded text-sm me-2">public</i> URL Entry
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="tab-content mt-4">
-                            <div class="tab-pane fade show active" id="osf_file_upload" role="tabpanel">
-                                <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
-                                <input type="file" id="osf_file_upload" name="filepond" multiple accept=".pldata,.npy,.npz,.yaml,.intrinsics,.extrinsics">
-                            </div>
-
-                            <div class="tab-pane fade" id="osf_url_entry" role="tabpanel">
-                                <form role="form" method="post" autocomplete="off">
-                                    <div class="card-body pb-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            {{ osfurl.csrf_token }}
-                                            {{ osfurl.osf_url.label(class="form-label") }}
-                                            {{ osfurl.osf_url(class="form-control", aria_label="OSF URL") }}
-                                            {% for error in osfurl.osf_url.errors %}
-                                                <div class="text-danger">{{ error }}</div>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="text-center">
-                                            {{ osfurl.osf_submit(class="btn bg-gradient-dark mt-3 mb-0") }}
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        {% else %}
-                                                        <div class="toast fade show d-flex align-items-center justify-content-between bg-gradient-dark border-0 pe-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
-                                    <div class="toast-body text-white">
-                                        Submitted!
-                                    </div>
-                                    <i class="fas fa-times text-md cursor-pointer pe-2 text-white" data-bs-dismiss="toast" aria-label="Close"></i>
-                                </div>
-                        {% endif %}
+                    {% if not videos_submitted %}
+                    <div class="nav-wrapper position-relative end-0 mt-4">
+                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#dtb_file_upload" role="tab" aria-selected="true"> <i class="material-symbols-rounded text-sm me-2">folder_open</i> File Upload </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#dtb_url_entry" role="tab" aria-selected="false"> <i class="material-symbols-rounded text-sm me-2">public</i> URL Entry </a>
+                            </li>
+                        </ul>
                     </div>
+
+                    <div class="tab-content mt-4">
+                        <div class="tab-pane fade show active" id="dtb_file_upload" role="tabpanel">
+                            <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+                            <input id="dtb_file_upload" type="file" name="filepond" multiple accept=".mp4,.csv" />
+                        </div>
+
+                        <div class="tab-pane fade" id="dtb_url_entry" role="tabpanel">
+                            <form role="form" method="post" autocomplete="off">
+                                <div class="card-body pb-2">
+                                    <div class="input-group input-group-static mb-4">
+                                        {{ databraryurl.csrf_token }} {{ databraryurl.dtb_url.label(class="form-label") }} {{ databraryurl.dtb_url(class="form-control", aria_label="Databrary URL") }} {% for error in
+                                        databraryurl.dtb_url.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="text-center">
+                                        {{ databraryurl.dtb_submit(class="btn bg-gradient-dark mt-3 mb-0") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="toast fade show d-flex align-items-center justify-content-between bg-gradient-dark border-0 pe-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-body text-white">
+                            Submitted!
+                        </div>
+                        <i class="fas fa-times text-md cursor-pointer pe-2 text-white" data-bs-dismiss="toast" aria-label="Close"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Data Upload Card -->
+            <div class="col-lg-6 d-flex justify-content-center flex-column">
+                <div class="card d-flex justify-content-center p-4 shadow-lg">
+                    <div class="text-center">
+                        <h3 class="text-gradient text-primary">Data Upload</h3>
+                        <p class="mb-0">
+                            Download the session sensor data (.ZIP with .NPY and .PLDATA files) from the OSF link under Project Resources, then upload its contents here. Also upload the gaze.npz file from the processedGaze folder.
+                            Alternatively, paste the ZIP file URL below.
+                        </p>
+                    </div>
+                    {% if not data_submitted %}
+                    <div class="nav-wrapper position-relative end-0 mt-4">
+                        <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#osf_file_upload" role="tab" aria-selected="true"> <i class="material-symbols-rounded text-sm me-2">folder_open</i> File Upload </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#osf_url_entry" role="tab" aria-selected="false"> <i class="material-symbols-rounded text-sm me-2">public</i> URL Entry </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content mt-4">
+                        <div class="tab-pane fade show active" id="osf_file_upload" role="tabpanel">
+                            <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+                            <input type="file" id="osf_file_upload" name="filepond" multiple accept=".pldata,.npy,.npz,.yaml,.intrinsics,.extrinsics" />
+                        </div>
+
+                        <div class="tab-pane fade" id="osf_url_entry" role="tabpanel">
+                            <form role="form" method="post" autocomplete="off">
+                                <div class="card-body pb-2">
+                                    <div class="input-group input-group-static mb-4">
+                                        {{ osfurl.csrf_token }}
+                                        {{ osfurl.osf_url.label(class="form-label") }}
+                                        {{ osfurl.osf_url(class="form-control", aria_label="OSF URL") }}
+                                        {% for error in osfurl.osf_url.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="text-center">
+                                        {{ osfurl.osf_submit(class="btn bg-gradient-dark mt-3 mb-0") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="toast fade show d-flex align-items-center justify-content-between bg-gradient-dark border-0 pe-2 mx-auto" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-body text-white">
+                            Submitted!
+                        </div>
+                        <i class="fas fa-times text-md cursor-pointer pe-2 text-white" data-bs-dismiss="toast" aria-label="Close"></i>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section>
-        <div class="container py-1 mt-3">
-            <div class="row justify-content-center text-center py-2">
-                <div class="col-auto">
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        {% if data_submitted and videos_submitted %}
-                        <form method="POST" action="{{ url_for('file_upload.file_upload') }}">
-                            {{ visualizer_button.hidden_tag() }}
-                            <button type="submit"
-                                    class="btn bg-gradient-dark btn-icon btn-lg"
-                                    name="{{ visualizer_button.submit.name }}"
-                                    value="1">
-                                <div class="d-flex align-items-center">
-                                    {{ visualizer_button.submit.label.text }}
-                                    <i class="material-symbols-rounded ms-2" aria-hidden="true">developer_board</i>
-                                </div>
-                            </button>
-                        </form>
-                        {% endif %}
+<section>
+    <div class="container py-1 mt-3">
+        <div class="row justify-content-center text-center py-2">
+            <div class="col-auto">
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <!-- enter visualizer -->
+                    {% if data_submitted and videos_submitted %}
+                    <form method="POST" action="{{ url_for('file_upload.file_upload') }}">
+                        {{ visualizer_button.hidden_tag() }}
+                        <button type="submit" class="btn bg-gradient-dark btn-icon btn-lg" name="{{ visualizer_button.submit.name }}" value="1">
+                            <div class="d-flex align-items-center">
+                                {{ visualizer_button.submit.label.text }}
+                                <i class="material-symbols-rounded ms-2" aria-hidden="true">developer_board</i>
+                            </div>
+                        </button>
+                    </form>
+                    {% endif %}
 
-                        <form method="POST" action="{{ url_for('file_upload.file_upload') }}">
-                            {{ reset_button.hidden_tag() }}
-                                <button type="submit"
-                                        class="btn bg-gradient-dark btn-icon btn-lg"
-                                        name="{{ reset_button.reset.name }}"
-                                        value="1">
-                                    <div class="d-flex align-items-center">
-                                        {{ reset_button.reset.label.text }}
-                                        <i class="material-symbols-rounded ms-2" aria-hidden="true">delete</i>
-                                    </div>
-                                </button>
-                        </form>
-                    </div>
+                    <!-- to set fixation variables page -->
+                    <a href="{{ url_for('file_upload.fixations') }}" class="btn bg-gradient-dark btn-icon btn-lg">
+                        <div class="d-flex align-items-center">
+                            Set fixation variables
+                            <i class="material-symbols-rounded ms-2" aria-hidden="true">visibility</i>
+                        </div>
+                    </a>
+
+                    <!-- clear session -->
+                    <form method="POST" action="{{ url_for('file_upload.file_upload') }}">
+                        {{ reset_button.hidden_tag() }}
+                        <button type="submit" class="btn bg-gradient-dark btn-icon btn-lg" name="{{ reset_button.reset.name }}" value="1">
+                            <div class="d-flex align-items-center">
+                                {{ reset_button.reset.label.text }}
+                                <i class="material-symbols-rounded ms-2" aria-hidden="true">delete</i>
+                            </div>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock %}
 
 {% block js %}
-    <!-- filepond and its plugins -->
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<!-- filepond and its plugins -->
+<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
 
-    <script>
-        // Register FilePond plugin
-        FilePond.registerPlugin(FilePondPluginFileValidateType);
+<script>
+    // Register FilePond plugin
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
 
-        // CSRF Token for security
-        const csrfToken = document.querySelector('#csrf_token').value;
+    // CSRF Token for security
+    const csrfToken = document.querySelector("#csrf_token").value;
 
-        // Get file input elements
-        const osf_file_upload_input_element = document.querySelector('input[id="osf_file_upload"]');
-        const dtb_file_upload_input_element = document.querySelector('input[id="dtb_file_upload"]');
+    // Get file input elements
+    const osf_file_upload_input_element = document.querySelector('input[id="osf_file_upload"]');
+    const dtb_file_upload_input_element = document.querySelector('input[id="dtb_file_upload"]');
 
-        // Set the field name for both FilePond instances
-        FilePond.setOptions({
-            name: 'filepond'
-        });
+    // Set the field name for both FilePond instances
+    FilePond.setOptions({
+        name: "filepond",
+    });
 
-        // Create FilePond instance for OSF file input
-        const osf_pond = FilePond.create(osf_file_upload_input_element, {
-            allowMultiple: true,
-            maxParallelUploads: 4,
-            allowFileTypeValidation: false,
-            allowRemove: false,
-            server: {
-                url: './upload',
-                process: {
-                    method: 'POST',
-                    withCredentials: false,
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    onload: response => response,
-                    onerror: response => response,
-                }
+    // Create FilePond instance for OSF file input
+    const osf_pond = FilePond.create(osf_file_upload_input_element, {
+        allowMultiple: true,
+        maxParallelUploads: 4,
+        allowFileTypeValidation: false,
+        allowRemove: false,
+        server: {
+            url: "./upload",
+            process: {
+                method: "POST",
+                withCredentials: false,
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+                onload: (response) => response,
+                onerror: (response) => response,
             },
-            onaddfile: (err, file) => {
-                if (err) return;
+        },
+        onaddfile: (err, file) => {
+            if (err) return;
 
-                const allowedExtensions = ['.pldata', '.npy', '.npz', '.yaml', '.intrinsics', '.extrinsics'];
-                const fileName = file.file.name.toLowerCase();
-                const isValid = allowedExtensions.some(ext => fileName.endsWith(ext));
+            const allowedExtensions = [".pldata", ".npy", ".npz", ".yaml", ".intrinsics", ".extrinsics"];
+            const fileName = file.file.name.toLowerCase();
+            const isValid = allowedExtensions.some((ext) => fileName.endsWith(ext));
 
-                if (!isValid) {
-                    osf_pond.removeFile(file.id);
-                }
+            if (!isValid) {
+                osf_pond.removeFile(file.id);
             }
-        });
+        },
+    });
 
-        // Create FilePond instance for Databrary file input
-        const dtb_pond = FilePond.create(dtb_file_upload_input_element, {
-            allowMultiple: true,
-            maxParallelUploads: 4,
-            allowFileTypeValidation: false,
-            allowRemove: false,
-            server: {
-                url: './upload',
-                process: {
-                    method: 'POST',
-                    withCredentials: false,
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    onload: response => response,
-                    onerror: response => response,
-                }
+    // Create FilePond instance for Databrary file input
+    const dtb_pond = FilePond.create(dtb_file_upload_input_element, {
+        allowMultiple: true,
+        maxParallelUploads: 4,
+        allowFileTypeValidation: false,
+        allowRemove: false,
+        server: {
+            url: "./upload",
+            process: {
+                method: "POST",
+                withCredentials: false,
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+                onload: (response) => response,
+                onerror: (response) => response,
             },
-            onaddfile: (err, file) => {
-                if (err) return;
+        },
+        onaddfile: (err, file) => {
+            if (err) return;
 
-                // Allowed file types
-                const allowedExtensions = ['.mp4', '.csv'];
-                const fileName = file.file.name.toLowerCase();
-                const isValid = allowedExtensions.some(ext => fileName.endsWith(ext));
+            // Allowed file types
+            const allowedExtensions = [".mp4", ".csv"];
+            const fileName = file.file.name.toLowerCase();
+            const isValid = allowedExtensions.some((ext) => fileName.endsWith(ext));
 
-                // If the file is invalid, remove it from FilePond and show an alert
-                if (!isValid) {
-                    dtb_pond.removeFile(file.id);
-                }
+            // If the file is invalid, remove it from FilePond and show an alert
+            if (!isValid) {
+                dtb_pond.removeFile(file.id);
             }
-        });
+        },
+    });
 
-        function checkIfBothQueuesAreDone() {
-            const osfIsProcessing = osf_pond.getFiles().some(file => file.status !== 5); // 5 = FilePond.FileStatus.PROCESSING_COMPLETE
-            const dtbIsProcessing = dtb_pond.getFiles().some(file => file.status !== 5);
+    function checkIfBothQueuesAreDone() {
+        const osfIsProcessing = osf_pond.getFiles().some((file) => file.status !== 5); // 5 = FilePond.FileStatus.PROCESSING_COMPLETE
+        const dtbIsProcessing = dtb_pond.getFiles().some((file) => file.status !== 5);
 
-            if (!osfIsProcessing && !dtbIsProcessing) {
-                // Small delay to ensure UI updates are complete before reloading
-                setTimeout(() => {
-                    location.reload();
-                }, 500);
-            }
+        if (!osfIsProcessing && !dtbIsProcessing) {
+            // Small delay to ensure UI updates are complete before reloading
+            setTimeout(() => {
+                location.reload();
+            }, 500);
         }
+    }
 
-        // Hook into the processfile event for both ponds
-        osf_pond.on('processfile', () => {
-            checkIfBothQueuesAreDone();
-        });
+    // Hook into the processfile event for both ponds
+    osf_pond.on("processfile", () => {
+        checkIfBothQueuesAreDone();
+    });
 
-        dtb_pond.on('processfile', () => {
-            checkIfBothQueuesAreDone();
-        });
-    </script>
+    dtb_pond.on("processfile", () => {
+        checkIfBothQueuesAreDone();
+    });
+</script>
 
 {% endblock %}

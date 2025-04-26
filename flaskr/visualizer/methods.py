@@ -75,18 +75,19 @@ def count_nans(vel_list):
 # return values
 def get_data_of_video(video_path: str) -> tuple[int, int, int]:
     vcap = cv2.VideoCapture(video_path)
-    if not vcap.isOpened():
-        return 0, 0, 0
+    width = 0
+    height = 0
+    fps = 0
 
-    return (
-        int(vcap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-        int(vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
-        int(vcap.get(cv2.CAP_PROP_FPS))
-    )
+    if vcap.isOpened():
+        # get vcap property
+        width = vcap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+        height = vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+        fps = vcap.get(cv2.CAP_PROP_FPS)
+    return int(width), int(height), int(fps)
 
 # graph generation
 # velocity
-
 def generate_velocity_graphs(filename_list: list[str]):
     # assuming either 1. both files exist, 2. neither file exists
     global graph_file_list
@@ -263,7 +264,7 @@ def start_fixation_algorithm(odometry_file:str, gaze_file:str, world_video_file:
 
     # see if user wants to override the optic flow method used
     # otherwise, go with what has been automatically decided
-    if(bool(in_args['optic_flow_override'])):
+    if bool(in_args['optic_flow_override']):
         imu_flag = in_args['force_imu']
 
     if csv_file != "":
@@ -308,18 +309,3 @@ def get_session_date_from_csv(filepath:str) -> str:
         _ = next(csv_reader)
         row = next(csv_reader)
         return row[0]
-
-def get_data_of_video(video_path:str) -> tuple[int, int, int]:
-    import cv2
-    print(video_path)
-    vcap = cv2.VideoCapture(video_path)
-    width = 0
-    height = 0
-    fps = 0
-    
-    if vcap.isOpened(): 
-        # get vcap property 
-        width  = vcap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
-        height = vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
-        fps = vcap.get(cv2.CAP_PROP_FPS)
-    return int(width), int(height), int(fps)
