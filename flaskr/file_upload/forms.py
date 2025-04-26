@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 from flask_wtf import FlaskForm
 
 # pip. used for above
-from wtforms import URLField, SubmitField
+from wtforms import URLField, SubmitField, BooleanField, IntegerField, DecimalField
 from wtforms.validators import DataRequired, URL, ValidationError
 
 # Custom validator class implementing what used to be "validate_link" in methods.py
@@ -54,9 +54,25 @@ class OSFURLForm(FlaskForm):
         LinkDomainValidator(flag=1, message="URL must be from osf.io")]
     )
     osf_submit = SubmitField("Submit URL")
-    
-class EnterVisualizer(FlaskForm):
-    submit = SubmitField("Enter Visualizer")
-    
+
+
 class ResetFileUpload(FlaskForm):
     reset = SubmitField("Remove all uploaded files in session")
+
+class FixationParameters(FlaskForm):
+    gaze_window_size_ms = IntegerField("Gaze Window Size (ms)", default=55)
+    polynomial_grade = IntegerField("Polynomial Grade", default=3)
+    min_velocity_threshold = IntegerField("Minimum Velocity Threshold (px/sec)", default=750)
+    gain_factor = DecimalField("Gain Factor", default=0.8)
+    world_camera_fov_h = IntegerField("World Camera FOV - Horizontal (deg)", default=90)
+    world_camera_fov_v = IntegerField("World Camera FOV - Vertical (deg)", default=90)
+    eye_camera_fov_h = IntegerField("Eye Camera FOV - Horizontal (deg)", default=110)
+    min_saccade_amp_deg = DecimalField("Minimum Saccade Amplitude (deg)", default=1.0)
+    min_saccade_dur_ms = IntegerField("Minimum Saccade Duration (ms)", default=10)
+    min_fixation_dur_ms = IntegerField("Minimum Fixation Duration (ms)", default=70)
+    imu_flag = BooleanField("LUCAS (fallback) or IMU?", default=False)
+
+    submit_parameters = SubmitField("Set Fixation Parameters")
+
+class EnterVisualizer(FlaskForm):
+    submit = SubmitField("Enter Visualizer")

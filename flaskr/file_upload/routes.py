@@ -29,6 +29,30 @@ def setup():
         session['data_submitted'] = False
     if 'videos_submitted' not in session:
         session['videos_submitted'] = False
+
+    # create fixation parameters dictionary
+    if 'fixation_params' not in session:
+        session['fixation_params'] = {
+            "gaze_window_size" : 55,
+            "polynomial_grade" : 3,
+            "adap_window_size_ms" : 200,
+            "min_vel_thresh" : 750,
+            "gain" : 0.8,
+            "eye_camera_x_px" : 400,
+            "eye_camera_y_px" : 400,
+            "eye_horiz_fov" : 110,
+            "world_camera_fov_horiz" : 90,
+            "world_camera_fov_vert" : 90,
+            "world_camera_x_px" : 2048,
+            "world_camera_y_px" : 1536,
+            "desired_hz" : 200,
+            "min_saccade_amp_deg" : 1.0,
+            "min_saccade_dur_ms" : 10,
+            "min_fix_dur_ms" : 70,
+
+            "optic_flow_override" : True,
+            "force_imu" : False,
+        }
         
     # designate an uuid-upload folder, creating it if it doesn't exist
     request.upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
@@ -46,6 +70,7 @@ def file_upload():
     osfurl = OSFURLForm()
     visualizer_button = EnterVisualizer()
     reset_button = ResetFileUpload()
+    fixation_parameters_list = FixationParameters()
 
     # If submitting via URL download
     if databraryurl.validate_on_submit() and databraryurl.dtb_submit.data:
@@ -70,6 +95,13 @@ def file_upload():
                 session['data_submitted'] = True
             else:
                 flash("No files were uploaded for OSF.", 'error')
+
+    # Handle reset button
+    if reset_button.validate_on_submit() and reset_button.reset.data:
+        session.pop('upload_uuid', None)
+        session.pop('data_submitted', None)
+        session.pop('videos_submitted', None)
+        return redirect("/file_upload")
 
     # Handle visualizer button
     if visualizer_button.validate_on_submit() and visualizer_button.submit.data:
@@ -98,12 +130,19 @@ def file_upload():
             except Exception as e:
                 flash(f"An error occurred: {str(e)}", 'danger')
 
-    # Handle reset button
-    if reset_button.validate_on_submit() and reset_button.reset.data:
-        session.pop('upload_uuid', None)
-        session.pop('data_submitted', None)
-        session.pop('videos_submitted', None)
-        return redirect("/file_upload")
+    # POST the fixation parameter list
+    if fixation_parameters_list.validate_on_submit() and fixation_parameters_list.submit_parameters.data:
+        session['fixation_params']["gaze_window_size"] = fixation_parameters_list.gaze_window_size_ms.data
+        session['fixation_params']["polynomial_grade"] = fixation_parameters_list.polynomial_grade.data
+        session['fixation_params']["min_vel_thres"] = fixation_parameters_list.min_velocity_threshold.data
+        session['fixation_params']["gain"] = fixation_parameters_list.gain_factor.data
+        session['fixation_params']["eye_horiz_fov"] = fixation_parameters_list.eye_camera_fov_h.data
+        session['fixation_params']["world_camera_fov_horiz"] = fixation_parameters_list.world_camera_fov_h
+        session['fixation_params']["world_camera_fov_vert"] = fixation_parameters_list.world_camera_fov_v
+        session['fixation_params']["min_saccade_amp_deg"] = fixation_parameters_list.min_saccade_amp_deg.data
+        session['fixation_params']["min_saccade_dur_ms"] = fixation_parameters_list.min_saccade_dur_ms.data
+        session['fixation_params']["min_fix_dur_ms"] = fixation_parameters_list.min_fixation_dur_ms.data
+        session['fixation_params']["force_imu"] = fixation_parameters_list.imu_flag.data
 
     return render_template("file_upload/file_upload.html",
                            is_admin=is_admin(),
