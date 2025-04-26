@@ -1,5 +1,11 @@
+{% extends 'dashboard/base.jinja' %}
 {% from 'bootstrap5/table.html' import render_table %}
 
+{% block header %}
+<h1>{% block title %}Admin Dashboard{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
     <!--Entire dashboard is templated by Creative Tim, under Material Dashboard 3-->
@@ -246,15 +252,6 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                {#Back to homepage#}
-                <span>
-                    <a href="{{ url_for('file_upload.file_upload') }}">
-                        <button type="button" class="btn btn-outline-primary me-2">File Uploader</button>
-                    </a>
-                </span>
-            </div>
-
-            <div class="col">
                 <span>
                     <button type="button" href="javascript:;" class="btn btn-outline-primary me-2" data-toggle="tooltip" data-original-title="Edit user" data-bs-toggle="modal" data-bs-target="#accountManage">
                         Upload User
@@ -368,3 +365,4 @@
 
     </body>
 </html>
+{% endblock %}
