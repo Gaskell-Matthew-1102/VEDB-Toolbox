@@ -190,9 +190,6 @@ def fixations():
         
         session['fixation_params']["optic_flow_override"] = fixation_parameters_list.optic_flow_override.data
         session['fixation_params']["force_imu"] = fixation_parameters_list.imu_flag.data
-        
-        print("The Pretty Print dictionary is : ")
-        pprint(session['fixation_params'])
                 
         return redirect("/file_upload")
 

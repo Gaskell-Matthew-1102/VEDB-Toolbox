@@ -4,6 +4,8 @@
 # defined WTForm classes for URL input as to:
 #   avoid literally creating an HTML form on the page and generating a POST request
 #    - in the original write, this was the case. rather unwieldy!
+# created a bunch of buttons for use with the program as POST methods to do things
+# fixation parameter list also by brian
 
 # base
 from urllib.parse import urlparse
@@ -71,7 +73,7 @@ class FixationParameters(FlaskForm):
     min_saccade_dur_ms = IntegerField("Minimum Saccade Duration (ms)", default=10)
     min_fixation_dur_ms = IntegerField("Minimum Fixation Duration (ms)", default=70)
     
-    optic_flow_override = BooleanField('Enable IMU Flag Switch', default=False)
+    optic_flow_override = BooleanField('Enable Override', default=False)
     imu_flag = BooleanField("LUCAS (fallback) or IMU?", default=False)
 
     submit_parameters = SubmitField("Set Fixation Parameters")
