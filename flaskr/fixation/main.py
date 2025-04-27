@@ -205,6 +205,7 @@ def main():
             export_parameters_file_path="./fixation/export/export_parameters.txt" , 
             gaze_window_size_ms=GAZE_WINDOW_SIZE_MS, 
             polynomial_grade=POLYNOMIAL_GRADE, 
+            adap_window_size_ms=ADAP_WINDOW_SIZE_MS,
             min_vel_thresh=MIN_VEL_THRESH, 
             gain_factor=GAIN_FACTOR, 
             desired_world_hz=200, 
