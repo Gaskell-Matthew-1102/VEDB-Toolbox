@@ -70,6 +70,8 @@ class FixationParameters(FlaskForm):
     min_saccade_amp_deg = DecimalField("Minimum Saccade Amplitude (deg)", default=1.0)
     min_saccade_dur_ms = IntegerField("Minimum Saccade Duration (ms)", default=10)
     min_fixation_dur_ms = IntegerField("Minimum Fixation Duration (ms)", default=70)
+    
+    optic_flow_override = BooleanField('Enable IMU Flag Switch', default=False)
     imu_flag = BooleanField("LUCAS (fallback) or IMU?", default=False)
 
     submit_parameters = SubmitField("Set Fixation Parameters")

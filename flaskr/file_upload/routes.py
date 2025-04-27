@@ -3,6 +3,7 @@
 
 # base
 import uuid
+from pprint import pprint
 
 # flask
 from flask import render_template, flash, request, redirect, jsonify
@@ -178,15 +179,21 @@ def fixations():
         session['fixation_params']["polynomial_grade"] = fixation_parameters_list.polynomial_grade.data
         session['fixation_params']["min_vel_thres"] = fixation_parameters_list.min_velocity_threshold.data
         session['fixation_params']["gain"] = fixation_parameters_list.gain_factor.data
+        
         session['fixation_params']["eye_horiz_fov"] = fixation_parameters_list.eye_camera_fov_h.data
         session['fixation_params']["world_camera_fov_horiz"] = fixation_parameters_list.world_camera_fov_h.data
         session['fixation_params']["world_camera_fov_vert"] = fixation_parameters_list.world_camera_fov_v.data
+        
         session['fixation_params']["min_saccade_amp_deg"] = fixation_parameters_list.min_saccade_amp_deg.data
         session['fixation_params']["min_saccade_dur_ms"] = fixation_parameters_list.min_saccade_dur_ms.data
         session['fixation_params']["min_fix_dur_ms"] = fixation_parameters_list.min_fixation_dur_ms.data
+        
+        session['fixation_params']["optic_flow_override"] = fixation_parameters_list.optic_flow_override.data
         session['fixation_params']["force_imu"] = fixation_parameters_list.imu_flag.data
-
-        print(session['fixation_params'])
+        
+        print("The Pretty Print dictionary is : ")
+        pprint(session['fixation_params'])
+                
         return redirect("/file_upload")
 
     return render_template("file_upload/fixations.html", fixation_parameters_list=fixation_parameters_list)

@@ -77,8 +77,17 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <!-- Unlock checkbox, bound to optic_flow_override -->
+                                    <div class="form-check mb-3">
+                                        {{ fixation_parameters_list.optic_flow_override(class="form-check-input", id="unlockSwitchCheckbox") }}
+                                        <label class="form-check-label" for="unlockSwitchCheckbox">
+                                            {{ fixation_parameters_list.optic_flow_override.label.text }}
+                                        </label>
+                                    </div>
+
+                                    <!-- IMU Flag Switch -->
                                     <div class="form-check form-switch d-flex align-items-center mb-4">
-                                        {{ fixation_parameters_list.imu_flag(class="form-check-input", id="imuFlagSwitch") }}
+                                        {{ fixation_parameters_list.imu_flag(class="form-check-input", id="imuFlagSwitch", disabled=not fixation_parameters_list.optic_flow_override.data) }}
                                         <label class="form-check-label ms-3 mb-0" for="imuFlagSwitch">
                                             {{ fixation_parameters_list.imu_flag.label.text }}
                                         </label>
@@ -95,4 +104,17 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const unlockCheckbox = document.getElementById('unlockSwitchCheckbox');
+        const imuSwitch = document.getElementById('imuFlagSwitch');
+
+        unlockCheckbox.addEventListener('change', function () {
+            imuSwitch.disabled = !this.checked;
+        });
+    });
+</script>
 {% endblock %}
