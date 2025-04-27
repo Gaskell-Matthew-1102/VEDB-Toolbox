@@ -153,3 +153,11 @@ def deletesession():
             db.session.commit()
 
     return render_dashboard("", "reset", 8)
+
+@blueprint.route("/searchsession", methods=["GET", "POST"])
+@login_required
+@admin_required
+def searchsession():
+    result_list = findsession(request.form.get('session_search', ""))
+    sessions = load_session_data(result_list)
+    return render_template('dashboard/dashboard.html', userlist=result_list, warning=0, sessionlist=sessions)

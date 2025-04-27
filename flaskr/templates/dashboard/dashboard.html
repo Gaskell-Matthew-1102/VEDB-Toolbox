@@ -134,6 +134,19 @@
                                 <input type="hidden" name="formType" value="reset">
                             </form>
                         </th>
+                        <th>
+                            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                                <div class="input-group input-group-outline">
+                                    <form action='/searchsession' method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <label class="form-label"></label>
+                                        <input type="text" class="form-control" onfocus="focused(this)"
+                                               onfocusout="defocused(this)" name="session_search"
+                                               placeholder="Search session name..">
+                                    </form>
+                                </div>
+                            </div>
+                        </th>
                     </tr>
                     </thead>
                     {#          Table Headers#}
