@@ -47,12 +47,12 @@ def visualizer():
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
     export_parameters_path = os.path.join(fixation_export_path, "export_fixation_parameters.txt")
 
-    # Create the files if they don't exist
-    for file_path in [export_json_path, export_parameters_path]:
-        if not os.path.exists(file_path):
-            # This will create the file if it does not exist
-            with open(file_path, 'w') as f:
-                pass  # just open and close the file to create it
+    # # Create the files if they don't exist
+    # for file_path in [export_json_path, export_parameters_path]:
+    #     if not os.path.exists(file_path):
+    #         # This will create the file if it does not exist
+    #         with open(file_path, 'w') as f:
+    #             pass  # just open and close the file to create it
 
     csv_list = list(pathlib.Path(upload_path).glob('*.csv'))
 
@@ -128,7 +128,13 @@ def check_fixation_status():
     fixation_export_path = os.path.join(upload_path, "export")
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
 
-    return jsonify(file=export_json_path.split("/", 1)[1])
+    file_exists = os.path.exists(export_json_path)
+    if file_exists:
+        out = jsonify(file=export_json_path.split("\\", 1)[1])
+    else:
+        out = jsonify(file="")
+    out = jsonify(file=export_json_path.split("\\", 1)[1] if file_exists else "")
+    return out
 
 @blueprint.route("/return_to_file_upload")
 @login_required
