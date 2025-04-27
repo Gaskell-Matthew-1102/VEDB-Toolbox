@@ -128,13 +128,10 @@ def check_fixation_status():
     fixation_export_path = os.path.join(upload_path, "export")
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
 
-    file_exists = os.path.exists(export_json_path)
-    if file_exists:
-        out = jsonify(file=export_json_path.split("\\", 1)[1])
+    if os.path.exists(export_json_path):
+        return jsonify(file=export_json_path.split("\\", 1)[1])
     else:
-        out = jsonify(file="")
-    out = jsonify(file=export_json_path.split("\\", 1)[1] if file_exists else "")
-    return out
+        return jsonify(file="")
 
 @blueprint.route("/return_to_file_upload")
 @login_required
