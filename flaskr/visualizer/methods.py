@@ -216,22 +216,6 @@ def generate_gaze_graph(filename_list):
     gaze_json = [json_left_timestamp, json_left_norm_pos_x, json_left_norm_pos_y, json_right_timestamp, json_right_norm_pos_x, json_right_norm_pos_y]
     return gaze_json
 
-def download_graphs():
-    linear_graph = request.args.get('linearGraph')
-    angular_graph = request.args.get('angularGraph')
-    gaze_graph = request.args.get('gazeGraph')
-
-    linear_file_name = request.args.get('linearFileName')
-    angular_file_name = request.args.get('angularFileName')
-    gaze_file_name = request.args.get('gazeFileName')
-
-    if not os.path.exists("graphs"):
-        os.mkdir("graphs")
-
-    linear_graph.write_image("images" + linear_file_name + ".png")
-    angular_graph.write_image("images" + angular_file_name + ".png")
-    gaze_graph.write_image("images" + gaze_file_name + ".png")
-
 def get_fig_numbers():
     if os.path.exists("graphs"):
         if len(os.listdir("graphs")) == 0:

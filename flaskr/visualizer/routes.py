@@ -70,7 +70,15 @@ def visualizer():
     world_frame_width, world_frame_height, world_fps = get_data_of_video(world_path)
     eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_path)
 
-    start_fixation_algorithm(odometry_file=odo_pldata_path, gaze_file=gaze_npz_path, world_video_file=world_path, csv_file=csv_path, eye0_file=eye0_path, eye1_file=eye1_path, export_json_path=export_json_path, export_parameters_path=export_parameters_path, in_args=session["fixation_params"])
+    start_fixation_algorithm(odometry_file=odo_pldata_path,
+                             gaze_file=gaze_npz_path,
+                             world_video_file=world_path,
+                             csv_file=csv_path,
+                             eye0_file=eye0_path,
+                             eye1_file=eye1_path,
+                             export_json_path=export_json_path,
+                             export_parameters_path=export_parameters_path,
+                             in_args=session["fixation_params"])
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
     vel_data = generate_velocity_graphs([odo_pldata_path, world_time_path])
@@ -102,24 +110,6 @@ def fetch(filename):
     fixed_path = os.path.join('..', UPLOAD_FOLDER)
     session_root = os.path.join(fixed_path, session['upload_uuid'])
     return send_from_directory(session_root, filename)
-
-@blueprint.route("/download")
-@login_required
-def download_graphs():
-    if request.method == "POST":
-        graphs = request.get_json()
-        linear = graphs["lin_graph"]
-        angular = graphs["ang_graph"]
-
-        linear_graph = go.Figure(linear)
-        angular_graph = go.Figure(angular)
-
-        if not os.path.exists("graphs"):
-            os.mkdir("graphs")
-
-        fig_numbers = get_fig_numbers()
-        pio.write_image(linear_graph, "images/linear_graph" + str(fig_numbers[0]) + ".png")
-        pio.write_image(angular_graph, "images/angular_graph" + str(fig_numbers[1]) + ".png")
 
 # grabs the json.
 @blueprint.route('/<uuid>/export/<filename>')

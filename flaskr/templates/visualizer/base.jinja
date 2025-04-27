@@ -293,6 +293,9 @@
                                             <img src="{{ url_for('static', filename='home/img/github.png') }}" width="24" height="24" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Check us out on Github" />                                        </a>
                                     </li>
                                     <li class="nav-item my-auto ms-3 ms-lg-0">
+                                        <a href="javascript:void(0);" onclick="downloadGraphs()" class="btn bg-gradient-light mb-0 mt-2 mt-md-0">Download All Graphs</a>
+                                    </li>
+                                    <li class="nav-item my-auto ms-3 ms-lg-0">
                                         <a href="{{ url_for('visualizer.return_to_file_upload') }}" class="btn bg-gradient-light mb-0 mt-2 mt-md-0">File Upload</a>
                                     </li>
                                     <li class="nav-item my-auto ms-3 ms-lg-0">

@@ -82,20 +82,7 @@ function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
 
     Plotly.downloadImage(linearGraphDiv, {format:'png', width: 500, height: 257, filename: linear_file_name});
     Plotly.downloadImage(angularGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name});
-    Plotly.downloadImage(gazeGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name})
-
-    // fetch('/download_graphs', {
-    //     method: 'POST',
-    //     headers: {
-    //         'linearGraph': linearGraphDiv,
-    //         'angularGraph': angularGraphDiv,
-    //         'gazeGraph': gazeGraphDiv,
-    //         'linearFileName': linear_file_name,
-    //         'angularFileName': angular_file_name,
-    //         'gazeFileName': gaze_file_name
-    //     },
-
-    // })
+    Plotly.downloadImage(gazeGraphDiv, {format:'png', width: 500, height: 257, filename: gaze_file_name});
 }
 
 function pollForFixationStatus() {
