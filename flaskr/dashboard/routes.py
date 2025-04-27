@@ -3,6 +3,8 @@
 # base
 from os import remove as remove_file
 from os import rename as rename_file
+from os import rmdir as remove_dir
+from shutil import rmtree as rmdirNonEmpty
 
 # flask and its plugins
 from flask import redirect, request
@@ -135,3 +137,19 @@ def edituser():
 
     #render dashboard
     return render_dashboard("", "reset", 6)
+
+@blueprint.route("/deletesession", methods=["GET", "POST"])
+@login_required
+@admin_required
+def deletesession():
+    deleting = request.form.get('session_to_delete', "")
+    foundSession = SessionHistory.query.with_entities(SessionHistory.session_id).filter_by(session_id=deleting).all()
+    fold1 = "uploads/"
+
+    # As of now, foundSession is a list with a list with the id
+    for a in foundSession:
+        for b in a:
+            SessionHistory.query.filter_by(session_id=b).delete()
+            db.session.commit()
+
+    return render_dashboard("", "reset", 8)

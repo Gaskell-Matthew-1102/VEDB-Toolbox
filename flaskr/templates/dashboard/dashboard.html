@@ -81,6 +81,13 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
+    {% elif warning == 8 %} {# Deleted session #}
+        <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
+            <span class="alert-text"><strong>Success!</strong> Session successfully deleted!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     {% endif %}
     {# Warning End #}
 
@@ -158,26 +165,33 @@
                                                  class="avatar avatar-sm me-3">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-xs">{{ row[0] }}</h6>
+                                            <h6 class="mb-0 text-xs">{{ row[1] }}</h6>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-xs text-secondary mb-0">{{ row[1] }}</p>
+                                    <p class="text-xs text-secondary mb-0">{{ row[2] }}</p>
                                 </td>
                                 <td class="align-middle text-center text-sm">
-                                    <span class="text-xs font-weight-bold mb-0">{{ row[2] }}</span>
+                                    <span class="text-xs font-weight-bold mb-0">{{ row[3] }}</span>
+                                </td>
+                                <td>
+                                    <p>
+                                        <button class="text-secondary font-weight-normal text-xs" type="button" data-bs-toggle="collapse" data-bs-target="#{{ row[2] }}" aria-expanded="false" aria-controls="{{ row[2] }}">
+                                            View Sessions
+                                        </button>
+                                    </p>
                                 </td>
                                 <td class="align-middle">
                                     <button type="button" href="javascript:;"
                                             class="text-secondary font-weight-normal text-xs" data-toggle="tooltip"
                                             data-original-title="Edit user" data-bs-toggle="modal"
-                                            data-bs-target="#{{ row[0] }}">
+                                            data-bs-target="#{{ row[1] }}">
                                         Edit
                                     </button>
                                     {#              Modal Start#}
                                     <!-- Modal -->
-                                    <div class="modal fade" id="{{ row[0] }}" tabindex="-1" role="dialog"
+                                    <div class="modal fade" id="{{ row[1] }}" tabindex="-1" role="dialog"
                                          aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
@@ -193,14 +207,14 @@
                                                     <div class="container">
                                                         <div class="row">
                                                             <div class="col">
-                                                                <span>{{ row[0] }}</span>
+                                                                <span>{{ row[1] }}</span>
                                                             </div>
                                                         </div>
                                                         <div class="w-100"></div>
                                                         <div class="row">
                                                             <form action='/edituser' method="POST">
                                                                 <div class="col">
-                                                                {% if row[2] ==  1 %}
+                                                                {% if row[3] ==  1 %}
                                                                 <div class="form-check form-switch">
                                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                                     <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="" name="editAdmin"/>
@@ -216,7 +230,7 @@
                                                                 </div>
                                                                 <div class="col">
                                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                                    <input type="hidden" value="{{ row[0] }}" name="user_to_edit"/>
+                                                                    <input type="hidden" value="{{ row[1] }}" name="user_to_edit"/>
                                                                     <button type="submit" class="btn bg-gradient-primary">Save changes</button>
                                                                 </div>
                                                             </form>
@@ -226,7 +240,7 @@
                                                 <div class="modal-footer">
                                                     <form action='/deleteuser' method="POST">
                                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                        <input type="hidden" value="{{ row[0] }}" name="user_to_delete"/>
+                                                        <input type="hidden" value="{{ row[1] }}" name="user_to_delete"/>
                                                         <button type="submit" class="btn btn-danger">Delete User</button>
                                                     </form>
                                                     <button type="button" class="btn bg-gradient-secondary"
@@ -238,6 +252,37 @@
                                         </div>
                                     </div>
                                     {#              Modal End#}
+                                </td>
+                            </tr>
+                            <tr class="collapse" id="{{ row[2] }}">
+                                <td colspan="4">
+                                    <div>
+                                        <div class="card card-body">
+                                            <span class="text-xs font-weight-bold mb-0">
+                                                {% for sessiongroup in sessionlist %}
+                                                    {% if row[0] == sessiongroup[1] %}
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                {{ sessiongroup[2] }}
+                                                            </div>
+                                                            <div class="col">
+                                                                <form action='/deletesession' method="POST">
+                                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                    <input type="hidden" value="{{ sessiongroup[0] }}" name="session_to_delete"/>
+                                                                    <button type="submit" class="btn btn-primary btn-sm">Delete Session</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    {% else %}
+                                                        No sessions found!
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if not sessionlist %}
+                                                    No sessions found!
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -362,7 +407,11 @@
 
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
     <script href="{{ url_for('static',filename='dashboard/js/material-dashboard.min.js') }}"></script>
-
+    <script>
+                $(document).on('click',function(){
+            $('.collapse').collapse('hide');
+        })
+    </script>
     </body>
 </html>
 {% endblock %}
