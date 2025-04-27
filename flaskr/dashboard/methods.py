@@ -97,6 +97,14 @@ def email_match(key):
     listOfEmails = [email for (email,) in User.query.with_entities(User.email).all()]
     return [e for e in listOfEmails if key in e]
 
+def session_match(key):
+    listOfUIDS = []
+    allses = SessionHistory.query.with_entities(SessionHistory.user_id, SessionHistory.session_name).all()
+    for ses in allses:
+        if key in ses[1]:
+            listOfUIDS.append(ses[0])
+    return listOfUIDS
+
 def load_session_data(userList):
     session_list = []
 
@@ -106,3 +114,21 @@ def load_session_data(userList):
             session_list.append(a)
 
     return session_list
+
+def findsession(searchTerm):
+    # Similar to the other searches, empties should just reset the search
+    username_list = []
+    if searchTerm == "":
+        result_list = User.query.with_entities(User.id, User.username, User.email, User.admin).all()
+        return result_list
+    # Otherwise, search through session names
+    else:
+        # Search sessions by session name, and return list of the associated UIDs
+        all_sessions_uid = session_match(searchTerm)
+        # Use UIDs to get user information
+        for uid in all_sessions_uid:
+            foundUser = User.query.with_entities(User.id, User.username, User.email, User.admin).filter_by(id=uid).all()
+            for element in foundUser:
+                username_list.append(element)
+        # Return the list of user data
+        return username_list
