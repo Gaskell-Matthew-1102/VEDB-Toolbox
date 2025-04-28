@@ -91,8 +91,8 @@ def do_it(filepath: str, scale_factor: float):
         # if cv2.waitKey(30) & 0xFF == 27:
         #     break
         frame_count += 1
-        # if frame_count == 1000:
-        #     break
+        if frame_count == 1250:
+            break
         # if(frame_count % 100 == 0):
         #     print(frame_count)
     cap.release()
