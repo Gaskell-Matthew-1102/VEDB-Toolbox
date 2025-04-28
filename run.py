@@ -17,16 +17,16 @@ def parse_args():
     # Add a command-line argument for the config type
     parser.add_argument(
         "--config",
-        choices = ["devel", "mem", "wsgi"],
+        choices=["devel", "mem", "wsgi-personal", "wsgi-server"],
         default = "devel",
-        help = "Specify the configuration to use: 'devel' (default), 'mem', 'wsgi-personal' (soon-to-be default), or 'wsgi-server'."
+        help = "Specify the configuration to use: 'devel' (default), 'mem', 'wsgi-personal', or 'wsgi-server'."
     )
     return parser.parse_args()
 
 # Run the Flask app based on the provided configuration type
 def run_app(config_type):
     # Create the app with the appropriate configuration
-    app = create_app(test_config=(config_type == "mem"))
+    app = create_app(test_config=None if config_type != "mem" else True)
     
     # Common configuration for WSGI
     common_kwargs = {
@@ -34,7 +34,7 @@ def run_app(config_type):
         # 4gb files for POST. largest video encountered to date is 3.1gb
         'max_request_body_size': 4294967296
     }
-    
+
     # Conditional logic to handle different configurations
     if config_type in ["devel", "mem"]:
         app.run(debug=True)
