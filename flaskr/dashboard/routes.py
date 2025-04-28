@@ -7,7 +7,7 @@ from os import rmdir as remove_dir
 from shutil import rmtree as rmdirNonEmpty
 
 # flask and its plugins
-from flask import redirect, request
+from flask import redirect, request, session
 from flask_login import login_required
 
 # local
@@ -151,6 +151,12 @@ def deletesession():
         for b in a:
             SessionHistory.query.filter_by(session_id=b).delete()
             db.session.commit()
+
+            if session['upload_uuid'] == b:
+                session.pop('upload_uuid', None)
+                session.pop('fixation_params', None)
+                session.pop('data_submitted', None)
+                session.pop('videos_submitted', None)
 
     return render_dashboard("", "reset", 8)
 

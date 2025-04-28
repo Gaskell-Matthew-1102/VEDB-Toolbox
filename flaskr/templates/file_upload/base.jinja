@@ -33,7 +33,7 @@
                 <div class="col-12">
                     <nav class="navbar navbar-expand-lg  blur border-radius-xl top-0 z-index-fixed shadow position-relative my-3 p-2 start-0 end-0 mx-4">
                         <div class="container-fluid px-0">
-                            <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm" href="{{ url_for('home.home') }}" rel="tooltip" title="Designed and Coded by Creative Tim" data-placement="bottom">
+                            <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm" href="{{ url_for('home.home') }}">
                             VEDB Toolbox
                             </a>
                             <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
@@ -276,22 +276,6 @@
             {% block content %}{% endblock %}
         </div>
         <!-- end real body -->
-
-        <!-- footer -->
-        <footer class="footer pt-1 mt-1">
-            <div class="container">
-                <div class=" row">
-                    <div class="col-12">
-                        <div class="text-center">
-                            <p class="text-dark my-4 text-sm font-weight-normal">
-                                All rights reserved. Copyright © <script>document.write(new Date().getFullYear())</script> VEDB Toolbox by Team 16 of UNR's 2024-25 Senior Projects course</a>.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- end footer -->
 
         <!--   Bootstrap from CDN -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

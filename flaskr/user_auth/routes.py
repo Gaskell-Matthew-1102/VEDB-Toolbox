@@ -35,18 +35,18 @@ def landing():
             register_form.r_email.data = ''
             register_form.r_password.data = ''
             register_form.r_repeat_password.data = ''
-            flash("Username already in use.")
+            flash("Username already in use.", "error")
             
         elif register_form.r_password.data != register_form.r_repeat_password.data:
             register_form.r_password.data = ''
             register_form.r_repeat_password.data = ''
-            flash("Passwords do not match.")
+            flash("Passwords do not match.", "error")
         else:
             # create user
             user = User(username=register_form.r_username.data, email=register_form.r_email.data, password_hash=generate_password_hash(register_form.r_password.data), admin=is_first_user())
             db.session.add(user)
             db.session.commit()
-            flash("Success!")
+            flash("Success!", "success")
             login_user(user)
             print("successful registration")
             return redirect("/file_upload")
@@ -55,7 +55,7 @@ def landing():
         user = User.query.filter_by(username=login_form.l_username.data).first()
         if user and check_password_hash(user.password_hash, login_form.l_password.data):
             login_user(user)
-            flash("Success!")
+            flash("Success!", "success")
             print("successful login")
             return redirect("/file_upload")
         else:
