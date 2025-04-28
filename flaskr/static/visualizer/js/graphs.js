@@ -93,9 +93,13 @@ function pollForFixationStatus() {
             method: 'GET',
             success: function(data) {
                 if (data.file != "") {
-                    console.log(data.file);
                     const fixationGraphDiv = document.getElementById("fixations");
-                    fetch(data.file)
+
+                    const filePath = data.file.replace(/\\/g, '/');
+                    const fullFilePath = `${window.location.origin}/${filePath}`;
+                    console.log(fullFilePath);
+
+                    fetch(fullFilePath)
                         .then(response => response.json())
                         .then(fixationData => {
                             const traces = fixationData.map(range => ({
