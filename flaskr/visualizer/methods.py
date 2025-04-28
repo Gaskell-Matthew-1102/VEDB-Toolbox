@@ -5,9 +5,10 @@ import os
 from io import BytesIO
 import math
 from json import dumps
+from functools import wraps
 
 # flask
-from flask import request
+from flask import redirect, session
 
 # pip
 import msgpack
@@ -17,7 +18,18 @@ import cv2
 import plotly.io as pio
 import plotly.graph_objects as go
 
+# local
 from flaskr.fixation.main import parse_viewer_arguments
+
+# @upload_required for the visualizer paths
+def upload_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if data or videos are not submitted
+        if not session.get('data_submitted') or not session.get('videos_submitted'):
+            return redirect("/file_upload")  # Redirect to file_upload page
+        return f(*args, **kwargs)
+    return decorated_function
 
 # dataset manipulation
 # The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student

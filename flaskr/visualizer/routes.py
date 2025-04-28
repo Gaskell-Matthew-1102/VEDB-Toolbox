@@ -21,6 +21,7 @@ UPLOAD_FOLDER = 'uploads'
 
 @blueprint.before_request
 @login_required
+@upload_required
 def setup():
     # create export folder per
     fixation_export_path = os.path.join(os.path.join(UPLOAD_FOLDER, session['upload_uuid']), "export")
@@ -29,61 +30,58 @@ def setup():
 
 @blueprint.route("/visualizer")
 @login_required
+@upload_required
 def visualizer():
-    if not session['data_submitted'] or not session['videos_submitted']:
-        return redirect("/file_upload")
-
     # base directory for all files
     upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
     fixation_export_path = os.path.join(upload_path, "export")
 
     # paths to all relevant files
+    # videoset
     world_path = os.path.join(upload_path, 'world.mp4')
     eye0_path = os.path.join(upload_path, 'eye0.mp4')
     eye1_path = os.path.join(upload_path, 'eye1.mp4')
+    csv_path = ""
+    
+    # dataset
     odo_pldata_path = os.path.join(upload_path, 'odometry.pldata')
     gaze_npz_path = os.path.join(upload_path, 'gaze.npz')
     world_time_path = os.path.join(upload_path, 'world_timestamps.npy')
+    
+    # new files needed for fixation algorithm
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
     export_parameters_path = os.path.join(fixation_export_path, "export_fixation_parameters.txt")
 
+    # checks how many CSVs have been uploaded
     csv_list = list(pathlib.Path(upload_path).glob('*.csv'))
-
-    csv_path = ""
-    if len(csv_list) == 1:
-        csv_path = csv_list[0]
-    elif len(csv_list) == 0:
+    if len(csv_list) == 0:
         print("No CSV files uploaded")
     else:
-        print("More than one CSV file uploaded")
-
-    # Start the fixation detection algorithm here
+        csv_path = csv_list[0]
+        if len(csv_list) > 1:
+            # on the off chance that multiple are uploaded, the least it can do is select *something*
+            print("More than one CSV file uploaded")
 
     # video manip., metadata
     world_frame_width, world_frame_height, world_fps = get_data_of_video(world_path)
     eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_path)
 
-    start_fixation_algorithm(odometry_file=odo_pldata_path,
-                             gaze_file=gaze_npz_path,
-                             world_video_file=world_path,
-                             csv_file=csv_path,
-                             eye0_file=eye0_path,
-                             eye1_file=eye1_path,
-                             export_json_path=export_json_path,
-                             export_parameters_path=export_parameters_path,
-                             in_args=session["fixation_params"])
+    # Start the fixation detection algorithm here
+    # if the file already exists, don't run the algorithm. allows reusing previously generated work
+    if not os.path.exists(export_json_path) or not os.path.exists(export_parameters_path):
+        start_fixation_algorithm(odometry_file=odo_pldata_path,
+                                 gaze_file=gaze_npz_path,
+                                 world_video_file=world_path,
+                                 csv_file=csv_path,
+                                 eye0_file=eye0_path,
+                                 eye1_file=eye1_path,
+                                 export_json_path=export_json_path,
+                                 export_parameters_path=export_parameters_path,
+                                 in_args=session["fixation_params"])
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
     vel_data = generate_velocity_graphs([odo_pldata_path, world_time_path])
     gaze_data = generate_gaze_graph([gaze_npz_path, world_time_path])
-
-
-    # # fixations, paths
-    # # EXPORT_JSON_PATH = "flaskr/fixation/export/export_fixation.json"
-    # EXPORT_JSON_PATH = f"{EXPORT_FOLDER_PATH}/{SESSION_NAME}.json"
-    # # EXPORT_PARAMETERS_PATH = "flaskr/fixation/export/export_parameters.txt"
-    # EXPORT_PARAMETER_PATH = f"{EXPORT_FOLDER_PATH}/{SESSION_NAME}_parameters.txt"
-    #
 
     return render_template("visualizer/visualizer.html",
                            world_frame_width=world_frame_width, world_frame_height=world_frame_height,
@@ -99,6 +97,7 @@ def visualizer():
 
 @blueprint.route('/fetch/<filename>')
 @login_required
+@upload_required
 def fetch(filename):
     fixed_path = os.path.join('..', UPLOAD_FOLDER)
     session_root = os.path.join(fixed_path, session['upload_uuid'])
@@ -107,6 +106,7 @@ def fetch(filename):
 # grabs the json. needed to make /check_fixation_status work
 @blueprint.route('/<uuid>/export/<filename>')
 @login_required
+@upload_required
 def fetch_json(uuid, filename):
     fixed_path = os.path.join('..', UPLOAD_FOLDER)
     upload_path = os.path.join(fixed_path, uuid)
@@ -116,6 +116,7 @@ def fetch_json(uuid, filename):
 
 @blueprint.route("/check_fixation_status")
 @login_required
+@upload_required
 def check_fixation_status():
     upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
     fixation_export_path = os.path.join(upload_path, "export")
@@ -126,8 +127,3 @@ def check_fixation_status():
         return jsonify(file="")
     
     return jsonify(file=export_json_path.split("\\", 1)[1])
-
-@blueprint.route("/return_to_file_upload")
-@login_required
-def return_to_file_upload():
-    return redirect("/file_upload")

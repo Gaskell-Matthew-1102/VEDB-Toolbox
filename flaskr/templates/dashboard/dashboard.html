@@ -192,7 +192,7 @@
                                 <td>
                                     <div class="d-flex justify-content-center mb-3">
                                         <p>
-                                            <button class="text-secondary font-weight-normal text-xs" type="button" data-bs-toggle="collapse" data-bs-target="#{{ row[2] }}" aria-expanded="false" aria-controls="{{ row[2] }}">
+                                            <button class="btn bg-gradient-secondary font-weight-normal" type="button" data-bs-toggle="collapse" data-bs-target="#{{ row[2] }}" aria-expanded="false" aria-controls="{{ row[2] }}">
                                                 View Sessions
                                             </button>
                                         </p>
@@ -201,7 +201,7 @@
                                 <td class="align-middle">
                                     <div class="d-flex justify-content-center mb-3">
                                         <button type="button" href="javascript:;"
-                                                class="text-secondary font-weight-normal text-xs" data-toggle="tooltip"
+                                                class="font-weight-normal btn bg-gradient-secondary" data-toggle="tooltip"
                                                 data-original-title="Edit user" data-bs-toggle="modal"
                                                 data-bs-target="#{{ row[1] }}">
                                             Edit
@@ -347,13 +347,15 @@
                                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="admEnter">
                                         <label class="form-check-label" for="flexSwitchCheckDefault">Administrator?</label>
                                     </div>
+                                <div class="modal-footer">
                                     <button type="submit" class="btn btn-info">Upload User</button>
+                                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+
                                 </form>
                                 {# End of form #}
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -382,7 +384,10 @@
                                 <form action="/csvupload" method="POST" enctype=multipart/form-data>
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="file" id="myFile" name="filename">
-                                    <input type="submit">
+                                    <div class="modal-footer">
+                                        <input type="submit" class="btn bg-gradient-dark">
+                                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
                                 </form>
                                 {#                      File form ends#}
                                 {#                      nav pill start disabled for now lol#}
@@ -408,9 +413,6 @@
                                 {#</div>#}
 
                                 {# nav pill end#}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
                             </div>
                         </div>
                     </div>

@@ -154,10 +154,6 @@ jQuery(function ($) {
         plotFixations(fixationTimes);
     });
 
-    $("#dwnld_btn").on('click', function(){
-        downloadGraphs();
-    })
-
     $("#worldvideo").on("timeupdate", function(){
         console.log("in here");
 
