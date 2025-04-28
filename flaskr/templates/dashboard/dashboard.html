@@ -127,14 +127,8 @@
                                 </div>
                             </div>
                         </th>
-                        <th>
-                            <form action='/searchuser' method="POST">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-secondary">Reset Search</button>
-                                <input type="hidden" name="formType" value="reset">
-                            </form>
-                        </th>
-                        <th>
+                        <th></th>
+                        <th colspan="1">
                             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                                 <div class="input-group input-group-outline">
                                     <form action='/searchsession' method="POST">
@@ -146,6 +140,13 @@
                                     </form>
                                 </div>
                             </div>
+                        </th>
+                        <th>
+                            <form action='/searchuser' method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-secondary">Reset Search</button>
+                                <input type="hidden" name="formType" value="reset">
+                            </form>
                         </th>
                     </tr>
                     </thead>
@@ -189,19 +190,23 @@
                                     <span class="text-xs font-weight-bold mb-0">{{ row[3] }}</span>
                                 </td>
                                 <td>
-                                    <p>
-                                        <button class="text-secondary font-weight-normal text-xs" type="button" data-bs-toggle="collapse" data-bs-target="#{{ row[2] }}" aria-expanded="false" aria-controls="{{ row[2] }}">
-                                            View Sessions
-                                        </button>
-                                    </p>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <p>
+                                            <button class="text-secondary font-weight-normal text-xs" type="button" data-bs-toggle="collapse" data-bs-target="#{{ row[2] }}" aria-expanded="false" aria-controls="{{ row[2] }}">
+                                                View Sessions
+                                            </button>
+                                        </p>
+                                    </div>
                                 </td>
                                 <td class="align-middle">
-                                    <button type="button" href="javascript:;"
-                                            class="text-secondary font-weight-normal text-xs" data-toggle="tooltip"
-                                            data-original-title="Edit user" data-bs-toggle="modal"
-                                            data-bs-target="#{{ row[1] }}">
-                                        Edit
-                                    </button>
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <button type="button" href="javascript:;"
+                                                class="text-secondary font-weight-normal text-xs" data-toggle="tooltip"
+                                                data-original-title="Edit user" data-bs-toggle="modal"
+                                                data-bs-target="#{{ row[1] }}">
+                                            Edit
+                                        </button>
+                                    </div>
                                     {#              Modal Start#}
                                     <!-- Modal -->
                                     <div class="modal fade" id="{{ row[1] }}" tabindex="-1" role="dialog"
