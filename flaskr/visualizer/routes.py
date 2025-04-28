@@ -47,13 +47,6 @@ def visualizer():
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
     export_parameters_path = os.path.join(fixation_export_path, "export_fixation_parameters.txt")
 
-    # # Create the files if they don't exist
-    # for file_path in [export_json_path, export_parameters_path]:
-    #     if not os.path.exists(file_path):
-    #         # This will create the file if it does not exist
-    #         with open(file_path, 'w') as f:
-    #             pass  # just open and close the file to create it
-
     csv_list = list(pathlib.Path(upload_path).glob('*.csv'))
 
     csv_path = ""
@@ -111,7 +104,7 @@ def fetch(filename):
     session_root = os.path.join(fixed_path, session['upload_uuid'])
     return send_from_directory(session_root, filename)
 
-# grabs the json.
+# grabs the json. needed to make /check_fixation_status work
 @blueprint.route('/<uuid>/export/<filename>')
 @login_required
 def fetch_json(uuid, filename):
@@ -128,10 +121,11 @@ def check_fixation_status():
     fixation_export_path = os.path.join(upload_path, "export")
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
 
-    if os.path.exists(export_json_path):
-        return jsonify(file=export_json_path.split("\\", 1)[1])
-    else:
+    # if file doesn't exist, exit this function early
+    if not os.path.exists(export_json_path):
         return jsonify(file="")
+    
+    return jsonify(file=export_json_path.split("\\", 1)[1])
 
 @blueprint.route("/return_to_file_upload")
 @login_required

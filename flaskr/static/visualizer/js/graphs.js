@@ -125,7 +125,7 @@ function pollForFixationStatus() {
                 clearInterval(intervalId); // Stop polling on error
             }
         });
-    }, 2000); // Poll every 2 seconds (can/should? be modified)
+    }, 5000); // Poll every 2 seconds (can/should? be modified) = Brian: yes, no point in sending so many GET
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar
