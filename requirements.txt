@@ -7,8 +7,8 @@ Flask_WTF
 Bootstrap-Flask
 email_validator
 
-# production-ready WSGI server
-gunicorn
+# production-ready WSGI server, supports windows and unix
+waitress
 
 # fixations and visualization
 numpy
@@ -20,7 +20,6 @@ pytest
 pytest-mock
 bitarray
 numpy-quaternion
-plotly
 pandas
 pathlib
 matplotlib

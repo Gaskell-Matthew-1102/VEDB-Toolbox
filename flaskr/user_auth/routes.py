@@ -48,6 +48,7 @@ def landing():
             db.session.commit()
             flash("Success!")
             login_user(user)
+            print("successful registration")
             return redirect("/file_upload")
 
     if login_form.validate_on_submit():
@@ -55,6 +56,7 @@ def landing():
         if user and check_password_hash(user.password_hash, login_form.l_password.data):
             login_user(user)
             flash("Success!")
+            print("successful login")
             return redirect("/file_upload")
         else:
             flash("Invalid username or password combination")

@@ -266,14 +266,15 @@
     });
 
     function checkIfBothQueuesAreDone() {
-        const osfIsProcessing = osf_pond.getFiles().some((file) => file.status !== 5); // 5 = FilePond.FileStatus.PROCESSING_COMPLETE
+        // 5 = FilePond.FileStatus.PROCESSING_COMPLETE
+        const osfIsProcessing = osf_pond.getFiles().some((file) => file.status !== 5);
         const dtbIsProcessing = dtb_pond.getFiles().some((file) => file.status !== 5);
 
         if (!osfIsProcessing && !dtbIsProcessing) {
             // Small delay to ensure UI updates are complete before reloading
             setTimeout(() => {
                 location.reload();
-            }, 500);
+            }, 1000);
         }
     }
 

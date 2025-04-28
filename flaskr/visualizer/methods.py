@@ -15,8 +15,6 @@ import msgpack
 import numpy as np
 import pandas as pd
 import cv2
-import plotly.io as pio
-import plotly.graph_objects as go
 
 # local
 from flaskr.fixation.main import parse_viewer_arguments

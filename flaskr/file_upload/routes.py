@@ -60,11 +60,14 @@ def setup():
         remove_unaccounted_dirs(UPLOAD_FOLDER)
         os.makedirs(request.upload_path, exist_ok=True)
 
-    print('using ' + request.upload_path)
-
 @blueprint.route("/file_upload", methods=["GET", "POST"])
 @login_required
 def file_upload():
+    # output state variables
+    print('using ' + request.upload_path)
+    print(f"Video Submitted: {session.get('videos_submitted')}")
+    print(f"Data Submitted: {session.get('data_submitted')}")
+    
     # url forms and buttons
     databraryurl = DatabraryURLForm()
     osfurl = OSFURLForm()
@@ -118,11 +121,6 @@ def file_upload():
                 normalize_video_filenames(request.upload_path)
                 add_session_to_db(session['upload_uuid'], get_csv_filename(request.upload_path))
 
-                # would be useful for maintaining state if returning from visualizer to modify fixation variables
-                # # Pop session variables
-                # session.pop('data_submitted', None)
-                # session.pop('videos_submitted', None)
-
                 # Redirect to the visualizer
                 return redirect("/visualizer")
             except KeyError:
@@ -158,11 +156,9 @@ def upload_file():
     ext = os.path.splitext(file.filename)[1].lower()
     if ext in ['.mp4', '.csv']:
         session['videos_submitted'] = True
-        print(f"Video Submitted: {session.get('videos_submitted')}")
     
     if ext in ['.pldata', '.npy', '.npz', '.yaml', '.intrinsics', '.extrinsics']:
         session['data_submitted'] = True
-        print(f"Data Submitted: {session.get('data_submitted')}")
     
     # Return the response to FilePond
     return jsonify({'id': file.filename})
