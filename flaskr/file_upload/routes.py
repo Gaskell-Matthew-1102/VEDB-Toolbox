@@ -1,5 +1,4 @@
 # written by brian, with inspiration from matt's original design (the variable-checking)
-# in the midst of a rewrite for more robust handling of files in general
 
 # base
 import uuid

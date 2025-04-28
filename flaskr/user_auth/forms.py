@@ -1,4 +1,5 @@
 # written by brian
+# admittedly, the password complexity check was done with help from ai
 
 # base
 import re
@@ -12,14 +13,18 @@ from wtforms.validators import InputRequired, Length, Email
 
 def password_complexity_check(form, field):
     password = field.data
+    errors = []
     if not re.search(r'[A-Z]', password):
-        raise ValidationError('Password must include at least one uppercase letter.')
+        errors.append('Password must include at least one uppercase letter')
     if not re.search(r'[a-z]', password):
-        raise ValidationError('Password must include at least one lowercase letter.')
+        errors.append('Password must include at least one lowercase letter')
     if not re.search(r'[0-9]', password):
-        raise ValidationError('Password must include at least one digit.')
+        errors.append('Password must include at least one digit')
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        raise ValidationError('Password must include at least one special character.')
+        errors.append('Password must include at least one special character from this set: !@#$%^&*(),.?":{}|<>')
+
+    if errors:
+        raise ValidationError(" ".join(errors))
 
 
 class RegistrationForm(FlaskForm):
