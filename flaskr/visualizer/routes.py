@@ -1,9 +1,8 @@
-# matt and brian's work
+# matt, tyler and, brian joint effort to make this work
 
 # base
 import os
 import pathlib
-
 
 # flask and its plugins
 from flask import render_template, session, redirect, send_from_directory, jsonify
@@ -12,10 +11,7 @@ from flask_login import login_required
 # local
 from flaskr.visualizer import blueprint
 from flaskr.visualizer.methods import *
-
-
 from flaskr.fixation.main import runner as fixation_main
-
 
 UPLOAD_FOLDER = 'uploads'
 
@@ -32,9 +28,6 @@ def setup():
 @login_required
 @upload_required
 def visualizer():
-    print('-' * 100)
-    print(session['fixation_params'])
-    print('-' * 100)
     # base directory for all files
     upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
     fixation_export_path = os.path.join(upload_path, "export")
@@ -112,9 +105,6 @@ def fetch(filename):
 def fetch_json(uuid, filename):
     upload_path = os.path.join(UPLOAD_FOLDER, uuid)
     fixation_export_path = os.path.join(upload_path, "export")
-
-    # print("FJ fixation export path:", fixation_export_path)
-    # print(filename)
     return send_from_directory(os.path.join(os.getcwd(), fixation_export_path), filename)
 
 @blueprint.route("/check_fixation_status")
@@ -129,5 +119,4 @@ def check_fixation_status():
     if not os.path.exists(export_json_path):
         return jsonify(file="")
     
-    # print(jsonify(file=export_json_path).data)
     return jsonify(file=export_json_path.split("\\", 1)[1])

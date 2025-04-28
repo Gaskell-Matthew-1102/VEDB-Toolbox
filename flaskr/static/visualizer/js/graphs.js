@@ -68,21 +68,24 @@ function plotFixations(fixationTimes){
 }
 
 //fix this plotly decided to just break lol
-function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
+function downloadGraphs(){
     const moment = new Date();
     const isoTime = moment.toISOString();
 
     linear_file_name = 'linear_graph_' + isoTime;
     angular_file_name = 'angular_graph_' + isoTime;
     gaze_file_name = 'gaze_graph_' + isoTime;
+    fixation_file_name = 'fixation_graph_' + isoTime;
 
     const linearGraphDiv = document.getElementById("linear_velocity");
     const angularGraphDiv = document.getElementById("angular_velocity");
     const gazeGraphDiv = document.getElementById('gaze');
+    const fixationGraphDiv = document.getElementById('fixations');
 
     Plotly.downloadImage(linearGraphDiv, {format:'png', width: 500, height: 257, filename: linear_file_name});
     Plotly.downloadImage(angularGraphDiv, {format:'png', width: 500, height: 257, filename: angular_file_name});
     Plotly.downloadImage(gazeGraphDiv, {format:'png', width: 500, height: 257, filename: gaze_file_name});
+    Plotly.downloadImage(fixationGraphDiv, {format:'png', width: 500, height: 257, filename: fixation_file_name});
 }
 
 function pollForFixationStatus() {
@@ -110,7 +113,7 @@ function pollForFixationStatus() {
 
                             const layout = {
                                 title: 'Fixations',
-                                xaxis: { title: 'Time' },
+                                xaxis: { title: 'Time (s)' },
                                 yaxis: { visible: false },
                                 showlegend: false
                             };
@@ -176,6 +179,7 @@ jQuery(function ($) {
         const linearGraphDiv = document.getElementById("linear_velocity");
         const angularGraphDiv = document.getElementById("angular_velocity");
         const gazeGraphDiv = document.getElementById('gaze');
+        const fixationGraphDiv = document.getElementById('fixations');
 
         left = wvideo.currentTime - 2;
         right = wvideo.currentTime + 2;
@@ -185,6 +189,7 @@ jQuery(function ($) {
         Plotly.update(linearGraphDiv, null, update);
         Plotly.update(angularGraphDiv, null, update);
         Plotly.update(gazeGraphDiv, null, update);
+        Plotly.update(fixationGraphDiv, null, update);
     });
 
     $("#seek-bar").on("mousedown", function(){
