@@ -20,7 +20,8 @@ def calculate_raw_gaze_vector(gaze_data_dict, x_res, y_res):
     # raw_gaze_vec = np.array([np.mean([raw_gaze_left[0], raw_gaze_right[0]], 0)*x_res, np.mean([raw_gaze_left[1], raw_gaze_right[1]], 0)*y_res])
     # return raw_gaze_vec
 
-    # This approach just returns the left eye gaze data, as it's actually normalized
+    # This approach just returns the left eye gaze data, as it's (usually) actually normalized
+    # raw_gaze_left = np.array([raw_gaze_left[0]*x_res, raw_gaze_left[1]*y_res])
     raw_gaze_left = np.array([raw_gaze_left[0]*x_res, raw_gaze_left[1]*y_res])
     return raw_gaze_left
 

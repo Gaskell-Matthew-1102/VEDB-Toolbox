@@ -1,72 +1,64 @@
-"""
-1st version of this file was based on a DigitalOcean tutorial that has
-since been rewritten constantly to suit our needs. originally a single file
-based on that tutorial that has since been split into 5 files.
-doing so means this is 100% our (Brian, Leon, Matt, Tyler) work
-"""
+# written by brian
+# this file serves as the system "master", doing:
+#   connecting with the subsystems (Flask Blueprints)
+#   registering all the extensions used in the application
+#   minifies everything to serve it easier
+# this rewrite was made possible with:
+# guide: https://hackersandslackers.com/flask-application-factory/
+# guide: https://github.com/app-generator/flask-datta-able
 
-# app/__init__.py
+# base
+from importlib import import_module
 
+# flask and its plugins
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
-from .config import Config, TestingConfig
-from .models import db, Users
+from flask_sqlalchemy import SQLAlchemy
+from flask_minify import Minify
+from flask_wtf.csrf import CSRFProtect
 
-# This will avoid circular imports by importing routes here.
-def create_app(test_config):
-    # Initialize Flask app
-    app = Flask(__name__, instance_relative_config=True)
+# globally accessible objects
+db = SQLAlchemy()
+csrf = CSRFProtect()
+bootstrap = Bootstrap5()
+login_manager = LoginManager()
 
-    # Load the configuration from Config class
-    if test_config == None:
-        app.config.from_object(Config)
-    if test_config == True:
-        app.config.from_object(TestingConfig)
-
-    # Initialize database with app
+def register_extensions(app):
     db.init_app(app)
-
-    # Set up Flask-Bootstrap
-    bootstrap = Bootstrap5(app)
-
-    # Set up Flask-Login
-    login_manager = LoginManager()
+    csrf.init_app(app)
+    bootstrap.init_app(app)
     login_manager.init_app(app)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        return Users.query.get(user_id)
+# registers blueprints in a generalized manner. idea by chatgpt
+def register_blueprints(app, bp_list):
+    for module_name in bp_list:
+        module = import_module('flaskr.{}.routes'.format(module_name))
+        app.register_blueprint(module.blueprint)
 
-    # Import routes here to avoid circular imports
+def create_app(test_config=None):
+    # initialize core application
+    app = Flask(__name__, instance_relative_config=True)
+
+    # configuration
+    if test_config is None:
+        app.config.from_object("flaskr.config.Config")
+    elif test_config:
+        app.config.from_object("flaskr.config.TestingConfig")
+
+    # minifies files within the project for faster serving
+    Minify(app, html=True, js=True, cssless=True)
+
+    register_extensions(app)
+
+    # blueprints. these are the aforementioned "subsystems" found in our project
+    blueprint_list = ["home", "user_auth", "file_upload", "visualizer", "dashboard"]
+    register_blueprints(app, blueprint_list)
+
+    # 401 error = user not authenticated. redirect to /
+    login_manager.login_view = "/"
+
     with app.app_context():
-        from . import auth  # This import depends on the app context being active
-        from . import file_upload
-        from . import visualizer
-
-        # Register routes (this can also be modularized into blueprints if needed)
-        app.add_url_rule('/', 'home', auth.home)
-        app.add_url_rule('/landing', 'landing', auth.landing, methods=["GET", "POST"])
-        app.add_url_rule('/team', 'team', auth.team)
-        app.add_url_rule('/faculty', 'faculty', auth.faculty)        
-        app.add_url_rule('/logout', 'logout', auth.logout)
-
-        app.add_url_rule('/dashboard', 'dashboard', auth.dashboard, methods=["GET", "POST"])
-        app.add_url_rule('/searchuser', 'searchuser', auth.searchuser, methods=["GET", "POST"])
-        app.add_url_rule('/deleteuser', 'deleteuser', auth.deleteuser, methods=["GET", "POST"])
-        app.add_url_rule('/adduser', 'adduser', auth.adduser, methods=["GET", "POST"])
-        app.add_url_rule('/csvupload', 'csvupload', auth.csvupload, methods=["GET", "POST"])
-
-        app.add_url_rule('/upload_help', 'upload_help', file_upload.upload_help)
-        app.add_url_rule('/upload_video', 'upload_video', file_upload.upload_video, methods=["POST"])
-        app.add_url_rule('/upload_data', 'upload_data', file_upload.upload_data, methods=["POST"])
-        app.add_url_rule('/upload_video_link', 'upload_video_link', file_upload.upload_video_link, methods=["POST"])
-        app.add_url_rule('/upload_data_link', 'upload_data_link', file_upload.upload_data_link, methods=["POST"])
-        app.add_url_rule('/upload_different_video', 'upload_different_video', file_upload.upload_different_video, methods=["POST"])
-        app.add_url_rule('/upload_different_data', 'upload_different_data', file_upload.upload_different_data, methods=["POST"])
-        app.add_url_rule('/go_back', 'back_to_file_upload', file_upload.back_to_file_upload, methods=["POST"])
-        app.add_url_rule('/visualizer', 'load_visualizer', file_upload.load_visualizer, methods=[ "POST"])
+        db.create_all()
         
-        app.add_url_rule('/exit_visualizer', 'exit_visualizer', visualizer.exit_visualizer, methods=["POST"])
-
     return app

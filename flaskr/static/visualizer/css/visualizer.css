@@ -1,0 +1,110 @@
+/* Reset all margins and paddings for the videos */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.video_container {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* World column takes up 800px width */
+.world_column {
+    width: 800px;
+    height: 100%;
+}
+
+.world_video {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+}
+
+/* Eye column takes up 300px width */
+.eye_column {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 100%;
+}
+
+/* Eye videos stacked vertically in the eye column */
+.eye_video {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+}
+
+#eye0video {
+    transform: rotate(180deg);
+}
+
+
+/* Box style for controls */
+.controls_container {
+    padding: 16px;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.seek-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.video-times {
+    width: 60px;
+    text-align: center;
+}
+
+.seek-bar {
+    width: 400px;
+}
+
+.button_container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-icon:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Graphs */
+.graph_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.graph_panel > div {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center;     /* Vertically center */
+}

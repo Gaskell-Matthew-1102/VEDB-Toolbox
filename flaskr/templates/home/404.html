@@ -1,0 +1,23 @@
+{% extends 'home/base2.jinja' %}
+
+{% block header %}
+    <h1>{% block title %}404{% endblock %}</h1>
+{% endblock %}
+
+{% block bodyheading %}
+    <h1 class="text-white font-weight-black pt-3 mt-n5">Error 404: Page not found...</h1>
+    <p class="lead text-white mt-3">You will be redirected to the homepage shortly.<br/>If that doesn't work, click the button below to go back to the homepage.</p>
+    <button type="button" class="btn bg-gradient-warning mt-4" onclick="window.location.href='/'">
+    Homepage
+</button>
+{% endblock %}
+
+{% block realbody %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block js %}
+    <script src="{{ url_for('static', filename='home/js/redirect.js') }}" type="text/javascript"></script>
+{% endblock %}

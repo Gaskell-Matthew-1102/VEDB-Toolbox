@@ -1,0 +1,305 @@
+# written by matt
+
+# base
+import os
+from io import BytesIO
+import math
+from json import dumps
+from functools import wraps
+
+# flask
+from flask import redirect, session
+
+# pip
+import msgpack
+import numpy as np
+import pandas as pd
+import cv2
+
+# local
+from flaskr.fixation.main import parse_viewer_arguments
+
+# @upload_required for the visualizer paths
+def upload_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if data or videos are not submitted
+        if not session.get('data_submitted') or not session.get('videos_submitted'):
+            return redirect("/file_upload")  # Redirect to file_upload page
+        return f(*args, **kwargs)
+    return decorated_function
+
+# dataset manipulation
+# The following two functions were provided to us by Brian Szekely, a UNR PhD student and a former student
+# of Paul MacNeilage's Self Motion Lab. They work with the pldata files, turning them into readable format for our graphing code
+def read_pldata(file_path):    
+    try:
+        with open(file_path, 'rb') as file:
+            unpacker = msgpack.Unpacker(file, raw=False)
+            data = []
+            for packet in unpacker:
+                data.append(packet)
+    except OSError:
+        print(f'File path: "{file_path}" not found.')
+        print(f"Current working directory: {os.getcwd()}")
+        raise OSError
+    return data
+
+def parse_pldata(data):
+    unpacker = msgpack.Unpacker(BytesIO(data), raw=False)
+    parsed_data = next(unpacker)
+
+    # flatten nested structures
+    flattened = {}
+    for key, value in parsed_data.items():
+        if isinstance(value, list):
+            for i, item in enumerate(value):
+                flattened[f"{key}_{i}"] = item
+        else:
+            flattened[key] = value
+
+    return flattened
+
+# This function was taken from Michelle, an individual who has worked on the VEDB and specifically published some
+# information about accessing and visualizing the VEDB, in which this function was found.
+# That can be found here: https://github.com/vedb/vedb-demos/blob/main/VEDB_demo_explore_session.ipynb
+def load_as_dict(path):
+    tmp = np.load(path, allow_pickle=True)
+    params = {}
+    for k, v in tmp.items():
+        if isinstance(v, np.ndarray) and (v.dtype==np.dtype("O")):
+            if v.shape==():
+              params[k] = v.item()
+            else:
+              params[k] = v
+    return params
+
+# Some data files in the VEDB record NANs when the hardware stops recording (for whatever reason)
+def count_nans(vel_list):
+    nan_count = sum(1 for value in vel_list if isinstance(value, float) and math.isnan(value))
+    print("Nan Count:", nan_count)
+    print("Nan Count Ratio:", nan_count / len(vel_list))
+    return nan_count
+
+# videoset manipulation
+# return values
+def get_data_of_video(video_path: str) -> tuple[int, int, int]:
+    vcap = cv2.VideoCapture(video_path)
+    width = 0
+    height = 0
+    fps = 0
+
+    if vcap.isOpened():
+        # get vcap property
+        width = vcap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+        height = vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+        fps = vcap.get(cv2.CAP_PROP_FPS)
+    return int(width), int(height), int(fps)
+
+# graph generation
+# velocity
+def generate_velocity_graphs(filename_list: list[str]):
+    # assuming either 1. both files exist, 2. neither file exists
+    global graph_file_list
+    for filename in filename_list:
+        if "world" in filename:
+            world_times = filename
+        elif "odometry" in filename:
+            odo = filename
+
+    data = read_pldata(odo)
+    df = pd.DataFrame(data)
+    linear_vel_0_list = []
+    linear_vel_1_list = []
+    linear_vel_2_list = []
+
+    angular_velocity_0_list = []
+    angular_velocity_1_list = []
+    angular_velocity_2_list = []
+
+    timestamp_list = []
+    world_time_values = np.load(world_times)
+    world_time_list = world_time_values.tolist()
+    # first_timestamp = parse_pldata(df[1].iloc[0])['timestamp']
+    first_timestamp = world_time_list[0]
+
+    min_length = min(len(df), len(world_time_list))
+    for i in range(min_length):
+        data_frame = parse_pldata(df[1].iloc[i])
+        if data_frame['timestamp'] - first_timestamp >= 0:
+            data_type_1 = 'linear_velocity_0'
+            data_type_2 = 'linear_velocity_1'
+            data_type_3 = 'linear_velocity_2'
+
+            data_type_4 = 'angular_velocity_0'
+            data_type_5 = 'angular_velocity_1'
+            data_type_6 = 'angular_velocity_2'
+
+            if not math.isnan(data_frame[data_type_1]):
+                linear_vel_0_list.append(data_frame[data_type_1])
+                linear_vel_1_list.append(data_frame[data_type_2])
+                linear_vel_2_list.append(data_frame[data_type_3])
+
+                angular_velocity_0_list.append(data_frame[data_type_4])
+                angular_velocity_1_list.append(data_frame[data_type_5])
+                angular_velocity_2_list.append(data_frame[data_type_6])
+
+                timestamp_list.append(data_frame['timestamp'] - first_timestamp)
+
+    json_timestamp = dumps(timestamp_list)
+
+    json_lin0 = dumps(linear_vel_0_list)
+    json_lin1 = dumps(linear_vel_1_list)
+    json_lin2 = dumps(linear_vel_2_list)
+
+    json_ang0 = dumps(angular_velocity_0_list)
+    json_ang1 = dumps(angular_velocity_1_list)
+    json_ang2 = dumps(angular_velocity_2_list)
+    # i am leaving behind absolutely horrific legacy code
+
+    json_list = [json_timestamp, json_lin0, json_lin1, json_lin2, json_ang0, json_ang1, json_ang2]
+    return json_list
+
+# gaze graph
+
+def generate_gaze_graph(filename_list):
+    for filename in filename_list:
+        if "world" in filename:
+            world_times = filename
+        elif "gaze" in filename:
+            gaz = filename
+
+
+    gaze_dict = load_as_dict(gaz)
+    left_gaze = gaze_dict['left']
+    right_gaze = gaze_dict['right']
+
+    left_timestamps = []
+    right_timestamps = []
+    left_norm_pos_x = []
+    left_norm_pos_y = []
+    right_norm_pos_x = []
+    right_norm_pos_y = []
+
+    # left_first_timestamp = left_gaze['timestamp'][0]
+    world_time_values = np.load(world_times)
+    world_time_list = world_time_values.tolist()
+    first_timestamp = world_time_list[0]
+    # for value in left_gaze['timestamp']:
+    #     left_timestamps.append(value - left_first_timestamp)
+    counter = 0
+    for value in left_gaze['norm_pos']:
+        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1 and left_gaze['timestamp'][counter] - first_timestamp > 0:
+            left_norm_pos_x.append(value[0])
+            left_norm_pos_y.append(value[1])
+            left_timestamps.append(left_gaze['timestamp'][counter] - first_timestamp)
+        counter = counter + 1
+
+    # right_first_timestamp = right_gaze['timestamp'][0]
+    # for value in  right_gaze['timestamp']:
+    #     right_timestamps.append(value - right_first_timestamp)
+    counter = 0
+    for value in  right_gaze['norm_pos']:
+        if value[0] < 1.0 and value[0] > -0.1 and value[1] < 1.0 and value[1] > -0.1 and right_gaze['timestamp'][counter] - first_timestamp > 0:
+            right_norm_pos_x.append(value[0])
+            right_norm_pos_y.append(value[1])
+            right_timestamps.append(right_gaze['timestamp'][counter] - first_timestamp)
+        counter = counter + 1
+
+    # DOWN SAMPLED TIMESTAMPS, these have 1/10 of the original value so around 8200 left or 7800 right
+    sampled_left_x = left_norm_pos_x[::10]
+    sampled_left_y = left_norm_pos_y[::10]
+    sampled_right_x = right_norm_pos_x[::10]
+    sampled_right_y = right_norm_pos_y[::10]
+
+    sampled_left_time = left_timestamps[::10]
+    sampled_right_time = right_timestamps[::10]
+
+    json_left_timestamp = dumps(sampled_left_time)
+    json_left_norm_pos_x = dumps(sampled_left_x)
+    json_left_norm_pos_y = dumps(sampled_left_y)
+
+    json_right_timestamp = dumps(sampled_right_time)
+    json_right_norm_pos_x = dumps(sampled_right_x)
+    json_right_norm_pos_y = dumps(sampled_right_y)
+
+    gaze_json = [json_left_timestamp, json_left_norm_pos_x, json_left_norm_pos_y, json_right_timestamp, json_right_norm_pos_x, json_right_norm_pos_y]
+    return gaze_json
+
+def get_fig_numbers():
+    if os.path.exists("graphs"):
+        if len(os.listdir("graphs")) == 0:
+            return [1, 1]
+        else:
+            flag = 1
+            linear_number, angular_number = 1, 1
+            while flag == 1:
+                if  os.path.exists("graphs/linear_graph" + str(linear_number) + ".png"):
+                    linear_number = linear_number + 1
+                else:
+                    flag = 0
+            flag = 1
+            while flag == 1:
+                if  os.path.exists("graphs/angular_graph" + str(angular_number) + ".png"):
+                    angular_number = angular_number + 1
+                else:
+                    flag = 0
+            return [linear_number, angular_number]
+    return None
+
+def start_fixation_algorithm(odometry_file:str, gaze_file:str, world_video_file:str, csv_file:str, eye0_file:str, eye1_file:str, export_json_path:str, export_parameters_path:str, in_args:dict):    
+    imu_flag = False
+    export_filepath = "fixation"
+    
+    if odometry_file != "":
+        imu_flag = True
+    world_frame_width, world_frame_height, world_fps = get_data_of_video(world_video_file)
+    eye_frame_width, eye_frame_height, eye_fps = get_data_of_video(eye0_file)
+
+    # see if user wants to override the optic flow method used
+    # otherwise, go with what has been automatically decided
+    if bool(in_args['optic_flow_override']):
+        imu_flag = in_args['force_imu']
+
+    if csv_file != "":
+        try:
+            date = get_session_date_from_csv(csv_file)
+            SESSION_NAME = date + "_" + SESSION_NAME
+        except:
+            print("CSV parsing failed, using fallback export name")
+        else:
+            print("CSV FILE NOT FOUND")
+
+    in_args['odometry_path'] = str(odometry_file)
+    in_args['gaze_path'] = str(gaze_file)
+    in_args['world_video_path'] = str(world_video_file)
+    in_args['export_json_path'] = str(export_json_path)
+    in_args['export_parameters_path'] = str(export_parameters_path)
+
+    in_args['eye_camera_x_px'] = int(eye_frame_height)
+    in_args['eye_camera_y_px'] = int(eye_frame_width)
+    in_args['world_camera_x_px'] = int(world_frame_width)
+    in_args['world_camera_y_px'] = int(world_frame_height)
+    in_args['world_fps'] = int(world_fps)
+
+    in_args['imu_flag'] = bool(imu_flag)
+
+    fix_det_args = parse_viewer_arguments(in_args)
+
+    from multiprocessing import Process
+    from flaskr.fixation.main import runner as fixation_main
+
+    print("ARGS:")
+    print(fix_det_args)
+    fix_det = Process(target=fixation_main, args=fix_det_args)
+    fix_det.start()
+    print("Fixation detection algorithm begun")
+    return fix_det
+
+def get_session_date_from_csv(filepath:str) -> str:
+    import csv
+    with open(filepath, 'r') as file:
+        csv_reader = csv.reader(file)
+        _ = next(csv_reader)
+        row = next(csv_reader)
+        return row[0]

@@ -1,0 +1,120 @@
+{% extends 'file_upload/base2.jinja' %}
+
+{% block title %}
+    Fixations Setup
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex align-items-center justify-content-center">
+    <div class="position-absolute fixed-top ms-auto w-100 h-100 z-index-0 d-none d-sm-none d-md-block" style="background-image: url('{{ url_for('static', filename='home/img/journey_into_dataviz_feature_dark.png') }}')"></div>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 d-flex justify-content-center flex-column">
+                <div class="card card-body d-flex justify-content-center shadow-lg p-5 blur align-items-center">
+                    <h3 class="text-center">Fixation Parameters</h3>
+                    <form role="form" id="contact-form" method="post" autocomplete="off">
+                        {{ fixation_parameters_list.csrf_token }}
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.gaze_window_size_ms.label(class="form-label") }}
+                                    {{ fixation_parameters_list.gaze_window_size_ms(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.polynomial_grade.label(class="form-label") }}
+                                    {{ fixation_parameters_list.polynomial_grade(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.min_velocity_threshold.label(class="form-label") }}
+                                    {{ fixation_parameters_list.min_velocity_threshold(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.gain_factor.label(class="form-label") }}
+                                    {{ fixation_parameters_list.gain_factor(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.world_camera_fov_h.label(class="form-label") }}
+                                    {{ fixation_parameters_list.world_camera_fov_h(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.world_camera_fov_v.label(class="form-label") }}
+                                    {{ fixation_parameters_list.world_camera_fov_v(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.eye_camera_fov_h.label(class="form-label") }}
+                                    {{ fixation_parameters_list.eye_camera_fov_h(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.min_saccade_amp_deg.label(class="form-label") }}
+                                    {{ fixation_parameters_list.min_saccade_amp_deg(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.min_saccade_dur_ms.label(class="form-label") }}
+                                    {{ fixation_parameters_list.min_saccade_dur_ms(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="input-group input-group-static">
+                                    {{ fixation_parameters_list.min_fixation_dur_ms.label(class="form-label") }}
+                                    {{ fixation_parameters_list.min_fixation_dur_ms(class="form-control", aria_label="Gaze") }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- Unlock checkbox, bound to optic_flow_override -->
+                                    <div class="form-check mb-3">
+                                        {{ fixation_parameters_list.optic_flow_override(class="form-check-input", id="unlockSwitchCheckbox") }}
+                                        <label class="form-check-label" for="unlockSwitchCheckbox">
+                                            {{ fixation_parameters_list.optic_flow_override.label.text }}
+                                        </label>
+                                    </div>
+
+                                    <!-- IMU Flag Switch -->
+                                    <div class="form-check form-switch d-flex align-items-center mb-4">
+                                        {{ fixation_parameters_list.imu_flag(class="form-check-input", id="imuFlagSwitch", disabled=not fixation_parameters_list.optic_flow_override.data) }}
+                                        <label class="form-check-label ms-3 mb-0" for="imuFlagSwitch">
+                                            {{ fixation_parameters_list.imu_flag.label.text }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    {{ fixation_parameters_list.submit_parameters(class="btn bg-gradient-dark w-100") }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const unlockCheckbox = document.getElementById('unlockSwitchCheckbox');
+        const imuSwitch = document.getElementById('imuFlagSwitch');
+
+        unlockCheckbox.addEventListener('change', function () {
+            imuSwitch.disabled = !this.checked;
+        });
+    });
+</script>
+{% endblock %}

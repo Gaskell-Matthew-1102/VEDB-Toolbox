@@ -5,7 +5,6 @@ import numpy as np
 import json
 import os
 from fixation_packages.ingestion import *
-from fixation_packages.gaze_processing import get_timestamp_list, calculateGazeVelocity, calculate_raw_gaze_vector, savgol
 
 def visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_time, end_time, gaze_vel_list):
     """
@@ -24,9 +23,18 @@ def visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_
     cap_world = cv2.VideoCapture(world_video_path)
 
     # Get frame rates
-    fps_eye1   = 120
-    fps_eye2   = 120
-    fps_world  = 25
+    fps_eye1   = int(cap_eye1.get(cv2.CAP_PROP_FPS))
+    fps_eye2   = int(cap_eye2.get(cv2.CAP_PROP_FPS))
+    fps_world  = int(cap_world.get(cv2.CAP_PROP_FPS))
+
+    print(fps_eye1)
+    print(fps_eye2)
+    print(fps_world)
+
+    print(cap_eye1.get(cv2.CAP_PROP_FRAME_COUNT), cap_eye1.get(cv2.CAP_PROP_FRAME_COUNT)/fps_eye1/60)
+    print(cap_eye2.get(cv2.CAP_PROP_FRAME_COUNT), cap_eye2.get(cv2.CAP_PROP_FRAME_COUNT)/fps_eye2/60)
+    print(cap_world.get(cv2.CAP_PROP_FRAME_COUNT), cap_world.get(cv2.CAP_PROP_FRAME_COUNT)/fps_world/60)
+
 
     # Calculate starting frame for each video
     start_frame_eye1 = int(start_time * fps_eye1)
@@ -81,9 +89,9 @@ def visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_
         # Combine horizontally:
         combined = cv2.hconcat([eyes_combined, frame_world_resized])
 
-        cv2.imshow("Session Visualization", combined)
         frame_num = cap_eye1.get(cv2.CAP_PROP_POS_FRAMES)
-        # cv2.putText(combined, f"Frame {frame_num} gaze vel: {gaze_vel_list[frame_num]}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
+        cv2.putText(combined, f"Frame {frame_num} gaze vel: ", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2, cv2.LINE_AA)  # frame
+        cv2.imshow("Session Visualization", combined)
         # Wait appropriate time (using the world video fps for timing)
         key = cv2.waitKey(int(1000/fps_world))
         if key == ord('q'):
@@ -113,13 +121,13 @@ def read_json_to_array(file_path: str) -> np.ndarray:
 
 # Example usage:
 if __name__ == "__main__":
-    OUTPUT_FOLDER_PATH = "fixation\\test_data\\VIDEO_DUMP"
+    OUTPUT_FOLDER_PATH = "fixation/test_data/VIDEO_DUMP"
 
-    data = read_json_to_array("fixation\\export\\export_fixation.json")
+    data = read_json_to_array("fixation/export/export_fixation.json")
 
-    eye_video1_path = "fixation\\test_data\\videos\\473417-eye0_blur.mp4"
-    eye_video2_path = "fixation\\test_data\\videos\\473419-eye1_blur.mp4"
-    world_video_path = "fixation\\test_data\\videos\\video.mp4"
+    eye_video1_path = "fixation/test_data/viewer_input2/video/eye0_blur.mp4"
+    eye_video2_path = "fixation/test_data/viewer_input2/video/eye1_blur.mp4"
+    world_video_path = "fixation/test_data/viewer_input2/video/worldPrivate.mp4"
 
 
     # gaze_data_dict = generate_gaze_data("fixation\\test_data\\2023_06_01_18_47_34\\processedGaze\\gaze.npz")
@@ -134,12 +142,30 @@ if __name__ == "__main__":
 
 
     for sample_i in range(data.size-1):
-        start_time = data[sample_i][0]
-        end_time = data[sample_i][1]
+        SHOW_FIXATIONS = True
         
-        # start_time = data[sample_i][1]
-        # end_time = data[sample_i+1][0]
+        if SHOW_FIXATIONS:
+            start_time = data[sample_i][0]
+            end_time = data[sample_i][1]
+        else:
+            start_time = data[sample_i][1]
+            end_time = data[sample_i+1][0]
 
-        if end_time - start_time < 0.15:
-            continue
+        # if end_time - start_time < 0.15:
+        #     continue
         visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_time, end_time, None)
+
+    # while True:
+    #     SAMPLE_I = 14
+    #     SHOW_FIXATIONS = True
+        
+    #     if SHOW_FIXATIONS:
+    #         start_time = data[SAMPLE_I][0]
+    #         end_time = data[SAMPLE_I][1]
+    #     # else:
+    #     #     start_time = data[sample_i][1]
+    #     #     end_time = data[sample_i+1][0]
+
+    #     if end_time - start_time < 0.15:
+    #         continue
+    #     visualize_session(eye_video1_path, eye_video2_path, world_video_path, start_time, end_time, None)

@@ -1,0 +1,190 @@
+# written by brian, with inspiration from matt's original design (the variable-checking)
+
+# base
+import uuid
+from pprint import pprint
+
+# flask
+from flask import render_template, flash, request, redirect, jsonify
+from flask_login import login_required
+
+# local
+from flaskr.file_upload import blueprint
+from flaskr.file_upload.forms import *
+from flaskr.file_upload.methods import *
+
+# create uploads directory if it doesn't already exist
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@blueprint.before_request
+@login_required
+def setup():
+    # Only generate a new UUID if it's not already in the session
+    if 'upload_uuid' not in session:
+        session['upload_uuid'] = str(uuid.uuid4())
+    
+    # create the submitted flags
+    if 'data_submitted' not in session:
+        session['data_submitted'] = False
+    if 'videos_submitted' not in session:
+        session['videos_submitted'] = False
+
+    # create fixation parameters dictionary
+    if 'fixation_params' not in session:
+        session['fixation_params'] = {
+            "gaze_window_size" : 55,
+            "polynomial_grade" : 3,
+            "adap_window_size_ms" : 200,
+            "min_vel_thresh" : 750,
+            "gain" : 0.8,
+            "eye_camera_x_px" : 400,
+            "eye_camera_y_px" : 400,
+            "eye_horiz_fov" : 110,
+            "world_camera_fov_horiz" : 90,
+            "world_camera_fov_vert" : 90,
+            "world_camera_x_px" : 2048,
+            "world_camera_y_px" : 1536,
+            "desired_hz" : 200,
+            "min_saccade_amp_deg" : 1.0,
+            "min_saccade_dur_ms" : 10,
+            "min_fix_dur_ms" : 70,
+
+            "optic_flow_override" : True,
+            "force_imu" : False,
+        }
+        
+    # designate an uuid-upload folder, creating it if it doesn't exist
+    request.upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
+    if not os.path.exists(request.upload_path):
+        remove_unaccounted_dirs(UPLOAD_FOLDER)
+        os.makedirs(request.upload_path, exist_ok=True)
+
+@blueprint.route("/file_upload", methods=["GET", "POST"])
+@login_required
+def file_upload():
+    # output state variables
+    print('using ' + request.upload_path)
+    print(f"Video Submitted: {session.get('videos_submitted')}")
+    print(f"Data Submitted: {session.get('data_submitted')}")
+    
+    # url forms and buttons
+    databraryurl = DatabraryURLForm()
+    osfurl = OSFURLForm()
+    visualizer_button = EnterVisualizer()
+    reset_button = ResetFileUpload()
+
+    # If submitting via URL download
+    if databraryurl.validate_on_submit() and databraryurl.dtb_submit.data:
+        dtb_extraction_path = fetch_and_unzip(download_databrary_videos, databraryurl.dtb_url.data, request.upload_path)
+
+        if "Error" in dtb_extraction_path:
+            flash(f"Error processing Databrary files: {dtb_extraction_path}", 'error')
+        else:
+            if files_exist(request.upload_path, ['.mp4', '.csv']):
+                flash(f"Videos from Databrary stored in: {dtb_extraction_path}")
+                session['videos_submitted'] = True
+            else:
+                flash("No files were uploaded for Databrary.", 'error')
+
+    if osfurl.validate_on_submit() and osfurl.osf_submit.data:
+        osf_extraction_path = fetch_and_unzip(download_osf_data, osfurl.osf_url.data, request.upload_path)
+
+        if "Error" in osf_extraction_path:
+            flash(f"Error processing OSF files: {osf_extraction_path}", 'error')
+        else:
+            if files_exist(request.upload_path, ['.pldata', '.npy', '.npz', '.yaml', '.intrinsics', '.extrinsics']):
+                session['data_submitted'] = True
+            else:
+                flash("No files were uploaded for OSF.", 'error')
+
+    # Handle reset button
+    if reset_button.validate_on_submit() and reset_button.reset.data:
+        session.pop('upload_uuid', None)
+        session.pop('fixation_params', None)
+        session.pop('data_submitted', None)
+        session.pop('videos_submitted', None)
+        return redirect("/file_upload")
+
+    # Handle visualizer button
+    if visualizer_button.validate_on_submit() and visualizer_button.submit.data:
+        # check if certain files are in the directory
+        required_files = ['odometry.pldata', 'gaze.npz', 'world_timestamps.npy']
+        missing_files = [f for f in required_files if not os.path.isfile(os.path.join(request.upload_path, f))]
+
+        if missing_files:
+            flash(f"The following required files are missing: {', '.join(missing_files)}", 'danger')
+        else:
+            try:
+                # Normalize video filenames and add session to database
+                print('success! will add to db and redirect to visualizer')
+                normalize_video_filenames(request.upload_path)
+                add_session_to_db(session['upload_uuid'], get_csv_filename(request.upload_path))
+
+                # Redirect to the visualizer
+                return redirect("/visualizer")
+            except KeyError:
+                flash("Session data is missing or invalid.", 'danger')
+            except Exception as e:
+                flash(f"An error occurred: {str(e)}", 'danger')
+
+    return render_template("file_upload/file_upload.html",
+                           is_admin=is_admin(),
+                           data_submitted=session.get('data_submitted'),
+                           videos_submitted=session.get('videos_submitted'),
+                           databraryurl=databraryurl,
+                           osfurl=osfurl,
+                           reset_button=reset_button,
+                           visualizer_button=visualizer_button
+                           )
+
+@blueprint.route('/upload', methods=['POST'])
+@login_required
+def upload_file():
+    if 'filepond' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    
+    file = request.files['filepond']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    
+    # Save the file to the user's uuid upload folder
+    save_path = os.path.join(request.upload_path, file.filename)
+    file.save(save_path)
+    
+    # Set session flags based on file type
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext in ['.mp4', '.csv']:
+        session['videos_submitted'] = True
+    
+    if ext in ['.pldata', '.npy', '.npz', '.yaml', '.intrinsics', '.extrinsics']:
+        session['data_submitted'] = True
+    
+    # Return the response to FilePond
+    return jsonify({'id': file.filename})
+
+@blueprint.route("/file_upload/fixations", methods=['GET', 'POST'])
+@login_required
+def fixations():
+    fixation_parameters_list = FixationParameters()
+
+    # POST the fixation parameter list
+    if fixation_parameters_list.validate_on_submit() and fixation_parameters_list.submit_parameters.data:
+        session['fixation_params']["gaze_window_size"] = fixation_parameters_list.gaze_window_size_ms.data
+        session['fixation_params']["polynomial_grade"] = fixation_parameters_list.polynomial_grade.data
+        session['fixation_params']["min_vel_thres"] = fixation_parameters_list.min_velocity_threshold.data
+        session['fixation_params']["gain"] = fixation_parameters_list.gain_factor.data
+        
+        session['fixation_params']["eye_horiz_fov"] = fixation_parameters_list.eye_camera_fov_h.data
+        session['fixation_params']["world_camera_fov_horiz"] = fixation_parameters_list.world_camera_fov_h.data
+        session['fixation_params']["world_camera_fov_vert"] = fixation_parameters_list.world_camera_fov_v.data
+        
+        session['fixation_params']["min_saccade_amp_deg"] = fixation_parameters_list.min_saccade_amp_deg.data
+        session['fixation_params']["min_saccade_dur_ms"] = fixation_parameters_list.min_saccade_dur_ms.data
+        session['fixation_params']["min_fix_dur_ms"] = fixation_parameters_list.min_fixation_dur_ms.data
+        
+        session['fixation_params']["optic_flow_override"] = fixation_parameters_list.optic_flow_override.data
+        session['fixation_params']["force_imu"] = fixation_parameters_list.imu_flag.data
+        session.modified = True
+        return redirect("/file_upload")
+    return render_template("file_upload/fixations.html", fixation_parameters_list=fixation_parameters_list)
