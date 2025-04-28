@@ -86,46 +86,47 @@ function downloadGraphs(linVelFlag, angVelFlag, gazeFlag, fixationFlag){
 }
 
 function pollForFixationStatus() {
-    // Set up an interval to poll the server every 2 seconds
     const intervalId = setInterval(function() {
-        // Send an AJAX request to the Flask endpoint that checks task status
-        console.log("Polling...")
+        console.log("Polling...");
         $.ajax({
             url: '/check_fixation_status',
             method: 'GET',
             success: function(data) {
-                // If task is complete, update the status on the frontend
                 if (data.file != "") {
-                    // do graph stuff here
-                    console.log(data.file);
                     const fixationGraphDiv = document.getElementById("fixations");
-                    fetch(data.file)
+                    const filePath = data.file.replace(/\\/g, '/');
+                    const fullFilePath = `${window.location.origin}/${filePath}`;
+                    // console.log(fullFilePath);
+
+                    fetch(fullFilePath)
                         .then(response => response.json())
-                        .then(data => {
-                            data.forEach((range, index) => {
-                                let fixationStart = range[0];
-                                let fixationEnd = range[1];
+                        .then(fixationData => {
+                            const traces = fixationData.map(range => ({
+                                x: [range[0], range[1]],
+                                y: [1, 1],
+                                mode: 'lines',
+                                name: 'Fixation'
+                            }));
 
-                                let fixationTrace = {
-                                    x: [fixationStart, fixationEnd],
-                                    y: [1, 1],
-                                    mode: 'lines',
-                                    name: 'Fixation'
-                                };
+                            const layout = {
+                                title: 'Fixations',
+                                xaxis: { title: 'Time' },
+                                yaxis: { visible: false },
+                                showlegend: false
+                            };
 
-                                Plotly.update(fixationGraphDiv, fixationTrace, null);
-                            });
+                            Plotly.react(fixationGraphDiv, traces, layout);
+                            console.log("Fixation graph updated");
                         });
-                    clearInterval(intervalId);      // stops the polling
+                    clearInterval(intervalId);
                 }
-                console.log(data.file);
             },
             error: function(error) {
                 console.error('Error checking fixation algorithm status:', error);
-                clearInterval(intervalId); // Stop polling on error
+                clearInterval(intervalId);
             }
         });
-    }, 5000); // Poll every 2 seconds (can/should? be modified) = Brian: yes, no point in sending so many GET
+    }, 1000);
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar

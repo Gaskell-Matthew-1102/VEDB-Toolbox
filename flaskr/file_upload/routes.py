@@ -185,7 +185,6 @@ def fixations():
         
         session['fixation_params']["optic_flow_override"] = fixation_parameters_list.optic_flow_override.data
         session['fixation_params']["force_imu"] = fixation_parameters_list.imu_flag.data
-                
+        session.modified = True
         return redirect("/file_upload")
-
     return render_template("file_upload/fixations.html", fixation_parameters_list=fixation_parameters_list)
