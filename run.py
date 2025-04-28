@@ -19,20 +19,29 @@ def parse_args():
         "--config",
         choices = ["devel", "mem", "wsgi"],
         default = "devel",
-        help = "Specify the configuration to use: 'devel' (default), 'mem', or 'wsgi'."
+        help = "Specify the configuration to use: 'devel' (default), 'mem', 'wsgi-personal' (soon-to-be default), or 'wsgi-server'."
     )
     return parser.parse_args()
 
 # Run the Flask app based on the provided configuration type
 def run_app(config_type):
     # Create the app with the appropriate configuration
-    app = create_app(test_config=None if config_type != "mem" else True)
-
+    app = create_app(test_config=(config_type == "mem"))
+    
+    # Common configuration for WSGI
+    common_kwargs = {
+        'threads': cpu_count(),
+        # 4gb files for POST. largest video encountered to date is 3.1gb
+        'max_request_body_size': 4294967296
+    }
+    
     # Conditional logic to handle different configurations
-    if config_type == "devel" or config_type == "mem":
+    if config_type in ["devel", "mem"]:
         app.run(debug=True)
-    elif config_type == "wsgi":
-        serve(app, listen='*:5000', threads=cpu_count(), max_request_body_size=4294967296)
+    elif config_type == "wsgi-personal":
+        serve(app, listen="127.0.0.1:5000 [::1]:5000", **common_kwargs)
+    elif config_type == "wsgi-server":
+        serve(app, listen='*:5000', **common_kwargs)
         
 
 # Run the app based on the selected configuration parsed from the command line
