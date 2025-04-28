@@ -123,7 +123,7 @@ function pollForFixationStatus() {
                 clearInterval(intervalId);
             }
         });
-    }, 5000);
+    }, 1000);
 }
 
 // I used some of this code: https://jsfiddle.net/adiioo7/zu6pK/light/ to make the video progress bar

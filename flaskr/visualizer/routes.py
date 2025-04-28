@@ -110,6 +110,8 @@ def fetch_json(uuid, filename):
     upload_path = os.path.join(UPLOAD_FOLDER, uuid)
     fixation_export_path = os.path.join(upload_path, "export")
 
+    print("FJ fixation export path:", fixation_export_path)
+    print(filename)
     return send_from_directory(fixation_export_path, filename)
 
 @blueprint.route("/check_fixation_status")
@@ -119,9 +121,12 @@ def check_fixation_status():
     upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
     fixation_export_path = os.path.join(upload_path, "export")
     export_json_path = os.path.join(fixation_export_path, "export_fixation.json")
+    print("CFS export json path:", export_json_path)
 
     # if file doesn't exist, exit this function early
     if not os.path.exists(export_json_path):
         return jsonify(file="")
     
-    return jsonify(file=export_json_path.split("\\", 1)[1])
+    # return jsonify(file=export_json_path.split("/", 1)[1])
+    print(jsonify(file=export_json_path).data)
+    return jsonify(file=export_json_path)
