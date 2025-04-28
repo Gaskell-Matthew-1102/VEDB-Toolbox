@@ -102,13 +102,11 @@ class IMU_Processor:
         return np.array([x_dot, y_dot])
 
     def create_grid(self, shape, step):
-        """Create a grid of points over the image."""
         h, w = shape
         y, x = np.mgrid[step//2:h:step, step//2:w:step]  # Generate grid points
         return np.float32(np.stack((x, y), axis=-1).reshape(-1, 1, 2))  # Reshape to (N, 1, 2)
     
     def compute_grid_rotational_flow(self, step):
-        """Compute rotational optic flow over a grid."""
         grid_points = self.create_grid((self.image_height, self.image_width), step)
 
         flow_vectors = []
