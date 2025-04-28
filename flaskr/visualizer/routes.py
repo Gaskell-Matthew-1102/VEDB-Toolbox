@@ -68,16 +68,15 @@ def visualizer():
 
     # Start the fixation detection algorithm here
     # if the file already exists, don't run the algorithm. allows reusing previously generated work
-    if not os.path.exists(export_json_path) or not os.path.exists(export_parameters_path):
-        start_fixation_algorithm(odometry_file=odo_pldata_path,
-                                 gaze_file=gaze_npz_path,
-                                 world_video_file=world_path,
-                                 csv_file=csv_path,
-                                 eye0_file=eye0_path,
-                                 eye1_file=eye1_path,
-                                 export_json_path=export_json_path,
-                                 export_parameters_path=export_parameters_path,
-                                 in_args=session["fixation_params"])
+    start_fixation_algorithm(odometry_file=odo_pldata_path,
+                             gaze_file=gaze_npz_path,
+                             world_video_file=world_path,
+                             csv_file=csv_path,
+                             eye0_file=eye0_path,
+                             eye1_file=eye1_path,
+                             export_json_path=export_json_path,
+                             export_parameters_path=export_parameters_path,
+                             in_args=session["fixation_params"])
 
     # This returns a JSON_list, in the refactor this will go to the frontend JS for graph generation, in the form of lists not graphs
     vel_data = generate_velocity_graphs([odo_pldata_path, world_time_path])
