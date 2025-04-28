@@ -107,14 +107,9 @@ def fetch(filename):
 @login_required
 @upload_required
 def fetch_json(uuid, filename):
-    # fixed_path = os.path.join('..', UPLOAD_FOLDER)
-    # fixed_path = os.path.join('..', UPLOAD_FOLDER)
     upload_path = os.path.join(UPLOAD_FOLDER, uuid)
-    # upload_path = os.path.join(fixed_path, uuid)
     fixation_export_path = os.path.join(upload_path, "export")
 
-    print("FIXATION EXPORT PATH:", fixation_export_path)
-    print("FILENAME:", filename)
     return send_from_directory(fixation_export_path, filename)
 
 @blueprint.route("/check_fixation_status")
