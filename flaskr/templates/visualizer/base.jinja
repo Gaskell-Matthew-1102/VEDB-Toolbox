@@ -314,7 +314,7 @@
         <!-- body -->
         <header class="bg-gradient-dark main-content">
             <div class="page-header min-vh-100" style="background-image: url('{{ url_for('static', filename='home/img/journey_into_dataviz_feature_dark.png') }}')" loading="lazy">
-                <span class="mask bg-gradient opacity-6"></span>
+                <span class="mask bg-gradient opacity-6" style="z-index:-1;"></span>
                 <div class="container-fluid">
                     {% block content %}{% endblock %}
                 </div>
