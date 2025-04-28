@@ -68,8 +68,6 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
     upsampled_timestamps, upsampled_raw_gaze = fixation_packages.spatial_average.linear_interpolate(gaze_timestamp, raw_gaze_vec_.transpose(), 120, 200)
     upsampled_raw_gaze = upsampled_raw_gaze.transpose()
 
-    print("LEN:", len(upsampled_raw_gaze[0]))
-
     savgol_x = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[0], gaze_window_size_ms, polynomial_grade)
     savgol_y = fixation_packages.gaze_processing.savgol(upsampled_raw_gaze[1], gaze_window_size_ms, polynomial_grade)
     savgol_gaze_vec = np.array(np.column_stack([savgol_x, savgol_y]))

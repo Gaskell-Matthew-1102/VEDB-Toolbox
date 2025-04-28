@@ -32,6 +32,9 @@ def setup():
 @login_required
 @upload_required
 def visualizer():
+    print('-' * 100)
+    print(session['fixation_params'])
+    print('-' * 100)
     # base directory for all files
     upload_path = os.path.join(UPLOAD_FOLDER, session['upload_uuid'])
     fixation_export_path = os.path.join(upload_path, "export")
@@ -110,8 +113,8 @@ def fetch_json(uuid, filename):
     upload_path = os.path.join(UPLOAD_FOLDER, uuid)
     fixation_export_path = os.path.join(upload_path, "export")
 
-    print("FJ fixation export path:", fixation_export_path)
-    print(filename)
+    # print("FJ fixation export path:", fixation_export_path)
+    # print(filename)
     return send_from_directory(os.path.join(os.getcwd(), fixation_export_path), filename)
 
 @blueprint.route("/check_fixation_status")
@@ -126,6 +129,5 @@ def check_fixation_status():
     if not os.path.exists(export_json_path):
         return jsonify(file="")
     
-    # return jsonify(file=export_json_path.split("/", 1)[1])
-    print(jsonify(file=export_json_path).data)
+    # print(jsonify(file=export_json_path).data)
     return jsonify(file=export_json_path.split("\\", 1)[1])
