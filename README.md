@@ -7,14 +7,25 @@ git clone https://github.com/Gaskell-Matthew-1102/VEDB-Toolbox.git
 ```
 Alternatively, an option is present to clone into the repository with GitHub Desktop, which will take you to that application and prompt you on completing the clone. If you downloaded the zip file, extract the files in a convenient location.
 ## Installing Requirements
-The Toolbox uses many Python libraries. To install these, open a terminal and navigate to the main directory of the files you previously downloaded. In this, there is a file named `requirements.txt`. Python and Pip are necessary to install these. Python can be installed from their website. Pip can also be installed through this, or through the command line. To ensure pip is installed, please use the following command:
+The Toolbox uses many Python libraries. To install these, open a terminal and navigate to the main directory of the files you previously downloaded.
+In this, there is a file named `requirements.txt`. Python and Pip are necessary to install these.
+Python can be installed from their website. Pip can also be installed through this, or through the command line. To ensure pip is installed, please use the following command:
 ```
 pip --version
 ```
 Once pip has been installed and verified, run the following:
 ```
+cd VEDB-Toolbox
+python3 -m venv .venv
+```
+Please then refer to the table to activate your Python virtual environment (colloquially "venv").
+![Table showing the requisite commands to activate the venv.](./flaskr/static/images/activate_venv.png)
+
+Finally, install the required python modules
+```
 pip install -r requirements.txt
 ```
+
 Now the Toolbox is ready to be run.
 
 Do note that on Linux devices there is the possibility OpenCV may require certain packages on the system. On Debian-based systems, check that `libgl1` is installed by running
@@ -24,7 +35,7 @@ apt list --installed | grep libgl1/
 ## Running the Toolbox
 In the same general directory, a file named `run_me.py` can be found. This can be ran from the command line:
 ```
-python run.py
+python run.py --config wsgi-personal
 ```
 The Toolbox is now locally accessible at http://127.0.0.1:5000. Navigating to this link in your browser (Chrome recommended) will bring you to the login page of the Toolbox.
 ## Using the Toolbox
