@@ -30,9 +30,15 @@ def remove_unaccounted_dirs(base_dir):
     # Fetch all session_ids from the session_history table
     session_ids = {session_entry.session_id for session_entry in SessionHistory.query.all()}
 
+    # Folders to exclude from deletion
+    protected_dirs = {"export"}
+
     # Walk through the directory
     for root, dirs, files in os.walk(base_dir, topdown=False):
         for name in dirs:
+            if name in protected_dirs:
+                continue  # Skip protected folders
+
             dir_path = os.path.join(root, name)
 
             # Check if the directory's name (UUID) is not in session_history
