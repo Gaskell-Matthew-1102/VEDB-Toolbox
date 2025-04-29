@@ -115,38 +115,23 @@ def fetch_and_unzip(download_func, url_string: str, unzip_to: str) -> str:
             zip_data = open(url_string, 'rb')
 
         with zipfile.ZipFile(zip_data) as zip_file:
-            # Get all file paths in the zip
-            all_paths = zip_file.namelist()
-
-            # Detect the common top-level directory (if any)
-            top_dirs = set(p.split('/')[0] for p in all_paths if '/' in p and not p.startswith('__MACOSX'))
-            common_prefix = top_dirs.pop() if len(top_dirs) == 1 else ''
-
             for member in zip_file.infolist():
-                original_path = member.filename
-
                 # Skip directories
                 if member.is_dir():
                     continue
 
-                # If the file is inside 'processedgaze', adjust the path
-                if 'processedGaze' in original_path:
-                    # Remove 'processedgaze' prefix from the path
-                    relative_path = original_path.replace('processedGaze' + '/', '')
-                elif common_prefix and original_path.startswith(common_prefix + '/'):
-                    # Remove the common top-level directory
-                    relative_path = original_path[len(common_prefix)+1:]
-                else:
-                    # Use the original path if no specific folder is found
-                    relative_path = original_path
+                # Extract only the filename (ignore folder paths)
+                filename = os.path.basename(member.filename)
+                if not filename:
+                    continue  # skip if it's an empty filename
 
-                # Construct the final output path
-                target_path = os.path.join(unzip_to, relative_path)
+                # Create the full output path
+                target_path = os.path.join(unzip_to, filename)
 
-                # Ensure parent dirs exist
-                os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                # Ensure the target directory exists
+                os.makedirs(unzip_to, exist_ok=True)
 
-                # Write the file
+                # Write the file to the flattened directory
                 with zip_file.open(member) as source, open(target_path, "wb") as target:
                     target.write(source.read())
 
