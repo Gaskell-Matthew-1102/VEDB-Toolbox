@@ -74,9 +74,9 @@ class FixationParameters(FlaskForm):
     min_fixation_dur_ms = IntegerField("Minimum Fixation Duration (ms)", default=70)
     
     optic_flow_override = BooleanField('Enable Override', default=False)
-    imu_flag = BooleanField("LUCAS (fallback) or IMU?", default=False)
+    imu_flag = BooleanField("LUCAS (default) or IMU?", default=False)
 
-    submit_parameters = SubmitField("Set Fixation Parameters")
+    submit_parameters = SubmitField("Set Fixation Algorithm Parameters")
 
 class EnterVisualizer(FlaskForm):
     submit = SubmitField("Enter Visualizer")
