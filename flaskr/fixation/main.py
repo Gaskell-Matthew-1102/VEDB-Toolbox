@@ -84,7 +84,7 @@ def runner(pldata_to_load, gaze_npz, world_scene_video_path, export_fixation_fil
 
     if(not imu_flag):
     # Step 3*
-        global_OF_vec_list = fixation_packages.gridTracking_LUCAS_KANADE_TEST.do_it(world_scene_video_path, 0.25)  # Needs to be averaged before upsampled
+        global_OF_vec_list = fixation_packages.lucas_kanade.do_it(world_scene_video_path, 0.25)  # Needs to be averaged before upsampled
         # TODO: Check timestamp alignment
         # TODO: global_OF_vec_list is a list of vectors produced per frame, do we need to find velocity?
 
