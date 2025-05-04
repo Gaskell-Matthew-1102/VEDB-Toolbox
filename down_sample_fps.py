@@ -1,4 +1,4 @@
-# This code was written by Matt, used a stackoverflow source and some chatgpt queries asking for Python libraries for frame grabbing and stitching
+# This code was written by Matt, used a stackoverflow source (cited below) and some chatgpt queries asking for Python libraries for frame grabbing and stitching
 
 # Takes in the eye0, eye1, and world timestamps, as well as the two eye vidoes, and downsamples them from 120 fps -> 30 fps
 # based on the world timestamps. Ran externally and independent of the viewer application due to its extremely slow pace.

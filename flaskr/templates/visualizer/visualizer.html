@@ -107,6 +107,7 @@
     <script src="{{ url_for('static',filename='visualizer/js/videos.js') }}"></script>
     <script type="text/javascript">
         // Assigning variables passed in through render_template on the backend
+        // Matt wrote all of this code, using https://plotly.com/javascript/ as a source
         var velocityTimestamps = {{velocity_timestamps | safe}};
 
         var linear0 = {{linear_0 | safe}};

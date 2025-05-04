@@ -1,6 +1,5 @@
 # validate link, download funcs are matt's work with some modification
 # fetch_&_unzip is a rewrite by brian for more "generalized" handling
-# overall brian
 
 # base
 import os
