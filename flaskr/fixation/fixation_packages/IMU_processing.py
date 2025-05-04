@@ -84,6 +84,7 @@ class IMU_Processor:
 
     #     return np.array([delta_v_x, delta_v_y, delta_v_z]), np.array([guh0, guh1, guh2])
 
+    # This function was written by ChatGPT
     def calculate_rotational_optic_flow(self, raw_x, raw_y):
         omega_x, omega_y, omega_z = self.angular_velocity
 
@@ -101,6 +102,7 @@ class IMU_Processor:
 
         return np.array([x_dot, y_dot])
 
+    # This function was written by ChatGPT
     def create_grid(self, shape, step):
         h, w = shape
         y, x = np.mgrid[step//2:h:step, step//2:w:step]  # Generate grid points
@@ -110,7 +112,7 @@ class IMU_Processor:
         grid_points = self.create_grid((self.image_height, self.image_width), step)
 
         flow_vectors = []
-        for point in grid_points[:, 0, :]:  # point shape is (N, 2)
+        for point in grid_points[:, 0, :]:
             raw_x, raw_y = point
             flow = self.calculate_rotational_optic_flow(raw_x, raw_y)
             flow_vectors.append(flow)

@@ -62,12 +62,9 @@ function plotFixations(fixationTimes){
         width: 500,
         height: 257
     }
-
-    // why was this plotted on gaze lol
-    // Plotly.newPlot("gaze", fixationData, layout);
 }
 
-//fix this plotly decided to just break lol
+//Plotly functionality was found here: https://plotly.com/javascript/
 function downloadGraphs(){
     const moment = new Date();
     const isoTime = moment.toISOString();

@@ -1,3 +1,5 @@
+// Matt wrote most of this code
+
 function getVideos() {
     return [
         document.getElementById("worldvideo"),

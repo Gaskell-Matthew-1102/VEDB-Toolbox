@@ -7,6 +7,7 @@ def calculateGlobalOpticFlowVec(local_vecs: list[np.ndarray[2]]):
         return np.array([0, 0])
     return np.average(local_vecs, axis=0)
 
+# This function was written by ChatGPT
 def linear_upsample(initial_Hz: float, desired_Hz: float, vec_1: np.ndarray, vec_2: np.ndarray):
     # If sampling rates are equal, no upsampling is needed.
     if initial_Hz == desired_Hz:
@@ -49,17 +50,13 @@ def linear_upsample_timestamps(timestamps: np.ndarray, initial_Hz: float, desire
     if desired_Hz < initial_Hz:
         raise ValueError("Downsampling is not supported.")
     
-    # Create an "original" time grid, assuming timestamps are uniformly spaced at initial_Hz:
     t_orig = np.arange(timestamps.shape[0]) / initial_Hz
-
-    # Create a new time grid from the first to the last original time, using the desired step.
     t_new = np.arange(t_orig[0], t_orig[-1] + 1/desired_Hz, 1/desired_Hz)
     
-    # Interpolate the timestamps along the new time grid.
     upsampled_timestamps = np.interp(t_new, t_orig, timestamps)
-    
     return upsampled_timestamps
 
+# This function was written by ChatGPT
 def linear_interpolate(time_original: np.ndarray, data_original: np.ndarray, original_frequency: float, target_frequency: float) -> tuple[np.ndarray, np.ndarray]:
     if len(time_original) != len(data_original):
         raise ValueError("Time and data arrays must have the same length.")
